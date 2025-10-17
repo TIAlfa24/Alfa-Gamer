@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" href="cima.png" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Curso</title>
     <link rel="stylesheet" href="cadastro.css">
 </head>
-        <header>
+<header>
   <div class="header-container">
     <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
 
@@ -26,15 +25,13 @@
       <a href="https://sites.google.com/view/equipealfa/in%C3%ADcio">Loja Online</a>
     </nav>
   </div>
-    </header>
+</header>
 <body>
-
     <div class="main-content-wrapper">
         <div class="container">
             <main>
                 <h1>Inscreva-se já para participar do nosso curso</h1>
-
-                    <form id="formCadastro" method="POST">
+                <form id="formCadastro" method="POST">
                     <label for="nome"><b>Nome completo:</b></label>
                     <input id="nome" name="nome" type="text" autocomplete="name" required placeholder="Ex: João da Silva" style="margin-bottom: 10px;">
                     
@@ -45,120 +42,73 @@
                     <input id="senhaUsuario" name="senhaUsuario" type="password" placeholder="Exemplo: 1234abc" required style="margin-bottom: 10px;">
 
                     <button id="btnEnviar" type="submit"><b>Enviar</b></button>
-                    <!--<div class="a-padding">
-                        <a href="login.html">Login</a>
-                    </div>-->
-                        <br>
-                        <h6>Ao clicar em "Enviar", nós garantimos que os seus dados pessoais não serão usados para nenhuma finalidade que não seja diretamente ligada ao curso.</h6>
+                    <br>
+                    <h6>Ao clicar em "Enviar", nós garantimos que os seus dados pessoais não serão usados para nenhuma finalidade que não seja diretamente ligada ao curso.</h6>
                 </form>
             </main>
         </div>
     </div>
 
     <script>
-        
-const res = await fetch('https://alfa-gamer.onrender.com/cadastro', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ nome, numero_aluno, senha })
-});
-    // CORREÇÃO: A inicialização do client estava incorreta.
-    const { createClient } = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY );
+      // HAMBURGER MENU
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('navMenu');
+      hamburger.addEventListener('click', () => {
+          hamburger.classList.toggle('active');
+          navMenu.classList.toggle('active');
+      });
 
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('navMenu');
+      // MÁSCARA DE WHATSAPP
+      const whatsappInput = document.getElementById("numero_aluno");
+      if (whatsappInput) {
+          whatsappInput.addEventListener("input", function (e) {
+              let valor = this.value.replace(/\D/g, "");
+              if (valor.length > 11) valor = valor.slice(0, 11);
 
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
+              let formatado = "";
+              if (valor.length > 0) formatado = "(" + valor.substring(0, 2);
+              if (valor.length >= 3) formatado += ") " + valor.substring(2, 7);
+              if (valor.length >= 8) formatado += "-" + valor.substring(7);
 
-    // 2. LÓGICA DE MÁSCARA
+              const backspace = e.inputType === "deleteContentBackward";
+              if (backspace && this.value.endsWith("-")) {
+                  this.value = this.value.slice(0, -1);
+                  return;
+              }
+              this.value = formatado;
+          });
+      }
 
-    // Máscara de WhatsApp (ID: 'numero_aluno')
-    const whatsappInput = document.getElementById("numero_aluno");
-    if (whatsappInput) {
-    whatsappInput.addEventListener("input", function (e) {
-        let valor = this.value.replace(/\D/g, "");
+      // ENVIO DO FORMULÁRIO PARA O BACKEND
+      const form = document.getElementById('formCadastro');
+      if (form) {
+          form.addEventListener('submit', async (e) => {
+              e.preventDefault();
 
-        // Limita a 11 dígitos
-        if (valor.length > 11) valor = valor.slice(0, 11);
+              const nome = document.getElementById('nome').value;
+              const numero_aluno = document.getElementById('numero_aluno').value.replace(/\D/g, '');
+              const senha = document.getElementById('senhaUsuario').value;
 
-        // Aplica máscara dinamicamente
-        let formatado = "";
-        if (valor.length > 0) {
-            formatado = "(" + valor.substring(0, 2);
-        }
-        if (valor.length >= 3) {
-            formatado += ") " + valor.substring(2, 7);
-        }
-        if (valor.length >= 8) {
-            formatado += "-" + valor.substring(7);
-        }
+              try {
+                  const res = await fetch('https://alfa-gamer.onrender.com/cadastro', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ nome, numero_aluno, senha })
+                  });
 
-        // Evita reescrever enquanto apaga (ex: travar no '-')
-        const backspace = e.inputType === "deleteContentBackward";
-        if (backspace && this.value.endsWith("-")) {
-            // Deixa apagar o hífen manualmente
-            this.value = this.value.slice(0, -1);
-            return;
-        }
+                  const data = await res.json();
 
-        this.value = formatado;
-    });
-}
-    // 3. LÓGICA DE SUBMISSÃO (ENVIO PARA O SUPABASE)
-
-    const form = document.getElementById('formCadastro');
-
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // CORREÇÃO: IDs dos campos corrigidos para corresponder ao HTML.
-            const cpf = document.getElementById('cpf').value.replace(/[^0-9]/g, '');
-            const nome = document.getElementById('nome').value;
-            const senha = document.getElementById('senhaUsuario').value;
-            const numero_aluno = document.getElementById('numero_aluno').value.replace(/[^0-9]/g, '');
-
-            // Envia para a tabela 'alunos' usando o client corrigido.
-            const { data, error } = await supabaseClient
-                .from('alunos')
-                .insert([
-                    { cpf: cpf, nome: nome, numero_aluno: numero_aluno, senha: senha }
-                ]);
-
-            // Feedback
-            if (error) {
-                console.error('Erro ao cadastrar:', error);
-                alert('Erro no cadastro. Tente novamente: ' + error.message);
-            } else {
-                alert('Cadastro realizado com sucesso!');
-                form.reset();
-            }
-        });
-    }
-</script>
-
+                  if (data.success) {
+                      alert('Cadastro realizado com sucesso!');
+                      form.reset();
+                  } else {
+                      alert('Erro: ' + data.error);
+                  }
+              } catch (err) {
+                  alert('Erro ao conectar com o servidor: ' + err.message);
+              }
+          });
+      }
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
