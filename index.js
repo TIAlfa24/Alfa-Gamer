@@ -1,43 +1,28 @@
-import express from 'express';
-import cors from 'cors';
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import express from "express";
+import cors from "cors";
 
 const app = express();
-app.use(cors({ origin: '*' })); // permite acesso de qualquer front-end
+app.use(cors());
 app.use(express.json());
 
-// Cria client do Supabase usando variáveis de ambiente
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+// Rota padrão (teste)
+app.get("/", (req, res) => {
+  res.send("Servidor do Alfa Gamer rodando! ✅");
+});
 
-// Rota de cadastro
-app.post('/cadastro', async (req, res) => {
-  const { nome, numero_aluno, senha } = req.body;
-
-  if (!nome || !numero_aluno || !senha) {
-    return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
-  }
-
+// Rota para cadastro
+app.post("/cadastro", async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('alunos')
-      .insert([{ nome, numero_aluno, senha }]);
+    const { nome, numero_aluno, senha } = req.body;
+    console.log("Dados recebidos:", { nome, numero_aluno, senha });
 
-    if (error) return res.status(400).json({ error: error.message });
-
-    res.json({ success: true, data });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+    // Aqui você colocaria a lógica do Supabase
+    res.json({ sucesso: true, mensagem: "Dados recebidos com sucesso!" });
+  } catch (erro) {
+    console.error("Erro no servidor:", erro);
+    res.status(500).json({ erro: "Erro interno no servidor" });
   }
 });
 
-// Inicia servidor
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
