@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="icon" href="cima.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Curso</title>
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+
+<body>
+
+    <header>
+  <div class="header-container">
+    <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
+
+    <!-- Botão Hamburger -->
+    <div class="hamburger" id="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <nav class="navbar" id="navMenu">
+      <a href="http://gameralfa.com/">Início</a>
+      <a href="login.html">Login</a>
+      <a href="#horarios">Depoimentos</a>
+      <a href="https://sites.google.com/view/equipealfa/in%C3%ADcio">Loja Online</a>
+    </nav>
+  </div>
+</header>
+    <div class="main-content-wrapper">
+        <div class="container">
+            <main>
+                <h1>Bem-Vindo(a) de volta!</h1>
+                <form id="formCadastro" novalidate>
+                    <label for="cpf"><b>CPF:</b></label>
+                    <br>
+                    <input id="cpf" name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" required>
+                    <br>
+                    <br>
+                    <label for="senhaUsuario"><b>Senha</b></label>
+                    <br>
+                    <input id="senhaUsuario" name="senhaUsuario" type="password" placeholder="Senha usada no cadastro" required>
+                    <br>
+                    <br>
+                    <button id="btnEnviar" type="submit"><b>Entrar</b></button>
+                    <div class="a-padding">
+                        <a href="cadastro.html">Não tem uma conta? Cadastre-se!</a>
+                    </div>
+                </form>
+            </main>
+        </div>
+
+        <script>
+
+            const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('navMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+            
+            const cpfInput = document.getElementById("cpf");
+            cpfInput.addEventListener("input", function () {
+                let valor = this.value.replace(/\D/g, "");
+                if (valor.length > 11) valor = valor.slice(0, 11);
+
+                if (valor.length > 9) {
+                    this.value = `${valor.slice(0, 3)}.${valor.slice(3, 6)}.${valor.slice(6, 9)}-${valor.slice(9, 11)}`;
+                } else if (valor.length > 6) {
+                    this.value = `${valor.slice(0, 3)}.${valor.slice(3, 6)}.${valor.slice(6)}`;
+                } else if (valor.length > 3) {
+                    this.value = `${valor.slice(0, 3)}.${valor.slice(3)}`;
+                } else {
+                    this.value = valor;
+                }
+            });</script>
+    </div>
+    
+</body>
+
+</html>

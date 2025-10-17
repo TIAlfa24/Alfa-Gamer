@@ -1,0 +1,314 @@
+/* ===== Reset e fonte ===== */
+html,
+body {
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ===== Body ===== */
+body {
+    background-color: #d3d3d3;
+    color: #111;
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+/* ===== HEADER PADRÃO (DESKTOP) ===== */
+header {
+    background-color: #111111;
+    color: white;
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    width: 100%;
+}
+
+.header-container {
+    max-width: 1100px; /* Use max-width para centrar, como no seu index.html */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    height: 90px;
+    width: auto;
+}
+
+/* HAMBURGUER (ESCONDIDO NO DESKTOP) */
+.hamburger {
+    display: none; /* Escondido no desktop */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 25px;
+    height: 20px;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.hamburger div {
+    height: 3px;
+    background-color: #f1f1f1;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* ANIMAÇÃO HAMBURGUER/X */
+.hamburger.active div:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active div:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active div:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* NAVBAR (HORIZONTAL NO DESKTOP) */
+.navbar {
+    display: flex;
+    align-items: center;
+}
+
+.navbar a {
+    color: #ffffff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 600;
+    font-size: 16px;
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar a::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #00b686;
+    transition: width 0.3s ease;
+}
+
+.navbar a:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.navbar a:hover::after {
+    width: 100%;
+}
+
+/* ===== RESPONSIVIDADE (MOBILE) ===== */
+@media (max-width: 700px) {
+    .logo {
+        max-height: 60px; /* Reduz tamanho da logo */
+    }
+
+    /* ESSENCIAL PARA EXPANSÃO: logo e hamburger lado a lado, e navbar quebra a linha */
+    .header-container {
+        flex-direction: row; 
+        justify-content: space-between; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        gap: 0; 
+        position: relative;
+    }
+
+    .hamburger {
+        display: flex; /* Mostra o botão hamburger */
+    }
+
+    /* NAVBAR (VERTICAL NO MOBILE, DENTRO DO FLUXO DO HEADER) */
+    .navbar {
+        flex-direction: column;
+        align-items: end;
+        background-color: #111111;
+        width: 100%;
+        order: 10; /* Força a navbar a aparecer abaixo da logo/hamburger */
+        
+        /* O CÓDIGO ABAIXO PERMITE A EXPANSÃO DA HEADER */
+        overflow: hidden;
+        max-height: 0; 
+        transition: max-height 0.4s ease;
+        /* REMOVIDO: position: absolute; */
+    }
+
+    .navbar.active {
+        max-height: 300px; /* Expande e empurra o conteúdo */
+    }
+
+    .navbar a {
+        display: block; /* Garante que os links ocupem a largura e fiquem verticais */
+        margin: 10px 0;
+        padding: 10px 20px; /* Adiciona algum padding se desejar */
+    }
+}
+
+/* ===== ESTILOS DO CONTEÚDO (DEPOIS DA HEADER) ===== */
+/* ===== Conteúdo principal ===== */
+.main-content-wrapper {
+    width: 100%;
+    display: block; /* ❗ volta ao fluxo normal */
+    padding: 40px 0;
+    min-height: auto;
+}
+
+.container {
+    background-color: #f9f9f9;
+    color: #111;
+    width: 900px;
+    max-width: 90%;
+    margin: 20px auto; /* centraliza apenas horizontalmente */
+    padding: 50px;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(83, 83, 83, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 0 45px rgba(221, 221, 221, 0.3);
+}
+
+h1 {
+    font-size: 2.8rem;
+    text-align: center;
+    color: #00b686;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #00b686;
+    border-left: 5px solid #00e6a0;
+    padding-left: 10px;
+    margin-top: 40px;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin-top: 25px;
+    color: #111;
+    border-left: 4px solid #00b686;
+    padding-left: 10px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+h3:hover {
+    transform: translateX(5px);
+    color: #00b686;
+}
+
+p {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #c0c0c0, #969696);
+    margin: 35px 0;
+    border-radius: 2px;
+}
+
+button {
+    background: linear-gradient(90deg, #00b686, #00e6a0);
+    border: none;
+    border-radius: 10px;
+    padding: 15px 35px;
+    margin: 30px auto;
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 20px rgba(128, 128, 128, 0.5);
+}
+
+button:hover {
+    text-decoration: none;
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(128, 128, 128, 1);
+}
+
+button a {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+button a:hover {
+    color: white; 
+    text-decoration: none;
+}
+
+.central-a {
+    display: block;
+    text-align: center;
+    color: #00b686;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.central-a:hover {
+    text-decoration: underline;
+    color: #009965;
+}
+
+.container-link {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.container-link img {
+    width: 45px;
+    height: 45px;
+    margin: 10px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.container-link img:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px #00b686);
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px 0;
+    }
+}
