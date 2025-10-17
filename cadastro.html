@@ -55,10 +55,12 @@
     </div>
 
     <script>
-    // 1. CHAVES DE CONEXÃO E INICIALIZAÇÃO SUPABASE
-    const SUPABASE_URL = 'https://eajkyimrywhfhcddchjd.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhamt5aW1yeXdoZmhjZGRjaGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTAzMDIsImV4cCI6MjA3NjAyNjMwMn0.XZpcI9Cw8B84ltVeR9GenWyiY4nkNHQiVZeYM5JiLOA';
-
+        
+const res = await fetch('https://SEU-BACKEND.onrender.com/cadastro', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nome, numero_aluno, senha })
+});
     // CORREÇÃO: A inicialização do client estava incorreta.
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY );
@@ -140,6 +142,7 @@
 
 </body>
 </html>
+
 
 
 
