@@ -90,11 +90,11 @@
               const senha = document.getElementById('senhaUsuario').value;
 
               try {
-                  const res = await fetch('https://alfa-gamer.onrender.com', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ nome, numero_aluno, senha })
-                  });
+                  const res = await fetch('https://alfa-gamer.onrender.com/cadastro', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nome, numero_aluno, senha })
+});
 
                   const data = await res.json();
 
@@ -112,4 +112,5 @@
     </script>
 </body>
 </html>
+
 
