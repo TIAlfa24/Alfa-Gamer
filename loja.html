@@ -1,0 +1,223 @@
+<html lang="en">
+
+<head>
+    <link rel="icon" href="cima.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja - Computadores & Jogos</title>
+    <link rel="stylesheet" href="loja.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container"> <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
+            <!-- BOTÃO DO CARRINHO PRINCIPAL --> <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;"> <span class="cart-count"
+                    id="cartCountHeader">0</span> </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu"> <a href="#">Início</a> <a href="#">Monte seu PC</a> <a
+                    href="#">Departamentos</a> <!-- BOTÃO DO CARRINHO NA NAVBAR --> <button class="cart-btn1"
+                    id="openCartNav" title="Abrir carrinho"> <img src="cart.png" alt="Carrinho" height="35px"
+                        style="padding-left: 10px;"> <span class="cart-count" id="cartCountNav">0</span> </button>
+            </nav>
+        </div>
+    </header> <!-- CART DRAWER (APENAS UM!) -->
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div id="cartItems"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotal">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px"> <button class="btn" id="checkout">Finalizar</button> <button
+                class="btn ghost" id="closeCart">Fechar</button> </div>
+    </div>
+    <main>
+        <div class="topbar-mobile">
+            <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..."/></div>
+        </div>
+            <aside class="sidebar">
+                <div class="filter-group">
+                    <h4>Pesquisar</h4> <input id="search" type="search" placeholder="Procurar por título..." />
+                </div>
+                <div class="filter-group">
+                    <h4>Categoria</h4>
+                    <div><label><input type="radio" name="cat" value="all" checked /> Todos</label></div>
+                    <div><label><input type="radio" name="cat" value="pc" /> Computadores</label></div>
+                    <div><label><input type="radio" name="cat" value="periféricos" /> Periféricos</label></div>
+                </div>
+                <div class="filter-group">
+                    <h4>Ordenar</h4> <select id="sort">
+                        <option value="default">Padrão</option>
+                        <option value="price-asc">Preço: menor</option>
+                        <option value="price-desc">Preço: maior</option>
+                    </select>
+                </div>
+                <div style="margin-top:12px"> <button class="btn" id="applyFilters">Aplicar</button> <button
+                        class="btn ghost" id="clearFilters">Limpar</button> </div>
+            </aside>
+            <section>
+                <div class="topbar">
+                    <div class="search"> <input id="quickSearch" type="search"
+                            placeholder="Pesquise seu futuro item..." />
+                    </div>
+                    <div style="min-width:180px;text-align:right;color:var(--muted)"> Mostrando <span
+                            id="shownCount">0</span> produtos </div>
+                </div>
+                <div class="products" style="min-width:180px;text-align:right;color:var(--muted);"> Mostrando <span
+                            id="shownCount">0</span> produtos </div>
+                <div class="product-list" id="products"></div>
+            </section>
+    </main>
+    <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
+    <script>
+        // HAMBURGER MENU
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // DADOS DOS PRODUTOS
+        const PRODUCTS = [
+            { id: 1, title: "PC Gamer Ryzen 5", category: "pc", price: 3499, desc: "Desktop com RTX 3060, 16GB RAM" },
+            { id: 2, title: "Notebook Gamer 15\"", category: "pc", price: 4899, desc: "i7, GTX 1660 Ti, 16GB RAM" },
+            { id: 3, title: "Mouse Gamer RGB", category: "periféricos", price: 129, desc: "Sensor 16000 DPI" },
+            { id: 4, title: "Teclado Mecânico", category: "periféricos", price: 299, desc: "Switches azuis, retroiluminado" },
+            { id: 5, title: "Monitor 24\" Full HD", category: "periféricos", price: 799, desc: "144Hz, 1ms" },
+        ];
+
+        const state = { products: PRODUCTS.slice(), cart: {} };
+        const el = id => document.getElementById(id);
+        const money = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+
+        // RENDERIZAÇÃO DE PRODUTOS
+        function renderProducts(list) {
+            const container = el('products');
+            container.innerHTML = '';
+            list.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="thumb">${p.category.toUpperCase()}</div>
+                    <div style="flex:1">
+                        <div style="font-weight:700">${p.title}</div>
+                        <div style="font-size:13px;color:var(--muted)">${p.desc}</div>
+                    </div>
+                    <div class="meta">
+                        <div class="price">${money(p.price)}</div>
+                        <div class="actions">
+                            <button class="btn" data-id="${p.id}" onclick="addToCart(${p.id})">Adicionar</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            el('shownCount').textContent = list.length;
+        }
+
+        // FILTROS
+        function applyFilters() {
+            const q = document.querySelector('input[name="cat"]:checked').value;
+            const search = el('search').value.trim().toLowerCase();
+            const sort = el('sort').value;
+            let list = PRODUCTS.slice();
+            if (q !== 'all') list = list.filter(p => p.category === q);
+            if (search) list = list.filter(p => p.title.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search));
+            if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
+            if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
+            state.products = list;
+            renderProducts(list);
+        }
+
+        function clearFilters() {
+            document.querySelector('input[name="cat"][value="all"]').checked = true;
+            el('search').value = '';
+            el('sort').value = 'default';
+            renderProducts(PRODUCTS);
+        }
+
+        // CARRINHO
+        function addToCart(id) {
+            const p = PRODUCTS.find(x => x.id === id);
+            if (!p) return;
+            state.cart[id] = (state.cart[id] || 0) + 1;
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            if (!state.cart[id]) return;
+            state.cart[id] += delta;
+            if (state.cart[id] <= 0) delete state.cart[id];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const items = el('cartItems');
+            items.innerHTML = '';
+            let total = 0;
+            Object.keys(state.cart).forEach(k => {
+                const qty = state.cart[k];
+                const p = PRODUCTS.find(x => x.id == k);
+                total += p.price * qty;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div class="thumb">${p.title.split(' ')[0]}</div>
+                    <div style="flex:1">
+                        <div style="font-weight:700">${p.title}</div>
+                        <div style="font-size:13px;color:var(--muted)">${money(p.price)} x ${qty}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                        <button class="btn ghost" onclick="changeQty(${p.id}, -1)">-</button>
+                        <button class="btn" onclick="changeQty(${p.id}, 1)">+</button>
+                    </div>
+                `;
+                items.appendChild(div);
+            });
+            el('cartTotal').textContent = money(total);
+
+            const count = Object.values(state.cart).reduce((s, n) => s + n, 0);
+            el('cartCountHeader').textContent = count;
+            el('cartCountNav').textContent = count;
+        }
+
+        // ABRIR / FECHAR CARRINHO
+        const cartDrawer = el('cartDrawer');
+        function toggleCart() {
+            cartDrawer.classList.toggle('open');
+            cartDrawer.setAttribute('aria-hidden', cartDrawer.classList.contains('open') ? 'false' : 'true');
+        }
+
+        el('openCartHeader').addEventListener('click', toggleCart);
+        el('openCartNav').addEventListener('click', toggleCart);
+        el('closeCart').addEventListener('click', () => {
+            cartDrawer.classList.remove('open');
+            cartDrawer.setAttribute('aria-hidden', 'true');
+        });
+
+        // BUSCA RÁPIDA
+        el('applyFilters').addEventListener('click', applyFilters);
+        el('clearFilters').addEventListener('click', clearFilters);
+        el('quickSearch').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                el('search').value = e.target.value;
+                applyFilters();
+            }
+        });
+
+        el('checkout').addEventListener('click', () => {
+            alert('Checkout de exemplo — implementar integração de pagamento.');
+        });
+
+        // RENDER INICIAL
+        renderProducts(PRODUCTS);
+        updateCartUI();
+    </script>
+</body>
+
+</html>
