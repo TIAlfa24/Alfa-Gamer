@@ -21,8 +21,8 @@
             </div>
             <nav class="navbar" id="navMenu"> <a href="#">Início</a> <a href="#">Monte seu PC</a> <a
                     href="#">Departamentos</a> <!-- BOTÃO DO CARRINHO NA NAVBAR --> <button class="cart-btn1"
-                    id="openCartNav" title="Abrir carrinho"> <img src="cart.png" alt="Carrinho" height="35px"
-                        style="padding-left: 10px;"> <span class="cart-count" id="cartCountNav">0</span> </button>
+                    id="openCartNav" title="Abrir carrinho"> <img src="cart.png" alt="Carrinho" height="35px"><span
+                        class="cart-count" id="cartCountNav">0</span> </button>
             </nav>
         </div>
     </header> <!-- CART DRAWER (APENAS UM!) -->
@@ -37,40 +37,40 @@
     </div>
     <main>
         <div class="topbar-mobile">
-            <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..."/></div>
+            <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..." />
+            </div>
         </div>
-            <aside class="sidebar">
-                <div class="filter-group">
-                    <h4>Pesquisar</h4> <input id="search" type="search" placeholder="Procurar por título..." />
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h4>Pesquisar</h4> <input id="search" type="search" placeholder="Procurar por título..." />
+            </div>
+            <div class="filter-group">
+                <h4>Categoria</h4>
+                <div><label><input type="radio" name="cat" value="all" checked /> Todos</label></div>
+                <div><label><input type="radio" name="cat" value="pc" /> Computadores</label></div>
+                <div><label><input type="radio" name="cat" value="periféricos" /> Periféricos</label></div>
+            </div>
+            <div class="filter-group">
+                <h4>Ordenar</h4> <select id="sort">
+                    <option value="default">Padrão</option>
+                    <option value="price-asc">Preço: menor</option>
+                    <option value="price-desc">Preço: maior</option>
+                </select>
+            </div>
+            <div style="margin-top:12px"> <button class="btn" id="applyFilters">Aplicar</button> <button
+                    class="btn ghost" id="clearFilters">Limpar</button> </div>
+        </aside>
+        <section>
+            <div class="topbar">
+                <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..." />
                 </div>
-                <div class="filter-group">
-                    <h4>Categoria</h4>
-                    <div><label><input type="radio" name="cat" value="all" checked /> Todos</label></div>
-                    <div><label><input type="radio" name="cat" value="pc" /> Computadores</label></div>
-                    <div><label><input type="radio" name="cat" value="periféricos" /> Periféricos</label></div>
-                </div>
-                <div class="filter-group">
-                    <h4>Ordenar</h4> <select id="sort">
-                        <option value="default">Padrão</option>
-                        <option value="price-asc">Preço: menor</option>
-                        <option value="price-desc">Preço: maior</option>
-                    </select>
-                </div>
-                <div style="margin-top:12px"> <button class="btn" id="applyFilters">Aplicar</button> <button
-                        class="btn ghost" id="clearFilters">Limpar</button> </div>
-            </aside>
-            <section>
-                <div class="topbar">
-                    <div class="search"> <input id="quickSearch" type="search"
-                            placeholder="Pesquise seu futuro item..." />
-                    </div>
-                    <div style="min-width:180px;text-align:right;color:var(--muted)"> Mostrando <span
-                            id="shownCount">0</span> produtos </div>
-                </div>
-                <div class="products" style="min-width:180px;text-align:right;color:var(--muted);"> Mostrando <span
-                            id="shownCount">0</span> produtos </div>
-                <div class="product-list" id="products"></div>
-            </section>
+                <div style="min-width:180px;text-align:right;color:var(--muted)"> Mostrando <span
+                        id="shownCount">0</span> produtos </div>
+            </div>
+            <div class="products" style="min-width:180px;text-align:right;color:var(--muted);"> Mostrando <span
+                    id="shownCount">0</span> produtos </div>
+            <div class="product-list" id="products"></div>
+        </section>
     </main>
     <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
     <script>
@@ -89,6 +89,11 @@
             { id: 3, title: "Mouse Gamer RGB", category: "periféricos", price: 129, desc: "Sensor 16000 DPI" },
             { id: 4, title: "Teclado Mecânico", category: "periféricos", price: 299, desc: "Switches azuis, retroiluminado" },
             { id: 5, title: "Monitor 24\" Full HD", category: "periféricos", price: 799, desc: "144Hz, 1ms" },
+            { id: 6, title: "Headset Gamer", category: "periféricos", price: 199, desc: "Som surround 7.1" },
+            { id: 7, title: "PC Workstation i9", category: "pc", price: 6999, desc: "RTX 3080, 32GB RAM, SSD 1TB" },
+            { id: 8, title: "Mousepad Gamer XL", category: "periféricos", price: 89, desc: "Superfície de alta precisão" },
+            { id: 9, title: "Webcam Full HD", category: "periféricos", price: 249, desc: "Ideal para streaming" },
+            { id: 10, title: "All-in-One i5", category: "pc", price: 3999, desc: "Tela 23.8\", 16GB RAM, SSD 512GB" }
         ];
 
         const state = { products: PRODUCTS.slice(), cart: {} };
