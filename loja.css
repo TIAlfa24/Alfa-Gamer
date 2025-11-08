@@ -37,8 +37,8 @@ header {
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
+    align-items: center;    
+    z-index: 999;
 }
 
 .logo {
@@ -96,7 +96,7 @@ header {
 
 .navbar a::after {
     content: "";
-    position: absolute;
+    position: fixed;
     bottom: -4px;
     left: 0;
     width: 0%;
@@ -116,6 +116,7 @@ header {
 
 /* CART */
 .cart-btn1 {
+    padding-left: 16px;
     background: transparent;
     border: 0;
     color: white;
@@ -133,21 +134,25 @@ header {
 }
 
 .cart-count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 17px;
+    height: 17px;
     position: absolute;
-    top: -6px;
-    right: -6px;
-    background: #ff3b30;
-    color: white;
+    top: -1;
+    right: 0;
+    background: #0ad8ab;
+    color: black;
     border-radius: 50%;
-    padding: 3px 6px;
     font-size: 12px;
 }
 
 /* CART DRAWER */
 .cart-drawer {
-    position: absolute;
-    top: 8%;
-    right: 30px;
+    position: fixed; /* Fixa na tela */
+    top: 0; /* Começa no topo */
+    right: 100px; /* Alinha com o padding direito do header */
     width: 320px;
     background: var(--card);
     border-radius: 10px;
@@ -155,15 +160,17 @@ header {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     color: #f1f1f1;
     opacity: 0;
-    transform: translateY(-15px);
+    transform: translateY(-100%); /* Esconde acima da tela */
     transition: opacity 400ms cubic-bezier(.2, .9, .3, 1), transform 400ms cubic-bezier(.2, .9, .3, 1);
     pointer-events: none;
-    z-index: 500;
+    z-index: 999; /* Abaixo do header (1000) */
 }
 
 .cart-drawer.open {
     opacity: 1;
-    transform: translateY(0);
+    /* Header tem aproximadamente 120px de altura. Para sobrepor 20px (na altura do texto "Carrinho"), 
+       o drawer deve descer 100px (120px - 20px). */
+    transform: translateY(100px); 
     pointer-events: auto;
 }
 
@@ -180,6 +187,12 @@ header {
     width: 64px;
     border-radius: 6px;
     font-size: 12px;
+}
+
+@media (max-width: 1700px) {
+    .cart-drawer {
+        right: 20px; /* Ajusta para telas menores */
+    }
 }
 
 /* ===== RESPONSIVIDADE (MOBILE) ===== */
