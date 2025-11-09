@@ -11,9 +11,9 @@
 <body>
     <header>
         <div class="header-container"> <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
-            <!-- BOTÃO DO CARRINHO PRINCIPAL --> <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
-                <img src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;"> <span class="cart-count"
-                    id="cartCountHeader">0</span> </button>
+                <!-- BOTÃO DO CARRINHO PRINCIPAL --> <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                    <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;"> <span class="cart-count"
+                        id="cartCountHeader">0</span> </button>
             <div class="hamburger" id="hamburger">
                 <div></div>
                 <div></div>
@@ -21,14 +21,16 @@
             </div>
             <nav class="navbar" id="navMenu"> <a href="#">Início</a> <a href="#">Monte seu PC</a> <a
                     href="#">Departamentos</a> <!-- BOTÃO DO CARRINHO NA NAVBAR --> <button class="cart-btn1"
-                    id="openCartNav" title="Abrir carrinho"> <img src="cart.png" alt="Carrinho" height="35px"><span
+                    id="openCartNav" title="Abrir carrinho"> <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px"><span
                         class="cart-count" id="cartCountNav">0</span> </button>
             </nav>
         </div>
     </header> <!-- CART DRAWER (APENAS UM!) -->
     <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
         <h3>Carrinho</h3>
-        <div id="cartItems"></div>
+        <div class="cart-box">
+            <div id="cartItems"></div>
+        </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
             <strong>Total:</strong><strong id="cartTotal">R$ 0,00</strong>
         </div>
@@ -193,9 +195,58 @@
 
         // ABRIR / FECHAR CARRINHO
         const cartDrawer = el('cartDrawer');
+
+        // Função utilitária: anima um img e troca a src no momento certo
+        function animateImageTo(img, newSrc, type) {
+            if (!img) return;
+            if (type === 'blackhole') {
+                img.classList.remove('anim-jump', 'anim-pop-in');
+                img.classList.add('anim-blackhole');
+                const onEnd = function () {
+                    img.removeEventListener('animationend', onEnd);
+                    img.classList.remove('anim-blackhole');
+                    // troca a imagem quando a animação de saída terminar
+                    img.src = newSrc;
+                    // efeito de entrada suave
+                    img.classList.add('anim-pop-in');
+                    const onPop = function () { img.removeEventListener('animationend', onPop); img.classList.remove('anim-pop-in'); };
+                    img.addEventListener('animationend', onPop);
+                };
+                img.addEventListener('animationend', onEnd);
+            } else if (type === 'jump') {
+                img.classList.remove('anim-blackhole', 'anim-pop-in', 'anim-jump');
+                img.src = newSrc;
+                // forçar reflow para reiniciar animação
+                void img.offsetWidth;
+                img.classList.add('anim-jump');
+                const onEnd = function () { img.removeEventListener('animationend', onEnd); img.classList.remove('anim-jump'); };
+                img.addEventListener('animationend', onEnd);
+            } else {
+                img.src = newSrc;
+            }
+        }
+
         function toggleCart() {
             cartDrawer.classList.toggle('open');
-            cartDrawer.setAttribute('aria-hidden', cartDrawer.classList.contains('open') ? 'false' : 'true');
+            const isOpen = cartDrawer.classList.contains('open');
+            cartDrawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+
+            // troca a imagem dos botões do carrinho (header e navbar) com animação
+            const headerBtn = el('openCartHeader');
+            const navBtn = el('openCartNav');
+            const headerImg = headerBtn && headerBtn.querySelector('img');
+            const navImg = navBtn && navBtn.querySelector('img');
+            const newSrc = isOpen ? 'close-cart.png' : 'cart.png';
+
+            if (isOpen) {
+                // ao abrir: efeito de "saída" (buraco negro) antes de mostrar a imagem de excluir
+                if (headerImg) animateImageTo(headerImg, newSrc, 'blackhole');
+                if (navImg) animateImageTo(navImg, newSrc, 'blackhole');
+            } else {
+                // ao fechar: troca e faz o efeito de pulo
+                if (headerImg) animateImageTo(headerImg, newSrc, 'jump');
+                if (navImg) animateImageTo(navImg, newSrc, 'jump');
+            }
         }
 
         el('openCartHeader').addEventListener('click', toggleCart);
@@ -203,6 +254,13 @@
         el('closeCart').addEventListener('click', () => {
             cartDrawer.classList.remove('open');
             cartDrawer.setAttribute('aria-hidden', 'true');
+            // garante que os botões voltem para a imagem do carrinho com animação de pulo
+            const headerBtn = el('openCartHeader');
+            const navBtn = el('openCartNav');
+            const headerImg = headerBtn && headerBtn.querySelector('img');
+            const navImg = navBtn && navBtn.querySelector('img');
+            if (headerImg) animateImageTo(headerImg, 'cart.png', 'jump');
+            if (navImg) animateImageTo(navImg, 'cart.png', 'jump');
         });
 
         // BUSCA RÁPIDA
