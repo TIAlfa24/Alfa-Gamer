@@ -11,18 +11,6 @@
     --containers: #f9f9f9;
 }
 
-html {
-    scrollbar-width: thin;
-    scrollbar-color: #5c5c5c rgba(0, 0, 0, 0.856);
-    scroll-behavior: smooth;
-    /* thumb | track */
-}
-
-html,
-body {
-    scroll-behavior: smooth;
-}
-
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -58,8 +46,10 @@ header {
     width: auto;
 }
 
+/* HAMBURGUER (ESCONDIDO NO DESKTOP) */
 .hamburger {
     display: none;
+    /* Escondido no desktop */
     flex-direction: column;
     justify-content: space-between;
     width: 25px;
@@ -75,6 +65,7 @@ header {
     transition: all 0.3s ease;
 }
 
+/* ANIMAÇÃO HAMBURGUER/X */
 .hamburger.active div:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
@@ -87,6 +78,7 @@ header {
     transform: rotate(-45deg) translate(5px, -5px);
 }
 
+/* NAVBAR (HORIZONTAL NO DESKTOP) */
 .navbar {
     display: flex;
     align-items: center;
@@ -155,11 +147,72 @@ header {
     border-radius: 50%;
     font-size: 12px;
 }
+/*--------------------------------------------------*/
+/* Carrossel: remove setas e autoplay */
+.carrossel-de-propagandas {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 980px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: #111;
+}
 
+.carrossel-de-propagandas .carousel-track {
+    display: flex;
+    transition: transform 450ms ease;
+    will-change: transform;
+}
+
+.carrossel-de-propagandas .carousel-slide {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.carrossel-de-propagandas img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* esconder botões (setas) */
+.carrossel-de-propagandas .carousel-btn {
+    display: none;
+}
+
+.carousel-dots {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.carousel-dots button {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0;
+    cursor: pointer;
+}
+
+.carousel-dots button.active {
+    background: #fff;
+}
+/*--------------------------------------------------*/
+/* CART DRAWER */
 .cart-drawer {
     position: fixed;
+    /* Fixa na tela */
     top: 0;
+    /* Começa no topo */
     right: 100px;
+    /* Alinha com o padding direito do header */
     width: 320px;
     background: var(--card);
     border-radius: 10px;
@@ -168,30 +221,22 @@ header {
     color: #f1f1f1;
     opacity: 0;
     transform: translateY(-100%);
+    /* Esconde acima da tela */
     transition: opacity 400ms cubic-bezier(.2, .9, .3, 1), transform 400ms cubic-bezier(.2, .9, .3, 1);
     pointer-events: none;
     z-index: 999;
+    /* Abaixo do header (1000) */
 }
 
 .cart-drawer.open {
     opacity: 1;
+    /* Header tem aproximadamente 120px de altura. Para sobrepor 20px (na altura do texto "Carrinho"), 
+       o drawer deve descer 100px (120px - 20px). */
     transform: translateY(100px);
     pointer-events: auto;
 }
 
-.cart-box {
-    scrollbar-width: thin;
-    scrollbar-color: #00e6a0 transparent;
-    overflow-y: auto;
-    overflow-x: hidden;
-    list-style: none;
-    margin: 10px -12px 0.75rem -12px;
-    padding: 0 12px; 
-    max-height: calc(4 * 80px);
-    scrollbar-gutter: stable;
-    position: relative;
-}
-
+/* CART ITENS */
 .cart-item {
     display: flex;
     gap: 10px;
@@ -206,91 +251,18 @@ header {
     font-size: 12px;
 }
 
-.cart-icon {
-    display: inline-block;
-    will-change: transform, opacity;
-    transform-origin: center center;
-    position: relative;
-}
-
-@keyframes blackhole-out {
-    0% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-        filter: none;
-        border-radius: 0;
-    }
-
-    60% {
-        transform: scale(0.8) rotate(260deg);
-        opacity: 0.85;
-        filter: blur(2px);
-    }
-
-    100% {
-        transform: scale(0) rotate(720deg);
-        opacity: 0;
-        filter: blur(8px);
-        border-radius: 50%;
-    }
-}
-
-.anim-blackhole {
-    animation: blackhole-out 420ms cubic-bezier(.4, 0, .2, 1);
-    transform-origin: center;
-}
-
-@keyframes pop-in {
-    0% {
-        transform: scale(0.6);
-        opacity: 0;
-    }
-
-    60% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.anim-pop-in {
-    animation: pop-in 260ms ease-out;
-}
-
-@keyframes jump {
-    0% {
-        transform: translateY(0) scale(1);
-    }
-
-    30% {
-        transform: translateY(-8px) scale(1.06);
-    }
-
-    60% {
-        transform: translateY(3px) scale(0.98);
-    }
-
-    100% {
-        transform: translateY(0) scale(1);
-    }
-}
-
-.anim-jump {
-    animation: jump 520ms cubic-bezier(.34, 1.56, .64, 1);
-}
-
 @media (max-width: 1700px) {
     .cart-drawer {
         right: 20px;
+        /* Ajusta para telas menores */
     }
 }
 
+/* ===== RESPONSIVIDADE (MOBILE) ===== */
 @media (max-width: 700px) {
     .logo {
         max-height: 60px;
+        /* Reduz tamanho da logo */
     }
 
     /* ESSENCIAL PARA EXPANSÃO: logo e hamburger lado a lado, e navbar quebra a linha */
@@ -549,5 +521,3 @@ footer {
     font-size: 13px;
     text-align: center;
 }
-
-/* Estilo global da barra de rolagem */
