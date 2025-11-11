@@ -1,0 +1,279 @@
+.produto-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.produto-grid {
+    margin: 0 auto;
+}
+
+
+.breadcrumb {
+    margin-bottom: 0;
+    color: var(--muted);
+    align-self: flex-start;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.produto-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 1200px;
+}
+
+@media (min-width: 768px) {
+    .produto-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .produto-detalhes {
+        grid-column: 1 / -1;
+    }
+}
+
+.produto-imagens {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 20px;
+    align-items: center;
+}
+
+.imagem-principal {
+    width: 80%;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.imagem-principal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s ease, transform 0.3s ease;
+    opacity: 1;
+}
+
+.imagem-principal img:hover {
+    transform: scale(1.05);
+}
+
+.miniaturas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 10px;
+    width: 15%;
+    overflow: visible;
+}
+
+.miniaturas.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cecece8f transparent;
+}
+
+.miniaturas img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    object-fit: cover;
+}
+
+.miniaturas img:hover {
+    opacity: 0.8;
+}
+
+.produto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.produto-info h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.preco-container {
+    margin: 15px 0;
+}
+
+.preco {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.parcelas {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quantidade {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 150px;
+}
+
+.quantidade button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quantidade button:hover {
+    background: var(--primary-light);
+}
+
+.quantidade input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.btn-comprar {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-comprar:hover {
+    background: var(--primary-light);
+}
+
+.produto-detalhes {
+    margin-top: 30px;
+}
+
+.tabs {
+    position: relative;
+    display: flex;
+    gap: 30px;
+    background: #f8fafc;
+    padding: 8px 30px;
+}
+
+.tab-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-weight: 600;
+}
+
+.underline {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    height: 3px;
+    background: var(--primary);
+    width: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#specsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#specsTable tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+#specsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+#specsTable td:first-child {
+    font-weight: 600;
+    width: 200px;
+}
+
+@media (max-width: 767px) {
+    .produto-container {
+        padding: 0 10px;
+    }
+    
+    .produto-info h1 {
+        font-size: 20px;
+    }
+    
+    .preco {
+        font-size: 24px;
+    }
+    
+    .quantidade {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .btn-comprar {
+        width: 100%;
+    }
+    
+    #specsTable td {
+        padding: 8px;
+    }
+    
+    #specsTable td:first-child {
+        width: 140px;
+    }
+}
