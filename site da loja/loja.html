@@ -1,0 +1,262 @@
+<html lang="en">
+
+<head>
+    <link rel="icon" href="cima.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja - Computadores & Jogos</title>
+    <link rel="stylesheet" href="loja.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;"> <span
+                    class="cart-count" id="cartCountHeader">0</span> </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu"> <a href="#">Início</a> <a href="#">Monte seu PC</a> <a
+                    href="#">Departamentos</a>
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho"> <img class="cart-icon" src="cart.png"
+                        alt="Carrinho" height="35px"><span class="cart-count" id="cartCountNav">0</span> </button>
+            </nav>
+        </div>
+    </header>
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box">
+            <div id="cartItems"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotal">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px"> <button class="btn" id="checkout">Finalizar</button> <button
+                class="btn ghost" id="closeCart">Fechar</button> </div>
+    </div>
+    <main>
+        <div class="topbar-mobile">
+            <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..." />
+            </div>
+        </div>
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h4>Pesquisar</h4> <input id="search" type="search" placeholder="Procurar por título..." />
+            </div>
+            <div class="filter-group">
+                <h4>Categoria</h4>
+                <div><label><input type="radio" name="cat" value="all" checked /> Todos</label></div>
+                <div><label><input type="radio" name="cat" value="pc" /> Computadores</label></div>
+                <div><label><input type="radio" name="cat" value="periféricos" /> Periféricos</label></div>
+            </div>
+            <div class="filter-group">
+                <h4>Ordenar</h4> <select id="sort">
+                    <option value="default">Padrão</option>
+                    <option value="price-asc">Preço: menor</option>
+                    <option value="price-desc">Preço: maior</option>
+                </select>
+            </div>
+            <div style="margin-top:12px"> <button class="btn" id="applyFilters">Aplicar</button> <button
+                    class="btn ghost" id="clearFilters">Limpar</button> </div>
+        </aside>
+        <section>
+            <div class="topbar">
+                <div class="search"> <input id="quickSearch" type="search" placeholder="Pesquise seu futuro item..." />
+                </div>
+        <div style="min-width:180px;text-align:right;color:var(--muted)"> Mostrando <span
+            id="shownCount">0</span> produtos </div>
+            </div>
+        <div class="products" style="min-width:180px;text-align:right;color:var(--muted);"> Mostrando <span
+            id="shownCount2">0</span> produtos </div>
+        <div class="product-list" id="products"></div>
+        <div class="pagination" id="pagination"></div>
+        </section>
+    </main>
+    <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
+    <script src="global.js"></script>
+    <script>
+        // hamburger menu agora é inicializado por global.js (setupHamburgerMenu)
+
+        // usa `PRODUCTS`, `el`, `money` e funções de carrinho vindas de global.js
+    const state = { products: PRODUCTS.slice(), pageSize: 8, currentPage: 1 };
+
+        function renderPage(page = 1) {
+            const container = el('products');
+            const total = state.products.length;
+            const pageSize = state.pageSize;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            page = Math.max(1, Math.min(page, totalPages));
+            state.currentPage = page;
+            try { localStorage.setItem('loja.currentPage', String(page)); } catch (e) { /* ignore */ }
+
+            const start = (page - 1) * pageSize;
+            const pageItems = state.products.slice(start, start + pageSize);
+
+            container.innerHTML = '';
+            pageItems.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                    card.innerHTML = `
+                        <div class="thumb">
+                            <img src="${(p.images && p.images.length) ? p.images[0] : 'images/products/placeholder.jpg'}" alt="${p.title}">
+                        </div>
+                        <div style="flex:1">
+                            <div style="font-weight:700">${p.title}</div>
+                            <div style="font-size:13px;color:var(--muted)">${p.desc}</div>
+                        </div>
+                        <div class="meta">
+                            <div class="price">${money(p.price)}</div>
+                            <div class="actions">
+                                <button class="btn" data-id="${p.id}" onclick="addToCart(${p.id})">Adicionar</button>
+                            </div>
+                        </div>
+                    `;
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', function(e) {
+                        if (e.target.tagName.toLowerCase() === 'button') return;
+                        window.location.href = `produto.html?id=${p.id}`;
+                    });
+                    container.appendChild(card);
+            });
+
+            const from = total === 0 ? 0 : start + 1;
+            const to = start + pageItems.length;
+            const label = `${from}-${to} de ${total}`;
+            if (el('shownCount')) el('shownCount').textContent = label;
+            if (el('shownCount2')) el('shownCount2').textContent = label;
+
+            renderPagination(totalPages, page);
+        }
+
+        function renderPagination(totalPages, current) {
+            const pag = el('pagination');
+            if (!pag) return;
+            pag.innerHTML = '';
+
+            const createBtn = (text, cls, disabled, handler) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = cls || 'page-btn';
+                b.textContent = text;
+                if (disabled) b.disabled = true;
+                b.addEventListener('click', handler);
+                return b;
+            };
+
+            // Prev
+            pag.appendChild(createBtn('Anterior', 'page-btn nav', current === 1, () => renderPage(current - 1)));
+
+            // Página numérica (simples)
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = createBtn(i, 'page-btn' + (i === current ? ' active' : ''), false, () => renderPage(i));
+                pag.appendChild(btn);
+            }
+
+            // Next
+            pag.appendChild(createBtn('Próximo', 'page-btn nav', current === totalPages, () => renderPage(current + 1)));
+        }
+
+        function applyFilters() {
+            const q = document.querySelector('input[name="cat"]:checked').value;
+            const search = el('search').value.trim().toLowerCase();
+            const sort = el('sort').value;
+            let list = PRODUCTS.slice();
+            if (q !== 'all') list = list.filter(p => p.category === q);
+            if (search) list = list.filter(p => p.title.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search));
+            if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
+            if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
+            state.products = list;
+            // reset para a primeira página após aplicar filtros
+            renderPage(1);
+        }
+
+        function clearFilters() {
+            document.querySelector('input[name="cat"][value="all"]').checked = true;
+            el('search').value = '';
+            el('sort').value = 'default';
+            state.products = PRODUCTS.slice();
+            renderPage(1);
+        }
+        // Delegar lógica de carrinho e helpers para global.js
+        // registra handlers que não conflitam com global.js
+        el('applyFilters').addEventListener('click', applyFilters);
+        el('clearFilters').addEventListener('click', clearFilters);
+        el('quickSearch').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                el('search').value = e.target.value;
+                applyFilters();
+            }
+        });
+
+        el('checkout').addEventListener('click', () => {
+            alert('Checkout de exemplo — implementar integração de pagamento.');
+        });
+
+    // fixa a altura da sidebar baseada na primeira medição (primeira aba) e aplica sempre essa altura
+    let initialSidebarHeight = null;
+    function debounce(fn, wait) {
+        let t;
+        return function (...args) {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(this, args), wait);
+        };
+    }
+
+    function computeInitialSidebarHeight() {
+        if (initialSidebarHeight !== null) return;
+        const sb = document.querySelector('.sidebar');
+        if (!sb) return;
+        // garantir medição natural
+        const prev = sb.style.height;
+        sb.style.height = 'auto';
+        // força um layout para obter scrollHeight confiável
+        const h = sb.scrollHeight;
+        initialSidebarHeight = h;
+        // restaura prev (we'll apply after)
+        sb.style.height = prev || '';
+    }
+
+    function applyFixedSidebarHeight() {
+        const sb = document.querySelector('.sidebar');
+        if (!sb) return;
+        const vw = window.innerWidth || document.documentElement.clientWidth;
+        if (vw >= 700 && initialSidebarHeight) {
+            sb.style.boxSizing = 'border-box';
+            sb.style.height = initialSidebarHeight + 'px';
+            sb.style.overflowY = 'auto';
+        } else {
+            sb.style.height = 'auto';
+            sb.style.overflowY = 'visible';
+        }
+    }
+
+    // calculamos a altura inicial logo após o paint para garantir medidas corretas
+    // e antes de renderizar a página salva — assim a sidebar será fixa ao tamanho da primeira aba
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        computeInitialSidebarHeight();
+        applyFixedSidebarHeight();
+
+        // agora inicializa paginação e renderiza página previamente visitada (se houver)
+        state.products = PRODUCTS.slice();
+        let savedPage = 1;
+        try {
+            const v = parseInt(localStorage.getItem('loja.currentPage'), 10);
+            if (!Number.isNaN(v) && v > 0) savedPage = v;
+        } catch (e) { /* ignore */ }
+        renderPage(savedPage);
+        updateCartUI();
+    }));
+
+    const _fixDeb = debounce(() => {
+        // só re-aplica a altura fixa (não recalcula a inicial)
+        applyFixedSidebarHeight();
+    }, 120);
+    window.addEventListener('resize', _fixDeb);
+    </script>
+</body>
+
+</html>
