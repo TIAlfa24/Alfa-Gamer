@@ -1,0 +1,581 @@
+.produto-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.breadcrumb {
+    margin-bottom: 0;
+    color: var(--muted);
+    align-self: flex-start;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.produto-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    max-width: 1200px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .produto-grid {
+        grid-template-columns: 1.2fr 1fr;
+        /* Imagem um pouco maior que a info */
+    }
+
+    .produto-detalhes {
+        grid-column: 1 / -1;
+    }
+}
+
+.produto-imagens {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 20px;
+    align-items: flex-start;
+    /* Alinhamento superior */
+}
+
+.imagem-principal {
+    width: 80%;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.imagem-principal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s ease, transform 0.3s ease;
+    opacity: 1;
+}
+
+.imagem-principal img:hover {
+    transform: scale(1.05);
+}
+
+.miniaturas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 10px;
+    width: 15%;
+    overflow: visible;
+}
+
+.miniaturas.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cecece8f transparent;
+}
+
+.miniaturas img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    object-fit: cover;
+}
+
+.miniaturas img:hover {
+    opacity: 1;
+    border: 2px solid var(--primary);
+}
+
+.produto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.produto-info h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #333;
+    line-height: 1.2;
+}
+
+.preco-container {
+    margin: 15px 0;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: var(--radius);
+    background-color: #f9f9f9;
+}
+
+.preco-antigo {
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: line-through;
+    margin-bottom: 5px;
+}
+
+.preco-desconto {
+    display: flex;
+    align-items: baseline;
+    /* Alinha pelas bases do texto */
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.preco-valor {
+    font-size: 50px;
+    font-weight: 700;
+    color: rgb(187, 19, 19);
+    /* Cor de destaque para o preço com desconto (vermelho/laranja) */
+}
+
+.desconto-pix {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    background-color: #e6fff6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+    /* Mantém o texto mais compacto */
+    margin-bottom: 4px;
+    /* Pequeno ajuste visual */
+}
+
+.parcelas {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.parcelas {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.estoque-status {
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.estoque-status::before {
+    content: "•";
+    font-size: 20px;
+    line-height: 1;
+}
+
+.estoque-status.em-estoque {
+    color: var(--primary);
+    /* Verde para Em Estoque */
+}
+
+.estoque-status.esgotado {
+    color: #d00;
+    /* Vermelho para Esgotado */
+}
+
+.frete-simulador {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    padding: 5px;
+}
+
+.frete-simulador input {
+    flex-grow: 1;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.frete-simulador .btn-frete {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.frete-simulador .btn-frete:hover {
+    background: var(--primary-light);
+}
+
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.quantidade {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    max-width: 150px;
+}
+
+.quantidade button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quantidade button:hover {
+    background: var(--primary-light);
+}
+
+.quantidade input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.limit-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff4444;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+}
+
+.limit-toast.hide {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+}
+
+.btn-comprar {
+    border: none;
+    padding: 15px 30px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-comprar.principal {
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 182, 134, 0.4);
+}
+
+.btn-comprar.principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 182, 134, 0.6);
+}
+
+.btn-comprar.secundario {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid rgba(0, 230, 160, 0.5);
+}
+
+.btn-comprar.secundario:hover {
+    transform: translateY(-2px);
+    background: var(--primary);
+    color: white;
+
+}
+
+.btn-comprar.esgotado {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.produto-detalhes {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.tabs {
+    position: relative;
+    display: flex;
+    gap: 30px;
+    background: #f8fafc;
+    padding: 8px 30px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-weight: 600;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+}
+
+.underline {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    height: 3px;
+    background: var(--primary);
+    width: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#specsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#specsTable tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+#specsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+#specsTable td:first-child {
+    font-weight: 600;
+    width: 200px;
+    color: #555;
+}
+
+/* ==================== RESPONSIVIDADE MELHORADA (abaixo de 700px) ==================== */
+@media (max-width: 700px) {
+    .produto-container {
+        padding: 0 15px;
+        margin: 10px auto;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        margin-bottom: 10px;
+        text-align: center;
+        align-self: center;
+    }
+
+    .produto-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Imagens do produto */
+    .produto-imagens {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .imagem-principal {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .miniaturas {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-right: 0;
+        gap: 8px;
+        scrollbar-width: none; /* remove a barra */
+    }
+
+    .miniaturas::-webkit-scrollbar {
+        display: none;
+    }
+
+    .miniaturas img {
+        width: 70px;
+        height: 70px;
+        border-radius: 6px;
+    }
+
+    /* Texto e preço */
+    .produto-info {
+        align-items: center;
+        text-align: center;
+    }
+
+    .produto-info h1 {
+        font-size: 22px;
+    }
+
+    .preco-container {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .preco-valor {
+        font-size: 36px;
+    }
+
+    .parcelas {
+        font-size: 13px;
+    }
+
+    .estoque-status {
+        justify-content: center;
+    }
+
+    /* Ações (frete, quantidade e botões) */
+    .acoes {
+        width: 100%;
+        align-items: center;
+    }
+
+        /* Frete simulador com botão lateral (mantém alinhado como no PC) */
+    .frete-simulador {
+        width: 100%;
+        flex-direction: row; /* mantém o botão ao lado */
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .frete-simulador input {
+        flex-grow: 1;
+        max-width: 70%; /* reduz um pouco a largura do campo */
+        font-size: 15px;
+        padding: 10px;
+        text-align: left;
+        border-radius: 6px;
+    }
+
+    .frete-simulador .btn-frete {
+        width: auto;
+        white-space: nowrap;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .quantidade {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    .quantidade button {
+        width: 38px;
+        height: 38px;
+    }
+
+    .quantidade input {
+        width: 60px;
+        height: 38px;
+        font-size: 15px;
+    }
+
+    .btn-comprar {
+        width: 100%;
+        max-width: 320px;
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    /* Tabs e descrição */
+    .tabs {
+        gap: 10px;
+        padding: 8px 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .underline {
+        display: none; /* opcional, simplifica em telas pequenas */
+    }
+
+    .tab-content {
+        padding: 15px 5px;
+        text-align: left;
+    }
+
+    #specsTable td {
+        font-size: 13px;
+        padding: 6px 4px;
+    }
+
+    #specsTable td:first-child {
+        width: 100px;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 15px 0;
+        text-align: center;
+    }
+}
