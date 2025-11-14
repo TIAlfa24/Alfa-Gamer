@@ -77,15 +77,22 @@
                 <h4 class="cat-title">
                     Categoria
                 </h4>
-
+                <div style="margin-top:10px; padding-left: 16px;">
+                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all" checked /></span> Todos</label>
+                </div>
                 <button class="cat-toggle">
                     Computadores
                     <span class="arrow"></span>
                 </button>
                 <fieldset class="subcats">
-                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="computadores"/></span> Desktop</label></div>
-                    <div><label><input type="radio" name="cat" value="computadores-gamer" /> Gamer</label></div>
-                    <div><label><input type="radio" name="cat" value="computadores-office" /> Office</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores" /></span> Desktops</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="notebooks" /></span> Notebooks</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores-gamer" /></span> Gamers</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores-office" /></span> Office</label></div>
                 </fieldset>
 
                 <button class="cat-toggle">
@@ -93,12 +100,18 @@
                     <span class="arrow"></span>
                 </button>
                 <fieldset class="subcats">
-                    <div><label><input type="radio" name="cat" value="mouses" /> Mouses</label></div>
-                    <div><label><input type="radio" name="cat" value="mousepads" /> Mousepads</label></div>
-                    <div><label><input type="radio" name="cat" value="teclados" /> Teclados</label></div>
-                    <div><label><input type="radio" name="cat" value="headsets" /> Headsets</label></div>
-                    <div><label><input type="radio" name="cat" value="monitores" /> Monitores</label></div>
-                    <div><label><input type="radio" name="cat" value="monitores" /> Webcams</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mouses" /></span> Mouses</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mousepads" /></span> Mousepads</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="teclados" /></span> Teclados</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="headsets" /></span> Headsets</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="monitores" /></span> Monitores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="webcams" /></span> Webcams</label></div>
                 </fieldset>
 
                 <button class="cat-toggle">
@@ -106,14 +119,23 @@
                     <span class="arrow"></span>
                 </button>
                 <fieldset class="subcats">
-                    <div><label><input type="radio" name="cat" value="gp" /> Placas de vídeo</label></div>
-                    <div><label><input type="radio" name="cat" value="ram" /> Memórias RAM</label></div>
-                    <div><label><input type="radio" name="cat" value="ssd" /> SSDs</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="cpu" /></span> Processadores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gpu" /></span> Placas de vídeo</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="motherboard" /></span> Placas-mãe</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mram" /></span> Memórias RAM</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="armazenamento" /></span> Armazenamento</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="fontes" /></span> Fontes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gabinetes" /></span> Gabinetes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="coolers" /></span> Coolers</label></div>
                 </fieldset>
-
-                <div style="margin-top:10px">
-                    <label><input type="radio" name="cat" value="all" checked /> Todos</label>
-                </div>
             </div>
             <select id="sort">
                 <option value="default">Ordenar</option>
@@ -129,10 +151,19 @@
             <div class="search">
                 <input id="searchMobile" type="search" placeholder="Procurar por título..." autocomplete="off"
                     autocorrect="off" autocapitalize="off" spellcheck="false" />
-
             </div>
         </div>
         <section>
+             <div class="carrossel-de-propagandas-mobile">
+                <div class="carousel-track">
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile.png" alt="Promo 1"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile 2.png" alt="Promo 2"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile 3.png" alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
             <div class="carrossel-de-propagandas">
                 <div class="carousel-track">
                     <div class="carousel-slide"><img src="images/carrossel/teste banner.png" alt="Promo 1"></div>
@@ -146,7 +177,6 @@
 
             <div class="topbar">
                 <div class="search">
-                    <!-- Desktop: id "search" mantém compatibilidade com applyFilters() -->
                     <input id="search" type="search" placeholder="Pesquise seu futuro item..." autocomplete="off"
                         autocorrect="off" autocapitalize="off" spellcheck="false" />
                 </div>

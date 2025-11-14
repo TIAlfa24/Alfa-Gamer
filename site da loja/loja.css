@@ -342,7 +342,7 @@ main {
 }
 
 .filter-group {
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
 .filter-group h4 {
@@ -375,16 +375,27 @@ main {
 
 .cat-toggle.active .arrow {
     transform: rotate(180deg);
+    border-top: 6px solid var(--primary);
 }
 
 .subcats {
-    margin-left: 10px;
-    margin-top: 6px;
-    display: none;
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+        max-height 0.35s ease,
+        opacity 0.3s ease,
+        transform 0.35s ease;
 }
 
 .subcats.open {
-    display: block;
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ================ CARROSSEL ================ */
@@ -762,6 +773,115 @@ footer {
     animation: jump 520ms cubic-bezier(.34, 1.56, .64, 1);
 }
 
+/* ================= STATUS DE ESTOQUE (LOJA) ================= */
+.stock-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    align-self: flex-start;
+}
+
+.stock-status.em-estoque {
+    color: var(--primary);
+    background-color: #e6fff6;
+    /* Cor de fundo suave para Em Estoque */
+}
+
+.stock-status.esgotado {
+    color: #d00;
+    /* Vermelho para Esgotado */
+    background-color: #ffe6e6;
+    /* Cor de fundo suave para Esgotado */
+}
+
+.card .actions button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ================= DESTAQUE DE PREÇO (CARDS) ================= */
+.price-container-card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.price-old {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: line-through;
+    margin-bottom: 2px;
+}
+
+.price-discounted {
+    font-size: 18px;
+    font-weight: 700;
+    color: #d00;
+    /* Cor de destaque para o preço com desconto (vermelho/laranja) */
+}
+
+.discount-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    background-color: #e6fff6;
+    padding: 2px 4px;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.radio-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.radio-rot {
+    display: inline-flex;
+}
+
+.radio-rot input[type="radio"] {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    border-radius: 35%;
+}
+
+.radio-rot input[type="radio"]:checked {
+    background: var(--card);
+    border: 2px solid var(--primary-light);
+}
+
+.radio-rot input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    /* alinha verticalmente */
+    gap: 6px;
+    /* espaço entre o radio e o texto */
+}
+
 /* ================= MEDIA QUERIES ================= */
 @media (max-width: 1700px) {
     .cart-drawer {
@@ -805,6 +925,7 @@ footer {
     }
 
     .sidebar {
+        align-self: stretch;
         order: 1;
         display: block;
         margin-bottom: 10px;
@@ -994,112 +1115,4 @@ footer {
     .carrossel-de-propagandas {
         aspect-ratio: 14 / 8;
     }
-}
-
-/* ================= STATUS DE ESTOQUE (LOJA) ================= */
-.stock-status {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    align-self: flex-start;
-}
-
-.stock-status.em-estoque {
-    color: var(--primary);
-    background-color: #e6fff6;
-    /* Cor de fundo suave para Em Estoque */
-}
-
-.stock-status.esgotado {
-    color: #d00;
-    /* Vermelho para Esgotado */
-    background-color: #ffe6e6;
-    /* Cor de fundo suave para Esgotado */
-}
-
-.card .actions button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-}
-
-/* ================= DESTAQUE DE PREÇO (CARDS) ================= */
-.price-container-card {
-    display: flex;
-    flex-direction: column;
-    margin-top: 5px;
-    margin-bottom: 10px;
-}
-
-.price-old {
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: line-through;
-    margin-bottom: 2px;
-}
-
-.price-discounted {
-    font-size: 18px;
-    font-weight: 700;
-    color: #d00;
-    /* Cor de destaque para o preço com desconto (vermelho/laranja) */
-}
-
-.discount-tag {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--primary);
-    background-color: #e6fff6;
-    padding: 2px 4px;
-    border-radius: 4px;
-    align-self: flex-start;
-    margin-top: 4px;
-}
-
-.radio-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.radio-rot {
-    display: inline-flex;
-    transform: rotate(45deg); /* só o container gira */
-}
-
-.radio-rot input[type="radio"] {
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    border: 1px solid var(--primary);
-    background: transparent;
-    cursor: pointer;
-    transition: 0.2s;
-    position: relative;
-    border-radius: 35%;
-}
-
-.radio-rot input[type="radio"]:checked {
-    background: transparent;
-    border: 2px solid var(--primary-light);
-}
-
-.radio-rot input[type="radio"]:checked::after {
-    content: "";
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: var(--primary);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 2px;
-}
-label {
-    display: flex;
-    align-items: center; /* alinha verticalmente */
-    gap: 6px; /* espaço entre o radio e o texto */
 }
