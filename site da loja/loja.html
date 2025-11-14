@@ -73,24 +73,53 @@
 
     <main>
         <aside class="sidebar">
-            <!-- Campo de pesquisa removido conforme solicitado -->
             <div class="filter-group">
-                <h4>Categoria</h4>
-                <div><label><input type="radio" name="cat" value="all" checked /> Todos</label></div>
-                <fieldset>
-                    <div><label><input type="radio" name="cat" value="computadores"/><legend> Computadores</legend></label></div>
-                    <div><label><input type="radio" name="cat" value="periféricos"/><legend> Periféricos</legend></label></div>
-                    <div><label><input type="radio" name="cat" value="hardware"/><legend> Hardware</legend></label></div>
+                <h4 class="cat-title">
+                    Categoria
+                </h4>
+
+                <button class="cat-toggle">
+                    Computadores
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="computadores"/></span> Desktop</label></div>
+                    <div><label><input type="radio" name="cat" value="computadores-gamer" /> Gamer</label></div>
+                    <div><label><input type="radio" name="cat" value="computadores-office" /> Office</label></div>
                 </fieldset>
+
+                <button class="cat-toggle">
+                    Periféricos
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label><input type="radio" name="cat" value="mouses" /> Mouses</label></div>
+                    <div><label><input type="radio" name="cat" value="mousepads" /> Mousepads</label></div>
+                    <div><label><input type="radio" name="cat" value="teclados" /> Teclados</label></div>
+                    <div><label><input type="radio" name="cat" value="headsets" /> Headsets</label></div>
+                    <div><label><input type="radio" name="cat" value="monitores" /> Monitores</label></div>
+                    <div><label><input type="radio" name="cat" value="monitores" /> Webcams</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Hardware
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label><input type="radio" name="cat" value="gp" /> Placas de vídeo</label></div>
+                    <div><label><input type="radio" name="cat" value="ram" /> Memórias RAM</label></div>
+                    <div><label><input type="radio" name="cat" value="ssd" /> SSDs</label></div>
+                </fieldset>
+
+                <div style="margin-top:10px">
+                    <label><input type="radio" name="cat" value="all" checked /> Todos</label>
+                </div>
             </div>
-            <div class="filter-group">
-                <h4>Ordenar</h4>
-                <select id="sort">
-                    <option value="default">Padrão</option>
-                    <option value="price-asc">Preço: menor</option>
-                    <option value="price-desc">Preço: maior</option>
-                </select>
-            </div>
+            <select id="sort">
+                <option value="default">Ordenar</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+            </select>
             <div style="margin-top:12px">
                 <button class="btn" id="applyFilters">Aplicar</button>
                 <button class="btn ghost" id="clearFilters">Limpar</button>
@@ -100,6 +129,7 @@
             <div class="search">
                 <input id="searchMobile" type="search" placeholder="Procurar por título..." autocomplete="off"
                     autocorrect="off" autocapitalize="off" spellcheck="false" />
+
             </div>
         </div>
         <section>
@@ -266,19 +296,22 @@
 
         function applyFilters() {
             const category = document.querySelector('input[name="cat"]:checked').value;
-            // usa o input com id 'search' (presente no topbar desktop)
             const searchInput = el('search');
             const searchQuery = (searchInput && searchInput.value) ? searchInput.value.trim().toLowerCase() : '';
             const sort = el('sort').value;
 
             let list = PRODUCTS.slice();
 
-            // Filtro por categoria
+            // Filtro por categoria/subcategoria/tags
             if (category !== 'all') {
-                list = list.filter(p => p.category === category);
+                list = list.filter(p =>
+                    p.category === category ||
+                    p.subcategory === category ||
+                    (p.subcategories === category)
+                );
             }
 
-            // Filtro por busca (título, descrição e palavras-chave relacionadas)
+            // Filtro por busca
             if (searchQuery) {
                 list = list.filter(p =>
                     p.title.toLowerCase().includes(searchQuery) ||
@@ -292,8 +325,9 @@
             if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
 
             state.products = list;
-            renderPage(1); // sempre renderiza da primeira página
+            renderPage(1);
         }
+
 
         function clearFilters() {
             document.querySelector('input[name="cat"][value="all"]').checked = true;
@@ -354,19 +388,24 @@
             initialSidebarHeight = h;
             sb.style.height = prev || '';
         }
+
         function applyFixedSidebarHeight() {
             const sb = document.querySelector('.sidebar');
             if (!sb) return;
-            const vw = window.innerWidth || document.documentElement.clientWidth;
+
+            const vw = window.innerWidth;
+
+            // desktop e já temos a altura inicial
             if (vw >= 700 && initialSidebarHeight) {
-                const maxHeight = window.innerHeight - 40; // margem top/bottom
-                sb.style.height = Math.min(initialSidebarHeight, maxHeight) + 'px';
-                sb.style.overflowY = 'auto';
+                sb.style.height = 'auto';
+                sb.style.overflowY = 'auto'; // scroll apenas se precisar
             } else {
+                // mobile
                 sb.style.height = 'auto';
                 sb.style.overflowY = 'visible';
             }
         }
+
 
         requestAnimationFrame(() => requestAnimationFrame(() => {
             computeInitialSidebarHeight();
@@ -384,6 +423,7 @@
             applyFixedSidebarHeight();
         }, 120);
         window.addEventListener('resize', _fixDeb);
+
     </script>
 
     <!-- scripts de global.js já carregados acima: setupHamburgerMenu, cart handlers, etc. -->

@@ -334,13 +334,11 @@ main {
 
 /* ================= SIDEBAR ================= */
 .sidebar {
+    align-self: start;
     background-color: var(--containers);
     padding: 20px;
     border-radius: var(--radius);
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    max-height: 90vh;
-    overflow-y: auto;
 }
 
 .filter-group {
@@ -351,6 +349,42 @@ main {
     margin: 0 0 8px 0;
     font-size: 14px;
     color: var(--primary);
+}
+
+.cat-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cat-toggle .arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--muted);
+    transition: transform 0.25s ease;
+}
+
+.cat-toggle.active .arrow {
+    transform: rotate(180deg);
+}
+
+.subcats {
+    margin-left: 10px;
+    margin-top: 6px;
+    display: none;
+}
+
+.subcats.open {
+    display: block;
 }
 
 /* ================ CARROSSEL ================ */
@@ -1023,4 +1057,49 @@ footer {
     border-radius: 4px;
     align-self: flex-start;
     margin-top: 4px;
+}
+
+.radio-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.radio-rot {
+    display: inline-flex;
+    transform: rotate(45deg); /* só o container gira */
+}
+
+.radio-rot input[type="radio"] {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    border-radius: 35%;
+}
+
+.radio-rot input[type="radio"]:checked {
+    background: transparent;
+    border: 2px solid var(--primary-light);
+}
+
+.radio-rot input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+label {
+    display: flex;
+    align-items: center; /* alinha verticalmente */
+    gap: 6px; /* espaço entre o radio e o texto */
 }

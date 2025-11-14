@@ -74,6 +74,7 @@ const PRODUCTS = [
         id: 7,
         title: "PC Workstation i9",
         category: "computadores",
+        subcategories: "computadores-office",
         price: 6999,
         stock: 1,
         desc: "RTX 3080, 32GB RAM, SSD 1TB",
@@ -457,7 +458,12 @@ function setupDraggableCartWidget() {
 
     // Mapa de categorias por palavra-chave
     const CATEGORIES_MAP = [
-        { value: "computadores", keywords: ["pc", "computador", "notebook", "desktop", "workstation"] },
+        { value: "computadores", keywords: ["pc", "computador", "notebook", "desktop", "workstation"], subcategories: [
+            { value: "comptadores-gamer", keywords: ["desktop", "pc", "gamer", "pra jogos",] },
+            { value: "computadores-office", keywords: ["workstation", "estações de trabalho"] },
+            { value: "all-in-one", keywords: ["all-in-one", "tudo em um"] },
+            { value: "notebooks", keywords: ["notebook", "laptop"] },
+        ] },
         {
             value: "acessórios", keywords: ["cabo", "adaptador", "suporte", "fonte notebook", "hub usb"], subcategories: [
                 { value: "cabos", keywords: ["cabo"] },
@@ -670,6 +676,14 @@ function setupDraggableCartWidget() {
 
         box.style.display = box.children.length > 0 ? "block" : "none";
     }
+
+    document.querySelectorAll('.cat-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        btn.classList.toggle('active');
+        const next = btn.nextElementSibling;
+        next.classList.toggle('open');
+    });
+});
 
     // Eventos de digitação
     searchInputs.forEach(input => {
