@@ -403,6 +403,7 @@ main {
     position: relative;
     overflow: hidden;
     width: 100%;
+    aspect-ratio: 16 / 3;
     max-width: 980px;
     margin-bottom: 12px;
     border-radius: 10px;
@@ -453,6 +454,10 @@ main {
 
 .carousel-dots button.active {
     background: #fff;
+}
+
+.carrossel-de-propagandas-mobile {
+    display: none;
 }
 
 /* ================= PRODUCTS ================= */
@@ -836,6 +841,12 @@ footer {
     margin-top: 4px;
 }
 
+/* ================= RADIOS CUSTOMIZADOS ================= */
+.cat-all {
+    margin-top: 10px;
+    padding-left: 13px;
+}
+
 .radio-wrap {
     display: flex;
     align-items: center;
@@ -880,6 +891,104 @@ label {
     /* alinha verticalmente */
     gap: 6px;
     /* espaço entre o radio e o texto */
+}
+
+/* CONTAINER */
+#sort-container {
+    position: relative;
+    width: 100%;
+}
+
+/* SELECT */
+#sort {
+    width: 100%;
+    padding: 12px 12px 12px 12px;
+    border-radius: 8px;
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    font-size: 15px;
+    appearance: base-select;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* Hover/focus padrão */
+#sort:hover {
+    border-color: #b5b5b5;
+}
+
+#sort:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 146, 107, 0.1);
+}
+
+/* SETA NATIVA */
+#sort::picker-icon {
+    color: #777;
+    transition: .3s rotate, .3s color;
+}
+
+#sort:open::picker-icon {
+    rotate: 180deg;
+    color: var(--primary);
+}
+
+#sort:open {
+    fill: var(--primary);
+}
+
+::picker(select#sort) {
+    appearance: base-select;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    background: #fff;
+    padding: 4px 0;
+    transition: opacity .25s ease;
+    opacity: 0;
+}
+
+/* dropdown quando aberto */
+::picker(select#sort):popover-open {
+    opacity: 1;
+}
+
+/* ITEMS */
+#sort option {
+    padding: 10px 14px;
+    font-size: 15px;
+    cursor: pointer;
+    /* layout bonito */
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* hover REAL dentro do dropdown */
+::picker(select#sort) option:hover,
+::picker(select#sort) option:focus,
+::picker(select#sort) option:focus-visible {
+    background: var(--primary) !important;
+    color: #fff !important;
+    outline: none !important;
+}
+
+/* zebra alternada (opcional) */
+#sort option:nth-of-type(odd) {
+    background: #fafafa;
+}
+
+/* seleção */
+#sort option:checked {
+    background: rgba(71, 255, 206, 0.12);
+    color: var(--primary);
+}
+
+/* checkmark lindo */
+#sort option::checkmark {
+    order: 1;
+    margin-left: auto;
+    content: "✔";
+    color: var(--primary);
 }
 
 /* ================= MEDIA QUERIES ================= */
@@ -1076,25 +1185,42 @@ label {
     }
 
     .carrossel-de-propagandas {
+        display: none;
+    }
+
+    .carrossel-de-propagandas-mobile {
+        display: block;
         max-width: 100%;
         margin: 0 auto 12px;
         border-radius: 8px;
-        aspect-ratio: 16 / 7;
+        aspect-ratio: 12 / 7;
         height: auto;
         overflow: hidden;
         background: #111;
         touch-action: pan-y;
+        position: relative;
+        background: #111;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     }
 
-    .carrossel-de-propagandas .carousel-slide {
+    .carrossel-de-propagandas-mobile .carousel-track-mobile {
+        display: flex;
+        transition: transform 450ms ease;
+        will-change: transform;
         min-width: 100%;
         box-sizing: border-box;
         height: 100%;
     }
 
-    .carrossel-de-propagandas img {
-        width: 100%;
+    .carousel-slide-mobile {
+        flex: 0 0 100%;
+        min-width: 100%;
         height: 100%;
+    }
+
+    .carrossel-de-propagandas-mobile img {
+        width: 100%;
+        height: auto;
         display: block;
         object-fit: cover;
     }

@@ -77,8 +77,9 @@
                 <h4 class="cat-title">
                     Categoria
                 </h4>
-                <div style="margin-top:10px; padding-left: 16px;">
-                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all" checked /></span> Todos</label>
+                <div class="cat-all">
+                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all"
+                                checked /></span> Todos</label>
                 </div>
                 <button class="cat-toggle">
                     Computadores
@@ -137,11 +138,8 @@
                                     value="coolers" /></span> Coolers</label></div>
                 </fieldset>
             </div>
-            <select id="sort">
-                <option value="default">Ordenar</option>
-                <option value="price-asc">Menor preço</option>
-                <option value="price-desc">Maior preço</option>
-            </select>
+            <div id="sort-container"> <select id="sort"> <option value=default disabled selected>Ordenar por...</option> <option value="price-asc">Menor preço</option> <option value="price-desc">Maior preço</option> </select> </div>
+
             <div style="margin-top:12px">
                 <button class="btn" id="applyFilters">Aplicar</button>
                 <button class="btn ghost" id="clearFilters">Limpar</button>
@@ -154,11 +152,14 @@
             </div>
         </div>
         <section>
-             <div class="carrossel-de-propagandas-mobile">
-                <div class="carousel-track">
-                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile.png" alt="Promo 1"></div>
-                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile 2.png" alt="Promo 2"></div>
-                    <div class="carousel-slide"><img src="images/carrossel/teste banner mobile 3.png" alt="Promo 3"></div>
+            <div class="carrossel-de-propagandas-mobile">
+                <div class="carousel-track-mobile">
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile.png"
+                            alt="Promo 1"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 2.png"
+                            alt="Promo 2"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 3.png"
+                            alt="Promo 3"></div>
                 </div>
                 <button class="carousel-btn prev" aria-label="Anterior"></button>
                 <button class="carousel-btn next" aria-label="Próximo"></button>
@@ -203,14 +204,24 @@
     <script>
         (function initAdsCarouselAuto() {
             const root = document.querySelector('.carrossel-de-propagandas');
-            if (!root) return;
+            const rootMobile = document.querySelector('.carrossel-de-propagandas-mobile');
+            if (!root || !rootMobile) return;
+
             const track = root.querySelector('.carousel-track');
+            const trackMobile = rootMobile.querySelector('.carousel-track-mobile');
+
             const slides = Array.from(root.querySelectorAll('.carousel-slide'));
+            const slidesMobile = Array.from(rootMobile.querySelectorAll('.carousel-slide-mobile'));
+
             const dotsWrap = root.querySelector('.carousel-dots');
+
             const total = slides.length;
+            const totalMobile = slidesMobile.length;
+
             let index = 0;
             const interval = 3500;
             let timer = null;
+
             function buildDots() {
                 if (!dotsWrap) return;
                 dotsWrap.innerHTML = '';
@@ -218,34 +229,105 @@
                     const b = document.createElement('button');
                     b.type = 'button';
                     b.dataset.index = i;
-                    b.addEventListener('click', () => { goTo(i); restart(); });
+                    b.addEventListener('click', () => { goToDesktop(i); restart(); });
                     if (i === 0) b.classList.add('active');
                     dotsWrap.appendChild(b);
                 });
             }
+
             function update() {
                 track.style.transform = `translateX(-${index * 100}%)`;
-                if (dotsWrap) Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === index));
+                trackMobile.style.transform = `translateX(-${index * 100}%)`;
+
+                if (dotsWrap)
+                    Array.from(dotsWrap.children).forEach((d, i) =>
+                        d.classList.toggle('active', i === index)
+                    );
             }
-            function next() { index = (index + 1) % total; update(); }
-            function goTo(i) { index = (i + total) % total; update(); }
-            function start() { stop(); timer = setInterval(next, interval); }
-            function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+            // DESKTOP
+            function nextDesktop() {
+                index = (index + 1) % total;
+                update();
+            }
+
+            function goToDesktop(i) {
+                index = (i + total) % total;
+                update();
+            }
+
+            // MOBILE
+            function nextMobile() {
+                index = (index + 1) % totalMobile;
+                update();
+            }
+
+            function goToMobile(i) {
+                index = (i + totalMobile) % totalMobile;
+                update();
+            }
+
+            function start() {
+                stop();
+
+                // condição simples: se for mobile, usar totalMobile
+                const isMobile = window.innerWidth <= 760;
+                timer = setInterval(isMobile ? nextMobile : nextDesktop, interval);
+            }
+
+            function stop() {
+                if (timer) clearInterval(timer);
+                timer = null;
+            }
+
             function restart() { start(); }
+
+            // HOVER
             root.addEventListener('mouseenter', stop);
+            rootMobile.addEventListener('mouseenter', stop);
             root.addEventListener('mouseleave', start);
+            rootMobile.addEventListener('mouseleave', start);
+
+            // SWIPE
             let startX = 0;
-            root.addEventListener('touchstart', e => { stop(); startX = e.touches[0].clientX; });
-            root.addEventListener('touchend', e => {
-                const dx = e.changedTouches[0].clientX - startX;
-                if (dx > 40) { index = (index - 1 + total) % total; update(); }
-                if (dx < -40) { index = (index + 1) % total; update(); }
-                start();
+
+            function swipeHandler(isMobile, dx) {
+                if (dx > 40) {
+                    isMobile
+                        ? goToMobile(index - 1)
+                        : goToDesktop(index - 1);
+                }
+                if (dx < -40) {
+                    isMobile
+                        ? goToMobile(index + 1)
+                        : goToDesktop(index + 1);
+                }
+                restart();
+            }
+
+            root.addEventListener('touchstart', e => {
+                stop();
+                startX = e.touches[0].clientX;
             });
+
+            root.addEventListener('touchend', e => {
+                swipeHandler(false, e.changedTouches[0].clientX - startX);
+            });
+
+            rootMobile.addEventListener('touchstart', e => {
+                stop();
+                startX = e.touches[0].clientX;
+            });
+
+            rootMobile.addEventListener('touchend', e => {
+                swipeHandler(true, e.changedTouches[0].clientX - startX);
+            });
+
             buildDots();
             update();
             start();
         })();
+
 
         // estado de produtos/paginação (usa PRODUCTS do global.js)
         const state = { products: PRODUCTS.slice(), pageSize: 8, currentPage: 1 };
