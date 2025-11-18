@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="icon" href="cima.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja - Computadores & Jogos</title>
+    <link rel="stylesheet" href="loja.css">
+</head>
+
+<body>
+    <div class="draggable-cart-widget" id="draggableCartWidget">
+        <div class="draggable-cart-header">
+            <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
+            <img src="cart.png" alt="Carrinho" height="35px">
+        </div>
+        <div class="draggable-cart-tooltip">Pressione para mover</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;">
+                <span class="cart-count" id="cartCountHeader">0</span>
+            </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu">
+                <a href="#">Início</a>
+                <a href="#">Monte seu PC</a>
+                <a href="#">Departamentos</a>
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho">
+                    <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px">
+                    <span class="cart-count" id="cartCountNav">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box">
+            <div id="cartItems"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotal">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
+
+    <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
+        <div class="cart-bottom-header">
+            <h3>Carrinho</h3>
+            <button id="closeCartBottom" class="btn ghost">Fechar</button>
+        </div>
+        <div class="cart-box" id="cartItems"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong>
+            <strong id="cartTotal">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkoutMobile">Finalizar</button>
+        </div>
+    </div>
+
+    <main>
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h4 class="cat-title">
+                    Categoria
+                </h4>
+                <div class="cat-all">
+                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all"
+                                checked /></span> Todos</label>
+                </div>
+                <button class="cat-toggle">
+                    Computadores
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores" /></span> Desktops</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="notebooks" /></span> Notebooks</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores-gamer" /></span> Gamers</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores-office" /></span> Office</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Periféricos
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mouses" /></span> Mouses</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mousepads" /></span> Mousepads</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="teclados" /></span> Teclados</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="headsets" /></span> Headsets</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="monitores" /></span> Monitores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="webcams" /></span> Webcams</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Hardware
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="cpu" /></span> Processadores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gpu" /></span> Placas de vídeo</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="motherboard" /></span> Placas-mãe</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mram" /></span> Memórias RAM</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="armazenamento" /></span> Armazenamento</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="fontes" /></span> Fontes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gabinetes" /></span> Gabinetes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="coolers" /></span> Coolers</label></div>
+                </fieldset>
+            </div>
+            <div id="sort-container"> <select id="sort"> <option value=default disabled selected>Ordenar por...</option> <option value="price-asc">Menor preço</option> <option value="price-desc">Maior preço</option> </select> </div>
+
+            <div style="margin-top:12px">
+                <button class="btn" id="applyFilters">Aplicar</button>
+                <button class="btn ghost" id="clearFilters">Limpar</button>
+            </div>
+        </aside>
+        <div class="topbar-mobile">
+            <div class="search">
+                <input id="searchMobile" type="search" placeholder="Procurar por título..." autocomplete="off"
+                    autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </div>
+        </div>
+        <section>
+            <div class="carrossel-de-propagandas-mobile">
+                <div class="carousel-track-mobile">
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile.png"
+                            alt="Promo 1"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 2.png"
+                            alt="Promo 2"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 3.png"
+                            alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+            <div class="carrossel-de-propagandas">
+                <div class="carousel-track">
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner.png" alt="Promo 1"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 2.png" alt="Promo 2"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 3.png" alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+
+            <div class="topbar">
+                <div class="search">
+                    <input id="search" type="search" placeholder="Pesquise seu futuro item..." autocomplete="off"
+                        autocorrect="off" autocapitalize="off" spellcheck="false" />
+                </div>
+                <div style="min-width:180px;text-align:right;color:var(--muted)">
+                    Mostrando <span id="shownCount">0</span> produtos
+                </div>
+            </div>
+
+            <div class="products" style="min-width:180px;text-align:right;color:var(--muted);">
+                Mostrando <span id="shownCount2">0</span> produtos
+            </div>
+
+            <div class="product-list" id="products"></div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+    </main>
+
+    <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
+
+    <!-- global.js (mantém PRODUCTS, lógica de carrinho, etc.) -->
+    <script src="global.js"></script>
+
+    <!-- Reinsere o script que renderiza produtos / filtros / paginação (o conteúdo que estava antes dentro do loja.html original) -->
+    <script>
+        (function initAdsCarouselAuto() {
+            const root = document.querySelector('.carrossel-de-propagandas');
+            const rootMobile = document.querySelector('.carrossel-de-propagandas-mobile');
+            if (!root || !rootMobile) return;
+
+            const track = root.querySelector('.carousel-track');
+            const trackMobile = rootMobile.querySelector('.carousel-track-mobile');
+
+            const slides = Array.from(root.querySelectorAll('.carousel-slide'));
+            const slidesMobile = Array.from(rootMobile.querySelectorAll('.carousel-slide-mobile'));
+
+            const dotsWrap = root.querySelector('.carousel-dots');
+
+            const total = slides.length;
+            const totalMobile = slidesMobile.length;
+
+            let index = 0;
+            const interval = 3500;
+            let timer = null;
+
+            function buildDots() {
+                if (!dotsWrap) return;
+                dotsWrap.innerHTML = '';
+                slides.forEach((_, i) => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.dataset.index = i;
+                    b.addEventListener('click', () => { goToDesktop(i); restart(); });
+                    if (i === 0) b.classList.add('active');
+                    dotsWrap.appendChild(b);
+                });
+            }
+
+            function update() {
+                track.style.transform = `translateX(-${index * 100}%)`;
+                trackMobile.style.transform = `translateX(-${index * 100}%)`;
+
+                if (dotsWrap)
+                    Array.from(dotsWrap.children).forEach((d, i) =>
+                        d.classList.toggle('active', i === index)
+                    );
+            }
+
+            // DESKTOP
+            function nextDesktop() {
+                index = (index + 1) % total;
+                update();
+            }
+
+            function goToDesktop(i) {
+                index = (i + total) % total;
+                update();
+            }
+
+            // MOBILE
+            function nextMobile() {
+                index = (index + 1) % totalMobile;
+                update();
+            }
+
+            function goToMobile(i) {
+                index = (i + totalMobile) % totalMobile;
+                update();
+            }
+
+            function start() {
+                stop();
+
+                // condição simples: se for mobile, usar totalMobile
+                const isMobile = window.innerWidth <= 760;
+                timer = setInterval(isMobile ? nextMobile : nextDesktop, interval);
+            }
+
+            function stop() {
+                if (timer) clearInterval(timer);
+                timer = null;
+            }
+
+            function restart() { start(); }
+
+            // HOVER
+            root.addEventListener('mouseenter', stop);
+            rootMobile.addEventListener('mouseenter', stop);
+            root.addEventListener('mouseleave', start);
+            rootMobile.addEventListener('mouseleave', start);
+
+            // SWIPE
+            let startX = 0;
+
+            function swipeHandler(isMobile, dx) {
+                if (dx > 40) {
+                    isMobile
+                        ? goToMobile(index - 1)
+                        : goToDesktop(index - 1);
+                }
+                if (dx < -40) {
+                    isMobile
+                        ? goToMobile(index + 1)
+                        : goToDesktop(index + 1);
+                }
+                restart();
+            }
+
+            root.addEventListener('touchstart', e => {
+                stop();
+                startX = e.touches[0].clientX;
+            });
+
+            root.addEventListener('touchend', e => {
+                swipeHandler(false, e.changedTouches[0].clientX - startX);
+            });
+
+            rootMobile.addEventListener('touchstart', e => {
+                stop();
+                startX = e.touches[0].clientX;
+            });
+
+            rootMobile.addEventListener('touchend', e => {
+                swipeHandler(true, e.changedTouches[0].clientX - startX);
+            });
+
+            buildDots();
+            update();
+            start();
+        })();
+
+
+        // estado de produtos/paginação (usa PRODUCTS do global.js)
+        const state = { products: PRODUCTS.slice(), pageSize: 8, currentPage: 1 };
+
+        function renderPage(page = 1) {
+            const container = el('products');
+            const total = state.products.length;
+            const pageSize = state.pageSize;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            page = Math.max(1, Math.min(page, totalPages));
+            state.currentPage = page;
+            try { localStorage.setItem('loja.currentPage', String(page)); } catch (e) { }
+            const start = (page - 1) * pageSize;
+            const pageItems = state.products.slice(start, start + pageSize);
+            container.innerHTML = '';
+            pageItems.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="thumb">
+                        <img src="${(p.images && p.images.length) ? p.images[0] : DEFAULT_PRODUCT_IMAGE}" alt="${p.title}">
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-weight:700">${p.title}</div>
+                        <div style="font-size:13px;color:var(--muted)">${p.desc}</div>
+                    </div>
+                    <div class="meta">
+                        <div class="stock-status ${p.stock > 0 ? 'em-estoque' : 'esgotado'}">
+                            ${p.stock > 0 ? 'Em Estoque' : 'Esgotado'}
+                        </div>
+                        <div class="price-container-card">
+                            <div class="price-old">${money(p.price * 1.15)}</div>
+                            <div class="price-discounted">${money(p.price)}</div>
+                            <div class="discount-tag">15% OFF no PIX</div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn" data-id="${p.id}" onclick="addToCart(${p.id})" ${p.stock <= 0 ? 'disabled' : ''}>
+                                ${p.stock > 0 ? 'Adicionar' : 'Esgotado'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function (e) {
+                    if (e.target.tagName.toLowerCase() === 'button') return;
+                    window.location.href = `produto.html?id=${p.id}`;
+                });
+                container.appendChild(card);
+            });
+            const from = total === 0 ? 0 : start + 1;
+            const to = start + pageItems.length;
+            const label = `${from}-${to} de ${total}`;
+            if (el('shownCount')) el('shownCount').textContent = label;
+            if (el('shownCount2')) el('shownCount2').textContent = label;
+            renderPagination(totalPages, page);
+        }
+
+        function renderPagination(totalPages, current) {
+            const pag = el('pagination');
+            if (!pag) return;
+            pag.innerHTML = '';
+            const createBtn = (text, cls, disabled, handler) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = cls || 'page-btn';
+                b.textContent = text;
+                if (disabled) b.disabled = true;
+                b.addEventListener('click', handler);
+                return b;
+            };
+            pag.appendChild(createBtn('Anterior', 'page-btn nav', current === 1, () => renderPage(current - 1)));
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = createBtn(i, 'page-btn' + (i === current ? ' active' : ''), false, () => renderPage(i));
+                pag.appendChild(btn);
+            }
+            pag.appendChild(createBtn('Próximo', 'page-btn nav', current === totalPages, () => renderPage(current + 1)));
+        }
+
+        function applyFilters() {
+            const category = document.querySelector('input[name="cat"]:checked').value;
+            const searchInput = el('search');
+            const searchQuery = (searchInput && searchInput.value) ? searchInput.value.trim().toLowerCase() : '';
+            const sort = el('sort').value;
+
+            let list = PRODUCTS.slice();
+
+            // Filtro por categoria/subcategoria/tags
+            if (category !== 'all') {
+                list = list.filter(p =>
+                    p.category === category ||
+                    p.subcategory === category ||
+                    (p.subcategories === category)
+                );
+            }
+
+            // Filtro por busca
+            if (searchQuery) {
+                list = list.filter(p =>
+                    p.title.toLowerCase().includes(searchQuery) ||
+                    p.desc.toLowerCase().includes(searchQuery) ||
+                    (p.tags && p.tags.some(tag => tag.toLowerCase().includes(searchQuery)))
+                );
+            }
+
+            // Ordenação
+            if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
+            if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
+
+            state.products = list;
+            renderPage(1);
+        }
+
+
+        function clearFilters() {
+            document.querySelector('input[name="cat"][value="all"]').checked = true;
+            if (el('search')) el('search').value = '';
+            el('sort').value = 'default';
+            state.products = PRODUCTS.slice();
+            renderPage(1);
+        }
+
+        el('applyFilters').addEventListener('click', applyFilters);
+        el('clearFilters').addEventListener('click', clearFilters);
+
+        // Busca ao apertar Enter no input desktop
+        el('search').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') applyFilters();
+        });
+
+        // Busca automática enquanto digita no desktop
+        el('search').addEventListener('input', () => {
+            applyFilters();
+        });
+
+        // Mobile: escuta searchMobile, copia para #search e aplica filtros
+        const mobileSearch = el('searchMobile');
+        if (mobileSearch) {
+            mobileSearch.addEventListener('input', debounce(() => {
+                if (el('search')) el('search').value = mobileSearch.value;
+                applyFilters();
+            }, 220));
+            mobileSearch.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    if (el('search')) el('search').value = mobileSearch.value;
+                    applyFilters();
+                }
+            });
+        }
+
+        el('checkout')?.addEventListener('click', () => {
+            alert('Checkout de exemplo — implementar integração de pagamento.');
+        });
+
+        // ===== utilitários e layout de sidebar fixo (copiados do original) =====
+        let initialSidebarHeight = null;
+        function debounce(fn, wait) {
+            let t;
+            return function (...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), wait);
+            };
+        }
+        function computeInitialSidebarHeight() {
+            if (initialSidebarHeight !== null) return;
+            const sb = document.querySelector('.sidebar');
+            if (!sb) return;
+            const prev = sb.style.height;
+            sb.style.height = 'auto';
+            const h = sb.scrollHeight;
+            initialSidebarHeight = h;
+            sb.style.height = prev || '';
+        }
+
+        function applyFixedSidebarHeight() {
+            const sb = document.querySelector('.sidebar');
+            if (!sb) return;
+
+            const vw = window.innerWidth;
+
+            // desktop e já temos a altura inicial
+            if (vw >= 700 && initialSidebarHeight) {
+                sb.style.height = 'auto';
+                sb.style.overflowY = 'auto'; // scroll apenas se precisar
+            } else {
+                // mobile
+                sb.style.height = 'auto';
+                sb.style.overflowY = 'visible';
+            }
+        }
+
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            computeInitialSidebarHeight();
+            applyFixedSidebarHeight();
+            state.products = PRODUCTS.slice();
+            let savedPage = 1;
+            try {
+                const v = parseInt(localStorage.getItem('loja.currentPage'), 10);
+                if (!Number.isNaN(v) && v > 0) savedPage = v;
+            } catch (e) { }
+            renderPage(savedPage);
+            updateCartUI();
+        }));
+        const _fixDeb = debounce(() => {
+            applyFixedSidebarHeight();
+        }, 120);
+        window.addEventListener('resize', _fixDeb);
+
+    </script>
+
+    <!-- scripts de global.js já carregados acima: setupHamburgerMenu, cart handlers, etc. -->
+</body>
+
+</html>
