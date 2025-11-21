@@ -1,0 +1,875 @@
+main{
+    gap: 10px;
+}
+
+.product-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb {
+    margin-bottom: 0;
+    color: var(--muted);
+    align-self: flex-start;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.breadcrumb a,
+.breadcrumb span {
+    white-space: nowrap;
+    padding-right: 5px;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    max-width: 1200px;
+    width: 100%;
+}
+
+.comments-area{
+    color: var(--primary);
+    font-family:'Poppins', sans-serif;
+    font-size: 50px;
+    padding: 20px;
+}
+
+.divider{
+margin: 15px;
+height: 3px;
+width: 100%;
+max-width: 1100px;
+background-color: var(--primary-light);
+border-radius: var(--radius);
+}
+
+.comment-grid {
+    display: grid;
+    grid-template-columns: 450px auto;
+    max-width: 1200px;
+    padding: 0 20px 0 20px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .product-grid {
+        grid-template-columns: 1.2fr 1fr;
+    }
+
+    .comment-grid {
+        grid-template-columns: 450px auto;
+    }
+
+    .product-detalhes {
+        grid-column: 1 / -1;
+    }
+}
+
+.rating-container {
+    height: 450px;
+    width: 100%;
+    border-radius: var(--radius);
+    background-color: #f9f9f9;
+    text-align: center;
+    display: flex;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.big-score {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 100px;
+    font-size: 100px;
+    font-weight: 700;
+    color: #444;
+    padding: 0px;
+    margin-bottom: 15px;
+}
+
+.stars {
+    width: 100%;
+    height: 100%;
+    max-width: 156px;
+    max-height: 56px;
+    display: inline-block
+}
+
+.star {
+    display: inline-block;
+    font-size: 30px;
+    margin-right: 2px
+}
+
+.meta {
+    padding-left: 10px;
+    margin-bottom: 10px;
+    font-size: 25px;
+    color: var(--muted)
+}
+
+.comments-list {
+    margin-left: 10px;
+    height: 450px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#reviewsList {
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: grid;
+    gap: 12px;
+
+    /* ESTADO PADRÃO (No topo): Fade apenas embaixo */
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+
+    /* Transição suave do efeito (funciona na maioria dos navegadores modernos) */
+    transition: -webkit-mask-image 0.3s, mask-image 0.3s;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* ESTADO ROLADO (Scrolled): Fade em cima E embaixo */
+#reviewsList.scrolled {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 85%, transparent 100%);
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Esconde scrollbar no Chrome, Edge e Safari */
+#reviewsList::-webkit-scrollbar {
+    display: none;
+}
+
+/* Esconde scrollbar no Firefox */
+#reviewsList {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE e Edge antigo */
+}
+
+.reviews {
+    display: grid;
+    gap: 12px;
+    padding: 5px 5px 0 5px;
+    width: 100%;
+}
+
+.review {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-self: start;
+    gap: 30px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #fcfeff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    border: 1px solid #eef6f6;
+    align-items: start;
+}
+
+.review .left {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.review .author {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.review .stars {
+    padding-right: 20px;
+    font-size: 20px;
+    color: #ffcc00;
+}
+
+.review .date {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.review .body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review .comment-text {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+    margin: 0;
+}
+
+
+.commentBtn {
+    width: 95%;
+    background: var(--containers);
+    font-weight: 600;
+    color: var(--primary);
+    border: 1px solid var(--primary-light);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    padding: 10px 16px;
+    margin-bottom: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.commentBtn:hover {
+    transform: scale(1.05);
+}
+
+
+.product-imagens {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.imagem-principal {
+    width: 80%;
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.imagem-principal img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.2s ease, transform 0.3s ease;
+    opacity: 1;
+}
+
+.imagem-principal img:hover {
+    transform: scale(1.05);
+}
+
+.miniaturas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 10px;
+    width: 15%;
+    overflow: visible;
+}
+
+.miniaturas.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cecece8f transparent;
+}
+
+.miniaturas img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    object-fit: contain;
+}
+
+.miniaturas img:hover {
+    opacity: 1;
+    border: 2px solid var(--primary);
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #333;
+    line-height: 1.2;
+}
+
+.preco-container {
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid #eee;
+    border-radius: var(--radius);
+    background-color: #f9f9f9;
+    transform: translateY(-15px);
+}
+
+.preco-antigo {
+    font-size: 20px;
+    color: var(--muted);
+    text-decoration: line-through;
+    transform: translateY(10px);
+}
+
+.preco-antigo-mobile {
+    display: none;
+}
+
+.preco-desconto {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.preco-valor {
+    font-size: 50px;
+    font-weight: 700;
+    color: rgb(187, 19, 19);
+}
+
+.desconto-pix {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    background-color: #e6fff6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.parcelas {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.parcelas {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.estoque-status {
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.estoque-status::before {
+    content: "•";
+    font-size: 20px;
+    line-height: 1;
+}
+
+.estoque-status.em-estoque {
+    color: var(--primary);
+    /* Verde para Em Estoque */
+}
+
+.estoque-status.esgotado {
+    color: #d00;
+    /* Vermelho para Esgotado */
+}
+
+.frete-simulador {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    padding: 5px;
+}
+
+.frete-simulador input {
+    flex-grow: 1;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.frete-simulador .btn-frete {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.frete-simulador .btn-frete:hover {
+    background: var(--primary-light);
+}
+
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    transform: translateY(-15px);
+}
+
+.quantidade {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    max-width: 150px;
+}
+
+.quantidade button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quantidade button:hover {
+    background: var(--primary-light);
+}
+
+.quantidade input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.limit-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff4444;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+}
+
+.limit-toast.hide {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+}
+
+.btn-comprar {
+    border: none;
+    padding: 15px 30px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-comprar.principal {
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 182, 134, 0.4);
+}
+
+.btn-comprar.principal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 182, 134, 0.6);
+}
+
+.btn-comprar.secundario {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid rgba(0, 230, 160, 0.5);
+}
+
+.btn-comprar.secundario:hover {
+    transform: translateY(-2px);
+    background: var(--primary);
+    color: white;
+
+}
+
+.btn-comprar.esgotado {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.product-detalhes {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.tabs {
+    position: relative;
+    display: flex;
+    gap: 30px;
+    background: #f8fafc;
+    padding: 8px 30px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-weight: 600;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+}
+
+.underline {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    height: 3px;
+    background: var(--primary);
+    width: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#specsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#specsTable tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+#specsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+#specsTable td:first-child {
+    font-weight: 600;
+    width: 200px;
+    color: #555;
+}
+
+/* ==================== RESPONSIVIDADE MELHORADA (abaixo de 700px) ==================== */
+@media (max-width: 700px) {
+    .product-container {
+        padding: 0 25px;
+        margin: 10px auto;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 0px;
+        padding: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .comment-grid {
+        grid-template-columns: 1fr;
+        gap: 0px;
+        padding: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-imagens {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .imagem-principal {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .miniaturas {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-right: 0;
+        gap: 8px;
+        scrollbar-width: none;
+    }
+
+    .miniaturas::-webkit-scrollbar {
+        display: none;
+    }
+
+    .miniaturas img {
+        width: 70px;
+        height: 70px;
+        border-radius: 6px;
+    }
+
+    .product-info {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .product-info h1 {
+        font-size: 22px;
+    }
+
+    .preco-desconto {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    /* selo PIX sobre o preço */
+    .desconto-pix {
+        position: absolute;
+        top: -18px;
+        right: -15px;
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background-color: #00b686;
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        z-index: 2;
+        /* fica por cima, mas só do preço, não do preço antigo */
+    }
+
+    /* preço principal */
+    .preco-valor {
+        font-size: 42px;
+        font-weight: 700;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* preço antigo — agora abaixo e visível */
+    .preco-antigo {
+        display: none;
+    }
+
+    .preco-antigo-mobile {
+        display: flex;
+        font-size: 14px;
+        color: var(--muted);
+        text-decoration: line-through;
+        justify-content: left;
+    }
+
+    .parcelas {
+        font-size: 13px;
+    }
+
+    .estoque-status {
+        justify-content: center;
+    }
+
+    /* Ações (frete, quantidade e botões) */
+    .acoes {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* centraliza tudo no mobile */
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    /* ======== Frete centralizado universal ======== */
+    .frete-simulador {
+        width: 100%;
+        max-width: 420px;
+        display: grid;
+        /* ← substitui o flex problemático */
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        justify-content: center;
+        /* ← centraliza no grid */
+        gap: 8px;
+        margin: 0 auto;
+        padding: 6px;
+        box-sizing: border-box;
+    }
+
+    .frete-simulador input {
+        width: 100%;
+        font-size: 15px;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        text-align: left;
+        box-sizing: border-box;
+    }
+
+    .frete-simulador .btn-frete {
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* ======== Quantidade (como no PC) ======== */
+    .quantidade {
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        justify-content: flex-start;
+        /* ← antes era flex-end */
+        align-items: center;
+        gap: 15px;
+        margin: 0 auto;
+    }
+
+    .quantidade button {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+
+    .quantidade input {
+        width: 70px;
+        height: 44px;
+        font-size: 17px;
+    }
+
+    /* ======== Botões maiores e centralizados ======== */
+    .btn-comprar {
+        display: block;
+        width: 100%;
+        max-width: 420px;
+        /* força largura total mesmo em telas pequenas */
+        font-size: 17px;
+        padding: 16px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 0 auto;
+        /* centraliza em navegadores antigos */
+    }
+
+    .btn-comprar.principal {
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 182, 134, 0.4);
+    }
+
+    .btn-comprar.secundario {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid rgba(0, 230, 160, 0.7);
+    }
+
+    /* Tabs e descrição */
+    .tabs {
+        gap: 10px;
+        padding: 8px 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .underline {
+        display: none;
+    }
+
+    .tab-content {
+        padding: 15px 5px;
+        text-align: left;
+    }
+
+    #specsTable td {
+        font-size: 13px;
+        padding: 6px 4px;
+    }
+
+    #specsTable td:first-child {
+        width: 100px;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 15px 0;
+        text-align: center;
+    }
+}

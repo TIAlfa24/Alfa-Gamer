@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="icon" href="cima.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja - Computadores & Jogos</title>
+    <link rel="stylesheet" href="loja.css">
+</head>
+
+<body>
+    <div class="draggable-cart-widget" id="draggableCartWidget">
+        <div class="draggable-cart-header">
+            <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
+            <img src="cart.png" alt="Carrinho" height="35px">
+        </div>
+        <div class="draggable-cart-tooltip">Pressione para mover</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="Logo Equipe Alfa" class="logo">
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;">
+                <span class="cart-count" id="cartCountHeader">0</span>
+            </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu">
+                <a href="#">Início</a>
+                <a href="#">Monte seu PC</a>
+                <a href="#">Departamentos</a>
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho">
+                    <img class="cart-icon" src="cart.png" alt="Carrinho" height="35px">
+                    <span class="cart-count" id="cartCountNav">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box">
+            <div id="cartItemsDesktop"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
+
+    <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
+        <div class="cart-bottom-header">
+            <h3>Carrinho</h3>
+            <button id="closeCartBottom" class="btn ghost">Fechar</button>
+        </div>
+        <div class="cart-box" id="cartItemsMobile"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong>
+            <strong id="cartTotalMobile">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkoutMobile">Finalizar</button>
+        </div>
+    </div>
+
+    <main>
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h4 class="cat-title">
+                    Categoria
+                </h4>
+                <div class="cat-all">
+                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all"
+                                checked /></span> Todos</label>
+                </div>
+                <button class="cat-toggle">
+                    Computadores
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores" /></span> Desktops</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="notebooks" /></span> Notebooks</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gamer" /></span> Gamers</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="office" /></span> Office</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Periféricos
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mouses" /></span> Mouses</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mousepads" /></span> Mousepads</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="teclados" /></span> Teclados</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="headsets" /></span> Headsets</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="monitores" /></span> Monitores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="webcams" /></span> Webcams</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Hardware
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="cpu" /></span> Processadores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gpu" /></span> Placas de vídeo</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="motherboard" /></span> Placas-mãe</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mram" /></span> Memórias RAM</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="armazenamento" /></span> Armazenamento</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="fontes" /></span> Fontes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gabinetes" /></span> Gabinetes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="coolers" /></span> Coolers</label></div>
+                </fieldset>
+            </div>
+            <div id="sort-container" class="custom-select-wrapper">
+                <button id="sort-button" class="custom-select-trigger" aria-expanded="false" aria-controls="sort-list">
+                    <span id="selected-value">Ordenar por...</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+
+                <ul id="sort-list" class="custom-options-list" role="listbox" aria-labelledby="sort-button" hidden>
+                    <li class="custom-option disabled selected" data-value="default" aria-selected="true">
+                        Ordenar por...
+                    </li>
+                    <li class="custom-option" data-value="price-asc" role="option">
+                        Menor preço
+                    </li>
+                    <li class="custom-option" data-value="price-desc" role="option">
+                        Maior preço
+                    </li>
+                </ul>
+
+                <input type="hidden" name="sort-by" id="sort-hidden-input" value="default">
+            </div>
+            <div style="margin-top:12px">
+                <button class="btn" id="applyFilters">Aplicar</button>
+                <button class="btn ghost" id="clearFilters">Limpar</button>
+            </div>
+        </aside>
+        <div class="topbar-mobile">
+            <div class="search">
+                <input id="searchMobile" type="search" placeholder="Procurar por título..." autocomplete="off"
+                    autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </div>
+        </div>
+        <section>
+            <div class="carrossel-de-propagandas-mobile">
+                <div class="carousel-track-mobile">
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile.png"
+                            alt="Promo 1"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 2.png"
+                            alt="Promo 2"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 3.png"
+                            alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+            <div class="carrossel-de-propagandas">
+                <div class="carousel-track">
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner.png" alt="Promo 1"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 2.png" alt="Promo 2"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 3.png" alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+
+            <div class="topbar">
+                <div class="search">
+                    <input id="search" type="search" placeholder="Pesquise seu futuro item..." autocomplete="off"
+                        autocorrect="off" autocapitalize="off" spellcheck="false" />
+                </div>
+                <div style="min-width:180px;text-align:right;color:var(--muted)">
+                    Mostrando <span id="shownCount">0</span> produtos
+                </div>
+            </div>
+
+            <div class="products" style="min-width:180px;text-align:right;color:var(--muted);">
+                Mostrando <span id="shownCount2">0</span> produtos
+            </div>
+
+            <div class="product-list" id="products"></div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+    </main>
+    <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
+    <script src="global.js"></script>
+    <script src="loja.js"></script>
+</body>
+
+</html>
