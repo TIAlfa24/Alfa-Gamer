@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Administrador</title>
+    <link rel="stylesheet" href="/css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/global.js?v=20260905"></script>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="/"> <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"> </a>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <nav class="navbar" id="navMenu">
+                <a href="/">Início</a>
+                <a href="#">cursos</a>
+                <a href="#">sobre nós</a>
+            </nav>
+        </div>
+    </header>
+    <div class="main-content-wrapper">
+        <div class="container">
+            <main>
+                <h1>Acesso Administrativo</h1>
+                <form id="formCadastro" novalidate>
+                    <label for="cpf"><b>Email:</b></label>
+                    <input id="cpf" name="cpf" type="email" placeholder="seu.email@exemplo.com" required>
+                    <label for="senhaUsuario"><b>Senha</b></label>
+                    <input id="senhaUsuario" name="senhaUsuario" type="password" placeholder="Sua senha de admin"
+                        required>
+                    <br><br>
+                    <button id="btnEnviar" type="submit"><b>Entrar no Painel</b></button>
+                    <div class="a-padding">
+                        <p style="text-align: center; color: #666; font-size: 12px;">
+                            Esta é uma área restrita apenas para administradores.
+                        </p>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+</body>
+<footer class="alfa-footer-trust">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Alfa Segurança & Tecnologia</h3>
+                <p><strong>CNPJ:</strong> 20.744.572/0001-92</p>
+                <p>Contagem - MG</p>
+                <p class="trust-badge">Compra 100% Segura & Protegida</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p>Segunda a Sexta: 09:00 às 18:00</p>
+                <p>Atendimento Online e Loja Física</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Transparência</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="#">Termos de Serviço</a></li>
+                    <li><a href="#">Preferências de Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
+        </div>
+    </footer>
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+</script>
+<script src="/js/auth.js"></script>

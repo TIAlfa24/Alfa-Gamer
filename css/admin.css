@@ -1,0 +1,155 @@
+/* ===== PAINEL ADMINISTRATIVO ===== */
+header {
+	position: relative;
+	z-index: 1000;
+}
+
+.admin-container {
+	width: min(900px, calc(100% - 32px));
+	margin: 32px auto;
+	padding: 24px;
+	background: #f9f9f9;
+	border-radius: 10px;
+	box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+}
+
+.admin-container h2 {
+	margin-bottom: 24px;
+}
+
+.category-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.category-container {
+	min-width: 0;
+	padding: 16px;
+	border: 1px solid #d6d6d6;
+	border-left: 4px solid #00926b;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.category-container legend {
+	padding: 0 6px;
+	color: #00926b;
+	font-weight: 700;
+}
+
+.category-container label {
+	display: flex;
+	align-items: center;
+	margin: 10px 0;
+	gap: 8px;
+	cursor: pointer;
+}
+
+.user-menu-button {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 4px;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.user-dropdown {
+	position: absolute;
+	top: 0;
+	right: 20px;
+	width: 320px;
+	max-width: calc(100vw - 40px);
+	padding: 12px;
+	background: #222;
+	color: #f1f1f1;
+	border-radius: 10px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+	opacity: 0;
+	transform: translateY(-100%);
+	pointer-events: none;
+	transition: opacity 400ms cubic-bezier(.2, .9, .3, 1), transform 400ms cubic-bezier(.2, .9, .3, 1);
+	z-index: 999;
+}
+
+.user-dropdown.open {
+	opacity: 1;
+	transform: translateY(100px);
+	pointer-events: auto;
+}
+
+.user-dropdown-arrow {
+	display: none;
+}
+
+.user-dropdown-content {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.user-dropdown-content a,
+.user-dropdown-content .logout-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #f1f1f1;
+    font: 14px 'Poppins', sans-serif;
+    line-height: 1.35;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.user-dropdown-content a:hover,
+.user-dropdown-content .logout-btn:hover {
+	background: #333;
+	color: #00b37d;
+}
+
+.user-dropdown-content .logout-btn {
+	margin-top: 8px;
+	border: 1px solid #00b37d;
+	text-align: center;
+}
+
+.user-drawer-header,
+.user-drawer-content,
+.drawer-close,
+.drawer-overlay {
+	display: none;
+}
+
+/* Mantido para evitar que estilos antigos criem um painel lateral. */
+.user-drawer {
+	display: none;
+}
+
+@media (max-width: 768px) {
+	.admin-container {
+		width: min(100% - 20px, 900px);
+		margin: 16px auto;
+		padding: 16px;
+	}
+
+	.category-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.user-dropdown {
+		right: 20px;
+		width: min(320px, calc(100vw - 40px));
+	}
+}
+
+@media (min-width: 1701px) {
+	.user-dropdown {
+		right: 100px;
+	}
+}

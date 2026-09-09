@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loja - Computadores & Jogos</title>
+    <link rel="stylesheet" href="/css/home.css?v=20260907" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div class="draggable-cart-widget" id="draggableCartWidget">
+        <div class="draggable-cart-header">
+            <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
+            <img src="/images/cart.png" alt="Carrinho" height="35px">
+        </div>
+        <div class="draggable-cart-tooltip">Pressione para mover</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <a href="/"> <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"> </a>
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="/images/cart.png" alt="Carrinho" height="35px" style="padding-left: 10px;">
+                <span class="cart-count" id="cartCountHeader">0</span>
+            </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu">
+                <a href="#">Monte seu PC</a>
+                <a href="#">Cursos</a>
+                <a href="#">Sobre Nós</a>
+                
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho">
+                    <img class="cart-icon" src="/images/cart.png" alt="Carrinho" height="35px">
+                    <span class="cart-count" id="cartCountNav">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box">
+            <div id="cartItemsDesktop"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout" onclick="window.location.href='/cart/index.html'">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
+
+    <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
+        <div class="cart-bottom-header">
+            <h3>Carrinho</h3>
+            <button id="closeCartBottom" class="btn ghost">Fechar</button>
+        </div>
+        <div class="cart-box" id="cartItemsMobile"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong>
+            <strong id="cartTotalMobile">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkoutMobile" onclick="window.location.href='/cart/index.html'">Finalizar</button>
+        </div>
+    </div>
+
+    <main>
+        <aside class="sidebar">
+            <div class="filter-group">
+                <h4 class="cat-title">
+                    Categorias
+                </h4>
+                <div class="cat-all">
+                    <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat" value="all"
+                                checked /></span> Todos</label>
+                </div>
+                <button class="cat-toggle">
+                    Computadores
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="computadores" /></span> Todos os computadores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="desktops" /></span> Desktops</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="notebooks" /></span> Notebooks</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gamer" /></span> Gamers</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="office" /></span> Office</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Periféricos
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="perifericos" /></span> Todos os periféricos</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mouses" /></span> Mouses</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="mousepads" /></span> Mousepads</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="teclados" /></span> Teclados</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="headsets" /></span> Headsets</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="monitores" /></span> Monitores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="webcams" /></span> Webcams</label></div>
+                </fieldset>
+
+                <button class="cat-toggle">
+                    Hardware
+                    <span class="arrow"></span>
+                </button>
+                <fieldset class="subcats">
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="hardware" /></span> Todo o hardware</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="processadores" /></span> Processadores</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="placas-de-video" /></span> Placas de vídeo</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="placa-mae" /></span> Placas-mãe</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="memorias-ram" /></span> Memórias RAM</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="armazenamento" /></span> Armazenamento</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="fontes" /></span> Fontes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="gabinetes" /></span> Gabinetes</label></div>
+                    <div><label class="radio-wrap"><span class="radio-rot"><input type="radio" name="cat"
+                                    value="coolers" /></span> Coolers</label></div>
+                </fieldset>
+            </div>
+            <div id="sort-container" class="custom-select-wrapper">
+                <button id="sort-button" class="custom-select-trigger" aria-expanded="false" aria-controls="sort-list">
+                    <span id="selected-value">Ordenar por...</span>
+                    <span class="arrow-icon">▼</span>
+                </button>
+
+                <ul id="sort-list" class="custom-options-list" role="listbox" aria-labelledby="sort-button" hidden>
+                    <li class="custom-option disabled selected" data-value="default" aria-selected="true">
+                        Ordenar por...
+                    </li>
+                    <li class="custom-option" data-value="price-asc" role="option">
+                        Menor preço
+                    </li>
+                    <li class="custom-option" data-value="price-desc" role="option">
+                        Maior preço
+                    </li>
+                </ul>
+
+                <input type="hidden" name="sort-by" id="sort-hidden-input" value="default">
+            </div>
+            <div style="margin-top:12px">
+                <button class="btn" id="applyFilters">Aplicar</button>
+                <button class="btn ghost" id="clearFilters">Limpar</button>
+            </div>
+        </aside>
+        <div class="topbar-mobile">
+            <div class="search">
+                <input id="searchMobile" type="search" placeholder="Procurar por título..." autocomplete="off"
+                    autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </div>
+        </div>
+        <section>
+            <div class="carrossel-de-propagandas-mobile">
+                <div class="carousel-track-mobile">
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile.png"
+                            alt="Promo 1"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 2.png"
+                            alt="Promo 2"></div>
+                    <div class="carousel-slide-mobile"><img src="images/carrossel/teste banner mobile 3.png"
+                            alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+            <div class="carrossel-de-propagandas">
+                <div class="carousel-track">
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner.png" alt="Promo 1"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 2.png" alt="Promo 2"></div>
+                    <div class="carousel-slide"><img src="images/carrossel/teste banner 3.png" alt="Promo 3"></div>
+                </div>
+                <button class="carousel-btn prev" aria-label="Anterior"></button>
+                <button class="carousel-btn next" aria-label="Próximo"></button>
+                <div class="carousel-dots" aria-hidden="false"></div>
+            </div>
+
+            <div class="topbar">
+                <div class="search">
+                    <input id="search" type="search" placeholder="Pesquise seu futuro item..." autocomplete="off"
+                        autocorrect="off" autocapitalize="off" spellcheck="false" />
+                </div>
+                <div style="min-width:180px;text-align:right;color:var(--muted)">
+                    Mostrando <span id="shownCount">0</span> produtos
+                </div>
+            </div>
+
+            <div class="products" style="min-width:180px;text-align:right;color:var(--muted);">
+                Mostrando <span id="shownCount2">0</span> produtos
+            </div>
+
+            <div class="product-list" id="products"></div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+    </main>
+    <footer class="alfa-footer-trust">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Alfa Segurança & Tecnologia</h3>
+                <p><strong>CNPJ:</strong> 20.744.572/0001-92</p>
+                <p>Contagem - MG</p>
+                <p class="trust-badge">Compra 100% Segura & Protegida</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p>Segunda a Sexta: 09:00 às 18:00</p>
+                <p>Atendimento Online e Loja Física</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Transparência</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="#">Termos de Serviço</a></li>
+                    <li><a href="#">Preferências de Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
+        </div>
+    </footer>
+    <script src="/js/global.js?v=20260907"></script>
+    <script src="/js/home.js?v=20260907"></script>
+</body>
+
+</html>
