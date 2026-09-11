@@ -1,4 +1,3 @@
-// 1. Função que envia o produto para o Supabase
 async function obterClienteSupabase() {
   if (window.supabaseClient?.auth) return window.supabaseClient;
   return typeof window.inicializarSupabase === 'function'
@@ -27,7 +26,6 @@ async function cadastrarNovoProduto(produtoData) {
   }
 }
 
-// 2. Event listener do formulário
 document.addEventListener('DOMContentLoaded', async () => {
   const userDrawer = document.getElementById('userDrawer');
   const openUserDrawer = document.getElementById('openUserDrawer');
@@ -116,7 +114,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         specs: {}
       };
 
-      // Insere na tabela 'produtos'
       const success = await cadastrarNovoProduto(produtoData);
 
       btn.disabled = false;
@@ -125,12 +122,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// 3. Função de Logout
 async function fazerLogout() {
   const supabase = await obterClienteSupabase();
   if (!supabase) {
     alert('⚠️ Sistema de autenticação não inicializado.');
-    // Mesmo assim, redireciona para login
     window.location.href = '/auth/login';
     return;
   }

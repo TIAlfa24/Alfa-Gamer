@@ -41,17 +41,17 @@
     </div>
 
     <div class="admin-container">
-        <h2>Cadastrar Novo Produto</h2>
+        <h1>Cadastrar Novo Produto</h1>
 
         <form id="form-cadastro-produto">
             <div class="form-group">
-                <label for="prod-title">Título do Produto *</label>
-                <input type="text" id="prod-title" placeholder="Ex: PC Gamer Ryzen 5" required>
+                <label for="prod-title"><h2>Título do Produto*</h2></label>
+                <input type="text" id="prod-title" class="input-field" placeholder="Ex: PC Gamer Ryzen 5" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-category">Categoria *</label>
-                <fieldset class="checkbox-group" id="prod-category">
+                <label for="prod-category"><h2>Categoria*</h2></label>
+                <fieldset class="category-container" id="prod-category">
                     <label><input type="checkbox" name="prod-category" value="computadores"> Computadores</label>
                     <label><input type="checkbox" name="prod-category" value="perifericos"> Periféricos</label>
                     <label><input type="checkbox" name="prod-category" value="hardware"> Hardware</label>
@@ -59,7 +59,7 @@
             </div>
 
             <div class="form-group">
-                <label for="prod-subcategory">Subcategoria *</label>
+                <label for="prod-subcategory"><h2>Subcategoria*</h2></label>
                 <div class="category-grid" id="prod-subcategory">
                     <fieldset class="category-container">
                         <legend>Computadores</legend>
@@ -93,27 +93,27 @@
             </div>
 
             <div class="form-group">
-                <label for="prod-price">Preço (R$) *</label>
+                <label for="prod-price"><h2>Preço (R$)*</h2></label>
                 <input type="number" step="0.01" id="prod-price" placeholder="3499.99" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-stock">Estoque Inicial *</label>
+                <label for="prod-stock"><h2>Estoque Inicial*</h2></label>
                 <input type="number" id="prod-stock" placeholder="50" value="1" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-desc">Descrição *</label>
+                <label for="prod-desc"><h2>Descrição*</h2></label>
                 <textarea id="prod-desc" placeholder="Descrição detalhada do produto" required></textarea>
             </div>
 
             <div class="form-group">
-                <label for="prod-image">URL da Imagem Principal *</label>
+                <label for="prod-image"><h2>URL da Imagem Principal*</h2></label>
                 <input type="url" id="prod-image" placeholder="https://exemplo.com/imagem.png" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-tags">Tags</label>
+                <label for="prod-tags"><h2>Tags</h2></label>
                 <input type="text" id="prod-tags" placeholder="gamer, desktop, ryzen, RTX 3060 (separadas por vírgula)">
             </div>
 

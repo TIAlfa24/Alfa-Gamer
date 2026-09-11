@@ -75,6 +75,11 @@ const DEFAULT_PRODUCT_IMAGE = "/images/products/placeholder.png";
 const PRODUCTS = [];
 window.PRODUCTS = PRODUCTS;
 
+if (typeof window !== 'undefined') {
+    const placeholderPreload = new Image();
+    placeholderPreload.src = DEFAULT_PRODUCT_IMAGE;
+}
+
 function normalizarProdutos(produtos) {
     return produtos.map(p => ({
         ...p,

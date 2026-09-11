@@ -13,8 +13,14 @@ header {
 	box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
 }
 
+.admin-container h1 {
+	color: var(--primary)
+}
+
 .admin-container h2 {
-	margin-bottom: 24px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	color: #444;
 }
 
 .category-grid {
@@ -92,19 +98,19 @@ header {
 
 .user-dropdown-content a,
 .user-dropdown-content .logout-btn {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 12px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: #f1f1f1;
-    font: 14px 'Poppins', sans-serif;
-    line-height: 1.35;
-    text-align: left;
-    text-decoration: none;
-    cursor: pointer;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: #f1f1f1;
+	font: 14px 'Poppins', sans-serif;
+	line-height: 1.35;
+	text-align: left;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .user-dropdown-content a:hover,
