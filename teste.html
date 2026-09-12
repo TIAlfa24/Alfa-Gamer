@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Animado Minimalista</title>
+    <style>
+        /* CSS: Zera as margens e define o fundo geral */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a;
+            /* Cor de fundo escuro */
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* Um texto de exemplo por cima do background */
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-family: sans-serif;
+            font-size: 2rem;
+            pointer-events: none;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content">Seu Conteúdo Aqui</div>
+    <canvas id="bgCanvas"></canvas>
+
+    <script>
+        // JAVASCRIPT: Lógica do Canvas e Animação
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let shapesArray = [];
+
+        // Ajusta o canvas para o tamanho da tela
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Matrizes 7x7 que definem como cada forma é desenhada através de círculos coordenados (1 = desenha, 0 = vazio)
+        const shapeMatrices = {
+            'x': [
+                [1, 1, 0, 0, 0, 0, 0, 1, 1],
+                [1, 1, 1, 0, 0, 0, 1, 1, 1],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [0, 0, 1, 1, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 0, 0],
+                [0, 1, 1, 1, 0, 1, 1, 1, 0],
+                [1, 1, 1, 0, 0, 0, 1, 1, 1],
+                [1, 1, 0, 0, 0, 0, 0, 1, 1]
+            ],
+            'triangle': [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+            ],
+            'square': [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ],
+            'circle': [ // ●
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ]
+        };
+
+        const shapeKeys = Object.keys(shapeMatrices);
+
+        // Classe que gerencia cada forma flutuante
+        class FloatingShape {
+            constructor() {
+                this.type = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+                this.matrix = shapeMatrices[this.type];
+
+                // Posição inicial aleatória
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+
+                // Velocidade de flutuação (lenta e suave)
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+
+                // Configurações dos pontinhos
+                this.dotRadius = 2.5; // Tamanho de cada bolinha que compõe a forma
+                this.spacing = 8;     // Espaço entre as bolinhas
+
+                // Variação suave de opacidade
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Faz com que as formas reapareçam do outro lado da tela quando saem
+                const size = this.matrix.length * this.spacing;
+                if (this.x > width + size) this.x = -size;
+                if (this.x < -size) this.x = width + size;
+                if (this.y > height + size) this.y = -size;
+                if (this.y < -size) this.y = height + size;
+            }
+
+            draw() {
+                // Cor monocromática das formas (Ciano/Azul claro)
+                ctx.fillStyle = `rgba(56, 189, 248, ${this.opacity})`;
+
+                // Centraliza a matriz de pontos em relação ao (x,y)
+                const offsetX = this.x - (this.matrix[0].length * this.spacing) / 2;
+                const offsetY = this.y - (this.matrix.length * this.spacing) / 2;
+
+                // Desenha a forma baseada na matriz
+                for (let row = 0; row < this.matrix.length; row++) {
+                    for (let col = 0; col < this.matrix[row].length; col++) {
+                        if (this.matrix[row][col] === 1) {
+                            ctx.beginPath();
+                            ctx.arc(
+                                offsetX + col * this.spacing,
+                                offsetY + row * this.spacing,
+                                this.dotRadius,
+                                0,
+                                Math.PI * 2
+                            );
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Instancia as formas (aumente ou diminua o número para mais/menos elementos)
+        const numberOfShapes = 40;
+        for (let i = 0; i < numberOfShapes; i++) {
+            shapesArray.push(new FloatingShape());
+        }
+
+        // Loop de Animação
+        function animate() {
+            // Limpa o frame anterior suavemente
+            ctx.clearRect(0, 0, width, height);
+
+            // Atualiza e desenha cada forma
+            shapesArray.forEach(shape => {
+                shape.update();
+                shape.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Inicia a animação
+        animate();
+    </script>
+</body>
+
+</html>
