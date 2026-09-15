@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Background Animado Minimalista</title>
+    <title>Background Animado - Modo Depuração</title>
     <style>
-        /* CSS: Zera as margens e define o fundo geral */
         body,
         html {
             margin: 0;
@@ -14,43 +13,47 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0f172a;
-            /* Cor de fundo escuro */
+            background-color: #d3d3d3;
         }
 
         canvas {
             display: block;
         }
 
-        /* Um texto de exemplo por cima do background */
         .content {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #ffffff;
+            color: #333333;
             font-family: sans-serif;
             font-size: 2rem;
             pointer-events: none;
             letter-spacing: 2px;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="content">Seu Conteúdo Aqui</div>
+    <div class="content">Modo Depuração / Debug</div>
     <canvas id="bgCanvas"></canvas>
 
     <script>
-        // JAVASCRIPT: Lógica do Canvas e Animação
+        let showDebug = true; // Controla se o debug está visível ou não
+
+document.addEventListener('keydown', function (event) {
+    if (event.key.toLowerCase() === 'd') {
+        showDebug = !showDebug; // Alterna entre verdadeiro e falso
+    }
+});
+
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
 
         let width, height;
-        let shapesArray = [];
 
-        // Ajusta o canvas para o tamanho da tela
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
@@ -60,105 +63,232 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Matrizes 7x7 que definem como cada forma é desenhada através de círculos coordenados (1 = desenha, 0 = vazio)
+        const GRID_COLS = 4;
+        const GRID_ROWS = 3;
+
+        function manageEmptySpaces(shapes) {
+            const cellWidth = width / GRID_COLS;
+            const cellHeight = height / GRID_ROWS;
+
+            const cellCounts = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(0));
+            const targetedCells = new Set();
+
+            shapes.forEach(shape => {
+                const col = Math.floor(shape.x / cellWidth);
+                const row = Math.floor(shape.y / cellHeight);
+
+                if (row >= 0 && row < GRID_ROWS && col >= 0 && col < GRID_COLS) {
+                    cellCounts[row][col]++;
+                }
+
+                if (shape.targetCell) {
+                    targetedCells.add(`${shape.targetCell.row},${shape.targetCell.col}`);
+                }
+            });
+
+            const emptyCells = [];
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    const key = `${r},${c}`;
+                    if (cellCounts[r][c] === 0 && !targetedCells.has(key)) {
+                        emptyCells.push({
+                            row: r,
+                            col: c,
+                            x: (c + 0.5) * cellWidth,
+                            y: (r + 0.5) * cellHeight
+                        });
+                    }
+                }
+            }
+
+            const freeShapes = shapes.filter(s => !s.targetCell);
+
+            for (const cell of emptyCells) {
+                if (freeShapes.length === 0) break;
+
+                let closestIndex = -1;
+                let minDistanceSq = Infinity;
+
+                freeShapes.forEach((shape, index) => {
+                    const dx = cell.x - shape.x;
+                    const dy = cell.y - shape.y;
+                    const distSq = dx * dx + dy * dy;
+                    if (distSq < minDistanceSq) {
+                        minDistanceSq = distSq;
+                        closestIndex = index;
+                    }
+                });
+
+                if (closestIndex !== -1) {
+                    const chosenShape = freeShapes.splice(closestIndex, 1)[0];
+                    chosenShape.targetCell = cell;
+                }
+            }
+        }
+
+        function createEquilateralTriangleMatrix() {
+            const rows = 22;
+            const cols = 25;
+            const center = 12;
+            const matrix = [];
+
+            for (let r = 0; r < rows; r++) {
+                const rowArr = Array(cols).fill(0);
+                const halfWidth = Math.round((r / (rows - 1)) * center);
+                for (let c = center - halfWidth; c <= center + halfWidth; c++) {
+                    rowArr[c] = 1;
+                }
+                matrix.push(rowArr);
+            }
+            return matrix;
+        }
+
         const shapeMatrices = {
             'x': [
-                [1, 1, 0, 0, 0, 0, 0, 1, 1],
-                [1, 1, 1, 0, 0, 0, 1, 1, 1],
-                [0, 1, 1, 1, 0, 1, 1, 1, 0],
-                [0, 0, 1, 1, 1, 1, 1, 0, 0],
-                [0, 0, 0, 1, 1, 1, 0, 0, 0],
-                [0, 0, 1, 1, 1, 1, 1, 0, 0],
-                [0, 1, 1, 1, 0, 1, 1, 1, 0],
-                [1, 1, 1, 0, 0, 0, 1, 1, 1],
-                [1, 1, 0, 0, 0, 0, 0, 1, 1]
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+                [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+                [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+                [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
             ],
-            'triangle': [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-
-            ],
-            'square': [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
-            'circle': [ // ●
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1]
+            'triangle': createEquilateralTriangleMatrix(),
+            'square': Array.from({ length: 25 }, () => Array(25).fill(1)),
+            'circle': [
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
         };
 
-        const shapeKeys = Object.keys(shapeMatrices);
+        const shapeKeys = ['x', 'triangle', 'square', 'circle'];
 
-        // Classe que gerencia cada forma flutuante
+        function getBalancedShapeType(existingShapes) {
+            const counts = { 'x': 0, 'triangle': 0, 'square': 0, 'circle': 0 };
+            existingShapes.forEach(s => {
+                if (counts[s.type] !== undefined) counts[s.type]++;
+            });
+
+            let minCount = Infinity;
+            let candidates = [];
+            for (const type of shapeKeys) {
+                if (counts[type] < minCount) {
+                    minCount = counts[type];
+                    candidates = [type];
+                } else if (counts[type] === minCount) {
+                    candidates.push(type);
+                }
+            }
+            return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+
         class FloatingShape {
-            constructor() {
-                this.type = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+            constructor(existingShapes = []) {
+                this.type = getBalancedShapeType(existingShapes);
                 this.matrix = shapeMatrices[this.type];
 
-                // Posição inicial aleatória
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
 
-                // Velocidade de flutuação (lenta e suave)
-                this.vx = (Math.random() - 0.5) * 0.8;
-                this.vy = (Math.random() - 0.5) * 0.8;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
 
-                // Configurações dos pontinhos
-                this.dotRadius = 2.5; // Tamanho de cada bolinha que compõe a forma
-                this.spacing = 8;     // Espaço entre as bolinhas
+                this.rotation = Math.random() * Math.PI * 2;
+                this.vRot = (Math.random() - 0.5) * 0.008;
 
-                // Variação suave de opacidade
-                this.opacity = Math.random() * 0.4 + 0.1;
+                this.dotRadius = 2.0;
+                this.spacing = 10.8;
+                this.opacity = Math.random() * 0.35 + 0.1;
+
+                this.radius = (25 * this.spacing) / 2.1;
+                this.targetCell = null;
+                this.isColliding = false;
             }
 
             update() {
+                if (this.targetCell) {
+                    const dx = this.targetCell.x - this.x;
+                    const dy = this.targetCell.y - this.y;
+                    const dist = Math.hypot(dx, dy);
+
+                    if (dist < 100) {
+                        this.targetCell = null;
+                    } else {
+                        const targetVx = (dx / dist) * 0.4;
+                        const targetVy = (dy / dist) * 0.4;
+
+                        this.vx += (targetVx - this.vx) * 0.015;
+                        this.vy += (targetVy - this.vy) * 0.015;
+                    }
+                }
+
                 this.x += this.vx;
                 this.y += this.vy;
+                this.rotation += this.vRot;
 
-                // Faz com que as formas reapareçam do outro lado da tela quando saem
                 const size = this.matrix.length * this.spacing;
-                if (this.x > width + size) this.x = -size;
-                if (this.x < -size) this.x = width + size;
-                if (this.y > height + size) this.y = -size;
-                if (this.y < -size) this.y = height + size;
+                if (this.x > width + size) { this.x = -size; this.targetCell = null; }
+                if (this.x < -size) { this.x = width + size; this.targetCell = null; }
+                if (this.y > height + size) { this.y = -size; this.targetCell = null; }
+                if (this.y < -size) { this.y = height + size; this.targetCell = null; }
             }
 
             draw() {
-                // Cor monocromática das formas (Ciano/Azul claro)
-                ctx.fillStyle = `rgba(56, 189, 248, ${this.opacity})`;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
 
-                // Centraliza a matriz de pontos em relação ao (x,y)
-                const offsetX = this.x - (this.matrix[0].length * this.spacing) / 2;
-                const offsetY = this.y - (this.matrix.length * this.spacing) / 2;
+                ctx.fillStyle = `rgba(100, 100, 100, ${this.opacity})`;
 
-                // Desenha a forma baseada na matriz
-                for (let row = 0; row < this.matrix.length; row++) {
-                    for (let col = 0; col < this.matrix[row].length; col++) {
+                const cols = this.matrix[0].length;
+                const rows = this.matrix.length;
+
+                const offsetX = -((cols - 1) * this.spacing) / 2;
+                const offsetY = -((rows - 1) * this.spacing) / 2;
+
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
                         if (this.matrix[row][col] === 1) {
                             ctx.beginPath();
                             ctx.arc(
@@ -172,22 +302,129 @@
                         }
                     }
                 }
+                ctx.restore();
+                if (showDebug) {
+        this.drawDebug();
+    }
+            }
+
+            drawDebug() {
+                if (this.targetCell) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.targetCell.x, this.targetCell.y);
+                    ctx.strokeStyle = 'rgba(147, 51, 234, 0.6)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.lineWidth = this.isColliding ? 3 : 1.5;
+                ctx.strokeStyle = this.isColliding ? '#dc2626' : 'rgba(37, 99, 235, 0.6)';
+                ctx.stroke();
+
+                // 3. Ponto Central (X, Y)
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = this.isColliding ? '#dc2626' : '#2563eb';
+                ctx.fill();
+                const vectorScale = 100;
+                const endX = this.x + this.vx * vectorScale;
+                const endY = this.y + this.vy * vectorScale;
+
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = '#16a34a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#16a34a';
+                ctx.fill();
+            }
+        }
+        function drawGridOverlay() {
+            const cellWidth = width / GRID_COLS;
+            const cellHeight = height / GRID_ROWS;
+
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = 1;
+
+            for (let c = 1; c < GRID_COLS; c++) {
+                ctx.beginPath();
+                ctx.moveTo(c * cellWidth, 0);
+                ctx.lineTo(c * cellWidth, height);
+                ctx.stroke();
+            }
+
+            for (let r = 1; r < GRID_ROWS; r++) {
+                ctx.beginPath();
+                ctx.moveTo(0, r * cellHeight);
+                ctx.lineTo(width, r * cellHeight);
+                ctx.stroke();
             }
         }
 
-        // Instancia as formas (aumente ou diminua o número para mais/menos elementos)
-        const numberOfShapes = 40;
-        for (let i = 0; i < numberOfShapes; i++) {
-            shapesArray.push(new FloatingShape());
+        function handleCollisions(shapes) {
+            shapes.forEach(s => s.isColliding = false);
+
+            for (let i = 0; i < shapes.length; i++) {
+                for (let j = i + 1; j < shapes.length; j++) {
+                    const s1 = shapes[i];
+                    const s2 = shapes[j];
+
+                    const dx = s2.x - s1.x;
+                    const dy = s2.y - s1.y;
+                    const dist = Math.hypot(dx, dy);
+                    const minDist = s1.radius + s2.radius;
+
+                    if (dist < minDist && dist > 0) {
+                        s1.isColliding = true;
+                        s2.isColliding = true;
+
+                        const overlap = (minDist - dist) / 2;
+                        const nx = dx / dist;
+                        const ny = dy / dist;
+
+                        s1.x -= nx * overlap * 0.08;
+                        s1.y -= ny * overlap * 0.08;
+                        s2.x += nx * overlap * 0.08;
+                        s2.y += ny * overlap * 0.08;
+
+                        const relativeVx = s1.vx - s2.vx;
+                        const relativeVy = s1.vy - s2.vy;
+                        const velAlongNormal = relativeVx * nx + relativeVy * ny;
+
+                        if (velAlongNormal > 0) {
+                            const impulse = velAlongNormal * 0.04;
+                            s1.vx -= impulse * nx;
+                            s1.vy -= impulse * ny;
+                            s2.vx += impulse * nx;
+                            s2.vy += impulse * ny;
+                        }
+                    }
+                }
+            }
         }
 
-        // Loop de Animação
+        const shapes = [];
+        const TOTAL_SHAPES = 12;
+
+        for (let i = 0; i < TOTAL_SHAPES; i++) {
+            shapes.push(new FloatingShape(shapes));
+        }
+
         function animate() {
-            // Limpa o frame anterior suavemente
             ctx.clearRect(0, 0, width, height);
 
-            // Atualiza e desenha cada forma
-            shapesArray.forEach(shape => {
+            drawGridOverlay();
+            manageEmptySpaces(shapes);
+            handleCollisions(shapes);
+
+            shapes.forEach(shape => {
                 shape.update();
                 shape.draw();
             });
@@ -195,7 +432,6 @@
             requestAnimationFrame(animate);
         }
 
-        // Inicia a animação
         animate();
     </script>
 </body>

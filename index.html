@@ -4,13 +4,15 @@
 <head>
     <link rel="icon" href="/images/favicon.png" type="image/x-icon">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Loja - Computadores & Jogos</title>
-    <link rel="stylesheet" href="/css/home.css?v=20260907" />
+    <link rel="stylesheet" href="/css/home.css?v=20260907"/>
+    <link rel="stylesheet" href="/css/background.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
+    <canvas id="bgCanvas"></canvas>
     <div class="draggable-cart-widget" id="draggableCartWidget">
         <div class="draggable-cart-header">
             <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
@@ -231,8 +233,12 @@
 
             <div class="footer-col">
                 <h4>Atendimento</h4>
+                <p>
                 <p>Segunda a Sexta: 09:00 às 18:00</p>
                 <p>Atendimento Online e Loja Física</p>
+                <ul class="footer-links">
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank">(31) 98375-3432</a></p>
+                </ul>
             </div>
 
             <div class="footer-col">
@@ -249,8 +255,8 @@
             <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
         </div>
     </footer>
+</body>
     <script src="/js/global.js?v=20260907"></script>
     <script src="/js/home.js?v=20260907"></script>
-</body>
-
+    <script src="/js/background.js?v=20260907"></script>
 </html>
