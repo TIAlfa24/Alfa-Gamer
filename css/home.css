@@ -173,6 +173,7 @@ header {
     opacity: 1;
     transform: translateY(100px);
     pointer-events: auto;
+    top: 15px;
 }
 
 /* ================= BOTTOM SHEET (MOBILE) ================= */
@@ -622,6 +623,7 @@ input[type="url"],
 input[type="tel"],
 textarea,
 select {
+    box-sizing: border-box;
     width: 100%;
     padding: 10px;
     border-radius: 8px;

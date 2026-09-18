@@ -7,8 +7,11 @@
     <title>Painel de Administração - Alfa Gamer</title>
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/admin.css">
-    
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
     <script src="/js/global.js?v=20260905"></script>
 </head>
 
@@ -45,75 +48,124 @@
 
         <form id="form-cadastro-produto">
             <div class="form-group">
-                <label for="prod-title"><h2>Título do Produto*</h2></label>
+                <label for="prod-title">
+                    <h2>Título do Produto*</h2>
+                </label>
                 <input type="text" id="prod-title" class="input-field" placeholder="Ex: PC Gamer Ryzen 5" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-category"><h2>Categoria*</h2></label>
+                <label for="prod-category">
+                    <h2>Categoria*</h2>
+                </label>
                 <fieldset class="category-container" id="prod-category">
-                    <label><input type="checkbox" name="prod-category" value="computadores"> Computadores</label>
-                    <label><input type="checkbox" name="prod-category" value="perifericos"> Periféricos</label>
-                    <label><input type="checkbox" name="prod-category" value="hardware"> Hardware</label>
+                    <div>
+                        <label class="radio-wrap">
+                            <span class="radio-rot"><input type="checkbox" name="prod-category" value="computadores" /></span> Computadores
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio-wrap">
+                            <span class="radio-rot"><input type="checkbox" name="prod-category" value="perifericos" /></span> Periféricos
+                        </label>
+                    </div>
+                    <div>
+                        <label class="radio-wrap">
+                            <span class="radio-rot"><input type="checkbox" name="prod-category" value="hardware" /></span> Hardware
+                        </label>
+                    </div>
                 </fieldset>
             </div>
 
+            <!-- E o mesmo padrão se repete nas subcategorias... -->
             <div class="form-group">
-                <label for="prod-subcategory"><h2>Subcategoria*</h2></label>
+                <label for="prod-subcategory">
+                    <h2>Subcategoria*</h2>
+                </label>
                 <div class="category-grid" id="prod-subcategory">
                     <fieldset class="category-container">
                         <legend>Computadores</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="desktops"> Desktops</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="notebooks"> Notebooks</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="gamer"> Gamers</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="office"> Office</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="all-in-one"> All-in-One</label>
+                        <div><label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="desktops" /></span> Desktops</label></div>
+                        <div><label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="notebooks" /></span> Notebooks</label></div>
+                        <div><label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="gamer" /></span> Gamers</label></div>
                     </fieldset>
                     <fieldset class="category-container">
                         <legend>Periféricos</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="mouses"> Mouses</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="mousepads"> Mousepads</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="teclados"> Teclados</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="headsets"> Headsets</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="monitores"> Monitores</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="webcams"> Webcams</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="mouses" /></span> Mouses</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="mousepads" /></span> Mousepads</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="teclados" /></span> Teclados</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="headsets" /></span> Headsets</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="monitores" /></span> Monitores</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="webcams" /></span> Webcams</label>
                     </fieldset>
                     <fieldset class="category-container">
                         <legend>Hardware</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="processadores"> Processadores</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="placas-de-video"> Placas de vídeo</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="placa-mae"> Placas-mãe</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="memorias-ram"> Memórias RAM</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="armazenamento"> Armazenamento</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="fontes"> Fontes</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="gabinetes"> Gabinetes</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="coolers"> Coolers</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="processadores" /></span> Processadores</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="placas-de-video" /></span> Placas de vídeo</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="placa-mae" /></span> Placas-mãe</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="memorias-ram" /></span> Memórias RAM</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="armazenamento" /></span> Armazenamento</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="fontes" /></span> Fontes</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="gabinetes" /></span> Gabinetes</label>
+                        <label class="radio-wrap"><span class="radio-rot"><input type="checkbox" name="prod-subcategory" value="coolers" /></span> Coolers</label>
                     </fieldset>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="prod-price"><h2>Preço (R$)*</h2></label>
+                <label for="prod-price">
+                    <h2>Preço (R$)*</h2>
+                </label>
                 <input type="number" step="0.01" id="prod-price" placeholder="3499.99" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-stock"><h2>Estoque Inicial*</h2></label>
+                <label for="prod-stock">
+                    <h2>Estoque Inicial*</h2>
+                </label>
                 <input type="number" id="prod-stock" placeholder="50" value="1" required>
             </div>
 
             <div class="form-group">
-                <label for="prod-desc"><h2>Descrição*</h2></label>
-                <textarea id="prod-desc" placeholder="Descrição detalhada do produto" required></textarea>
+                <label>
+                    <h2>Descrição*</h2>
+                </label>
+                <div id="editor-desc" style="height: 250px; background: #fff;"></div>
             </div>
 
             <div class="form-group">
-                <label for="prod-image"><h2>URL da Imagem Principal*</h2></label>
-                <input type="url" id="prod-image" placeholder="https://exemplo.com/imagem.png" required>
+                <label for="prod-specs">
+                    <h2>Especificações Técnicas</h2>
+                </label>
+                <textarea id="prod-specs"
+                    placeholder="Processador: AMD Ryzen 7 5700G&#10;Armazenamento: SSD 1TB M.2&#10;Memória RAM: 16GB"
+                    rows="5" class="input-field"></textarea>
+                <small style="color: #666;">Digite uma especificação por linha. O sistema formata
+                    automaticamente.</small>
             </div>
 
             <div class="form-group">
-                <label for="prod-tags"><h2>Tags</h2></label>
+                <label>
+                    <h2>Imagens do Produto*</h2>
+                </label>
+                <small style="color: #666; display: block; margin-bottom: 10px;">
+                    A primeira imagem da lista será a capa do produto. Arraste as imagens para reordená-las. As imagens
+                    serão comprimidas automaticamente.
+                </small>
+
+                <!-- Área de clique/arraste que agora também abriga os previews -->
+                <div id="drop-zone"
+                    style="border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #fafafa; transition: 0.3s; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; min-height: 140px;">
+                    <span id="drop-zone-text" style="color: #555;"><a>Clique aqui ou arraste as imagens para
+                            anexar</a></span>
+                    <input type="file" id="prod-images-file" accept="image/png, image/jpeg, image/webp" multiple
+                        style="display: none;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="prod-tags">
+                    <h2>Tags</h2>
+                </label>
                 <input type="text" id="prod-tags" placeholder="gamer, desktop, ryzen, RTX 3060 (separadas por vírgula)">
             </div>
 
@@ -122,6 +174,8 @@
 
     </div>
 
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script src="/js/admin.js?v=20260906"></script>
 </body>
 

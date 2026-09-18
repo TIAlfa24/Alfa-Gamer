@@ -50,13 +50,10 @@ if (document.readyState === 'loading') {
 
 // Dentro de global.js
 async function buscarProdutosPaginados(paginaAtual, itensPorPagina = 8) {
-    // Calcula o intervalo. Ex: Página 1 (0 a 7), Página 2 (8 a 15)
     const inicio = (paginaAtual - 1) * itensPorPagina;
     const fim = inicio + itensPorPagina - 1;
 
     try {
-        // O { count: 'exact' } é importante para sabermos o total de itens no banco
-        // e podermos desenhar os botões de paginação (1, 2, 3...) corretamente.
         const { data, error, count } = await supabase
             .from('produtos')
             .select('*', { count: 'exact' }) 
@@ -114,19 +111,16 @@ function normalizarCategoria(valor) {
 window.normalizarCategoria = normalizarCategoria;
 
 async function carregarProdutosSupabase() {
-    const supabase = await inicializarSupabase(); //[cite: 5]
-    if (!supabase) throw new Error('Supabase não inicializado.'); //[cite: 5]
+    const supabase = await inicializarSupabase();
+    if (!supabase) throw new Error('Supabase não inicializado.');
 
     const { data, error } = await supabase
-        .from('produtos') //[cite: 5]
-        .select('*'); //[cite: 5]
+        .from('produtos')
+        .select('*'); 
+    if (error) throw error;
 
-    if (error) throw error; //[cite: 5]
-
-    const produtos = normalizarProdutos(data || []); //[cite: 5]
-    PRODUCTS.splice(0, PRODUCTS.length, ...produtos); //[cite: 5]
-
-    // 🚀 NOVO: Atualiza a interface do carrinho com os produtos recém-carregados
+    const produtos = normalizarProdutos(data || []);
+    PRODUCTS.splice(0, PRODUCTS.length, ...produtos);
     updateCartUI();
 
     return PRODUCTS; //[cite: 5]
@@ -138,7 +132,6 @@ const CART_STORAGE_KEY = 'cart.items.v1';
 const el = id => document.getElementById(id);
 const money = v => 'R$ ' + v.toFixed(2).replace('.', ',');
 
-// ===== A FONTE DA VERDADE =====
 const globalState = {
     cart: {},
     isCartOpen: false
@@ -674,11 +667,9 @@ function setupDraggableCartWidget() {
                 const searchMobile = document.getElementById("searchMobile");
                 if (searchDesktop) searchDesktop.value = "";
                 if (searchMobile) searchMobile.value = "";
-                // chama a função global de filtros
                 if (typeof applyFilters === "function") {
                     applyFilters();
                 }
-                // fecha a box de sugestões
                 box.style.display = "none";
             };
 
@@ -708,8 +699,6 @@ function setupDraggableCartWidget() {
                 box.style.display = "none";
             };
             box.appendChild(item);
-
-            // 🔹 Adiciona a faixa verde separadora entre os itens
             if (idx < results.length - 1) {
                 const separator = document.createElement("div");
                 separator.className = "suggestion-separator";

@@ -1,4 +1,3 @@
-/* ===== PAINEL ADMINISTRATIVO ===== */
 header {
 	position: relative;
 	z-index: 1000;
@@ -18,7 +17,7 @@ header {
 }
 
 .admin-container h2 {
-	margin-top: 15px;
+	margin-top: 20px;
 	margin-bottom: 15px;
 	color: #444;
 }
@@ -84,6 +83,7 @@ header {
 	opacity: 1;
 	transform: translateY(100px);
 	pointer-events: auto;
+	top: 20px;
 }
 
 .user-dropdown-arrow {
@@ -158,4 +158,91 @@ header {
 	.user-dropdown {
 		right: 100px;
 	}
+}
+
+.preview-card {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    cursor: grab;
+    background: #eee;
+}
+.preview-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.preview-card .badge-capa {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #75757541;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+#preview-container .preview-card:first-child .badge-capa {
+    display: block; 
+}
+.btn-remover-img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+	background-color: transparent;
+	border-color: transparent;
+    color: #757575;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radio-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.radio-rot {
+    display: inline-flex;
+}
+
+.radio-rot input[type="checkbox"] {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    border-radius: 35%; 
+}
+
+.radio-rot input[type="checkbox"]:checked {
+    background: var(--card);
+    border: 2px solid var(--primary-light);
+}
+
+.radio-rot input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    background: var(--card); 
 }
