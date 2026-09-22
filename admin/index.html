@@ -3,125 +3,220 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Painel de Administração - Alfa Gamer</title>
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/admin.css">
-    
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
     <script src="/js/global.js?v=20260905"></script>
 </head>
 
 <body>
+    <!-- HEADER IDÊNTICO À PÁGINA PRINCIPAL -->
     <header>
         <div class="header-container">
-            <a href="/"> <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"> </a>
+            <a href="/">
+                <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo">
+            </a>
+
+            <!-- Botão Hambúrguer -->
             <div class="hamburger" id="hamburger">
                 <div></div>
                 <div></div>
                 <div></div>
             </div>
 
+            <!-- Navbar Expansível (Alinhado à direita no mobile como na imagem de referência) -->
             <nav class="navbar" id="navMenu">
-                <button class="user-menu-button" id="openUserDrawer" type="button" title="Abrir opções do usuário">
-                    <img src="/images/usefull-icons/person.png" alt="Opções do usuário" height="40">
-                </button>
+                <a href="#">Painel administrativo</a>
+                <a href="#">Meus dados</a>
+                <a href="#">Comentários</a>
+                <button type="button" class="logout-nav-btn" onclick="fazerLogout()">Sair</button>
             </nav>
         </div>
     </header>
 
-    <div class="user-dropdown" id="userDrawer" aria-hidden="true">
-        <div class="user-dropdown-arrow"></div>
-        <nav class="user-dropdown-content" aria-label="Opções da conta">
-            <a href="#">Painel administrativo</a>
-            <a href="#">Meus dados</a>
-            <a href="#">Comentarios</a>
-            <button class="logout-btn" id="closeUserDrawer" type="button" onclick="fazerLogout()">Sair</button>
-        </nav>
-    </div>
-
     <div class="admin-container">
-        <h1>Cadastrar Novo Produto</h1>
+        <div class="admin-header-title">
+            <h1>Cadastrar Novo Produto</h1>
+            <p>Preencha os campos abaixo para adicionar um novo item ao catálogo.</p>
+        </div>
 
-        <form id="form-cadastro-produto">
-            <div class="form-group">
-                <label for="prod-title"><h2>Título do Produto*</h2></label>
-                <input type="text" id="prod-title" class="input-field" placeholder="Ex: PC Gamer Ryzen 5" required>
+        <form id="form-cadastro-produto" class="admin-form-grid">
+
+            <!-- BLOCO 1: INFORMAÇÕES PRINCIPAIS VS PREÇO, ESTOQUE E IMAGENS -->
+            <div class="admin-grid-row cols-2-desktop">
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h2>Informações Principais</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prod-title">Título do Produto*</label>
+                        <input type="text" id="prod-title" class="input-field" placeholder="Ex: PC Gamer Ryzen 5" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoria*</label>
+                        <fieldset class="category-container" id="prod-category">
+                            <label><input type="checkbox" name="prod-category" value="computadores"> Computadores</label>
+                            <label><input type="checkbox" name="prod-category" value="perifericos"> Periféricos</label>
+                            <label><input type="checkbox" name="prod-category" value="hardware"> Hardware</label>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Subcategoria*</label>
+                        <div class="category-grid" id="prod-subcategory">
+                            <fieldset class="category-container">
+                                <legend>Computadores</legend>
+                                <label><input type="checkbox" name="prod-subcategory" value="desktops"> Desktops</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="notebooks"> Notebooks</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="gamer"> Gamers</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="office"> Office</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="all-in-one"> All-in-One</label>
+                            </fieldset>
+                            <fieldset class="category-container">
+                                <legend>Periféricos</legend>
+                                <label><input type="checkbox" name="prod-subcategory" value="mouses"> Mouses</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="mousepads"> Mousepads</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="teclados"> Teclados</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="headsets"> Headsets</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="monitores"> Monitores</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="webcams"> Webcams</label>
+                            </fieldset>
+                            <fieldset class="category-container">
+                                <legend>Hardware</legend>
+                                <label><input type="checkbox" name="prod-subcategory" value="processadores"> Processadores</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="placas-de-video"> Placas de vídeo</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="placa-mae"> Placas-mãe</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="memorias-ram"> Memórias RAM</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="armazenamento"> Armazenamento</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="fontes"> Fontes</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="gabinetes"> Gabinetes</label>
+                                <label><input type="checkbox" name="prod-subcategory" value="coolers"> Coolers</label>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column-group">
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h2>Preço e Estoque</h2>
+                        </div>
+
+                        <div class="form-row-inner cols-2-inner">
+                            <div class="form-group">
+                                <label for="prod-price">Preço (R$)*</label>
+                                <input type="number" step="0.01" id="prod-price" class="input-field" placeholder="3499.99" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="prod-pix-discount">Desconto PIX (%)*</label>
+                                <input type="number" id="prod-pix-discount" class="input-field" placeholder="Ex: 15" value="15">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prod-stock">Estoque Inicial*</label>
+                            <input type="number" id="prod-stock" class="input-field" placeholder="50" value="1" required>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <h2>Imagens do Produto*</h2>
+                        </div>
+
+                        <div class="form-group">
+                            <small class="help-text" style="margin-bottom: 12px; display: block;">
+                                A primeira imagem será a <strong>capa do produto</strong>. Arraste para reordenar.
+                            </small>
+
+                            <div id="drop-zone">
+                                <span id="drop-zone-text"><a>Clique aqui ou arraste as imagens para anexar</a></span>
+                                <input type="file" id="prod-images-file" accept="image/png, image/jpeg, image/webp" multiple style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label for="prod-category"><h2>Categoria*</h2></label>
-                <fieldset class="category-container" id="prod-category">
-                    <label><input type="checkbox" name="prod-category" value="computadores"> Computadores</label>
-                    <label><input type="checkbox" name="prod-category" value="perifericos"> Periféricos</label>
-                    <label><input type="checkbox" name="prod-category" value="hardware"> Hardware</label>
-                </fieldset>
-            </div>
+            <!-- BLOCO 2: GERENCIAMENTO DE TAGS -->
+            <div class="admin-card full-width">
+                <div class="admin-card-header">
+                    <h2>Gerenciamento de Tags</h2>
+                </div>
 
-            <div class="form-group">
-                <label for="prod-subcategory"><h2>Subcategoria*</h2></label>
-                <div class="category-grid" id="prod-subcategory">
-                    <fieldset class="category-container">
-                        <legend>Computadores</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="desktops"> Desktops</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="notebooks"> Notebooks</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="gamer"> Gamers</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="office"> Office</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="all-in-one"> All-in-One</label>
-                    </fieldset>
-                    <fieldset class="category-container">
-                        <legend>Periféricos</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="mouses"> Mouses</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="mousepads"> Mousepads</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="teclados"> Teclados</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="headsets"> Headsets</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="monitores"> Monitores</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="webcams"> Webcams</label>
-                    </fieldset>
-                    <fieldset class="category-container">
-                        <legend>Hardware</legend>
-                        <label><input type="checkbox" name="prod-subcategory" value="processadores"> Processadores</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="placas-de-video"> Placas de vídeo</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="placa-mae"> Placas-mãe</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="memorias-ram"> Memórias RAM</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="armazenamento"> Armazenamento</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="fontes"> Fontes</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="gabinetes"> Gabinetes</label>
-                        <label><input type="checkbox" name="prod-subcategory" value="coolers"> Coolers</label>
-                    </fieldset>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="input-tag-manual">Adicionar Tag Manual</label>
+                    <div class="tag-add-box">
+                        <input type="text" id="input-tag-manual" class="input-field" placeholder="Digite uma tag e toque em Adicionar...">
+                        <button type="button" id="btn-add-tag-manual" class="btn-tag-add">Adicionar</button>
+                    </div>
+                    <small class="help-text">Toque em Adicionar para incluir.</small>
+                </div>
+
+                <div class="admin-grid-row cols-2-desktop tags-inner-grid">
+                    <div class="form-group">
+                        <label>Tags Manuais</label>
+                        <div id="manual-tags-list" class="tags-chip-container"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tags Automáticas — Preview</label>
+                        <div id="auto-tags-list" class="tags-chip-container auto-tags-container">
+                            <span class="tags-placeholder-text">Preencha o título, descrição ou especificações para visualizar as tags...</span>
+                        </div>
+                        <small class="help-text">Geradas pelo conteúdo. Toque no X para descartar.</small>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="prod-price"><h2>Preço (R$)*</h2></label>
-                <input type="number" step="0.01" id="prod-price" placeholder="3499.99" required>
+            <!-- BLOCO 3: DESCRIÇÃO E ESPECIFICAÇÕES -->
+            <div class="admin-card full-width">
+                <div class="admin-card-header">
+                    <h2>Descrição e Especificações</h2>
+                </div>
+
+                <div class="admin-grid-row cols-2-desktop desc-specs-grid">
+                    <div class="form-group">
+                        <label>Descrição Detalhada*</label>
+                        <div id="editor-desc" style="height: 220px; background: #fff;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Especificações Técnicas</label>
+
+                        <div class="specs-builder-inputs">
+                            <input type="text" id="spec-key-input" class="input-field" placeholder="Especificação (ex: Processador)">
+                            <input type="text" id="spec-val-input" class="input-field" placeholder="Valor (ex: Ryzen 7 7700)">
+                            <button type="button" id="btn-add-spec" class="btn-tag-add">+ Adicionar</button>
+                        </div>
+                        <small class="help-text">Informe o nome e valor da especificação.</small>
+
+                        <div id="specs-list-container" class="specs-list-container">
+                            <span class="tags-placeholder-text">Nenhuma especificação técnica adicionada.</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="prod-stock"><h2>Estoque Inicial*</h2></label>
-                <input type="number" id="prod-stock" placeholder="50" value="1" required>
+            <div class="admin-actions">
+                <button type="submit" id="btn-salvar" class="btn-submit-main">Cadastrar Produto</button>
             </div>
 
-            <div class="form-group">
-                <label for="prod-desc"><h2>Descrição*</h2></label>
-                <textarea id="prod-desc" placeholder="Descrição detalhada do produto" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="prod-image"><h2>URL da Imagem Principal*</h2></label>
-                <input type="url" id="prod-image" placeholder="https://exemplo.com/imagem.png" required>
-            </div>
-
-            <div class="form-group">
-                <label for="prod-tags"><h2>Tags</h2></label>
-                <input type="text" id="prod-tags" placeholder="gamer, desktop, ryzen, RTX 3060 (separadas por vírgula)">
-            </div>
-
-            <button type="submit" id="btn-salvar">Cadastrar Produto</button>
         </form>
-
     </div>
 
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script src="/js/admin.js?v=20260906"></script>
 </body>
 
