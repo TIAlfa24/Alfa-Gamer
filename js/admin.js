@@ -4,35 +4,35 @@
 async function obterClienteSupabase() {
     if (window.supabaseClient?.auth) return window.supabaseClient;
     return typeof window.inicializarSupabase === 'function'
-      ? await window.inicializarSupabase()
-      : null;
+        ? await window.inicializarSupabase()
+        : null;
 }
 
 async function cadastrarNovoProduto(produtoData) {
     const supabase = await obterClienteSupabase();
     if (!supabase) {
-      alert('⚠️ Sistema de banco de dados não inicializado.');
-      return false;
+        alert('⚠️ Sistema de banco de dados não inicializado.');
+        return false;
     }
 
     const { error } = await supabase
-      .from('produtos')
-      .insert([produtoData]);
+        .from('produtos')
+        .insert([produtoData]);
 
     if (error) {
-      alert('❌ Erro ao cadastrar produto: ' + error.message);
-      return false;
+        alert('❌ Erro ao cadastrar produto: ' + error.message);
+        return false;
     } else {
-      alert('✅ Produto inserido com sucesso!');
-      document.getElementById('form-cadastro-produto').reset();
-      return true;
+        alert('✅ Produto inserido com sucesso!');
+        document.getElementById('form-cadastro-produto').reset();
+        return true;
     }
 }
 
 // Gerador de Tags Automáticas
 function gerarTagsAutomaticas(titulo, descTexto, specsObj) {
     const valoresSpecs = Object.values(specsObj).join(' ');
-    const descLimpa = (descTexto || '').replace(/<[^>]*>?/gm, ' '); 
+    const descLimpa = (descTexto || '').replace(/<[^>]*>?/gm, ' ');
     const textoCompleto = `${titulo} ${descLimpa}${valoresSpecs}`.toLowerCase();
 
     const palavras = textoCompleto
@@ -50,20 +50,20 @@ let arrayArquivosImagens = [];
 
 async function comprimirImagem(file) {
     const options = {
-        maxSizeMB: 0.3, 
-        maxWidthOrHeight: 1200, 
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 1200,
         useWebWorker: true
     };
     try {
         return await imageCompression(file, options);
     } catch (error) {
         console.error("Erro ao comprimir imagem:", error);
-        return file; 
+        return file;
     }
 }
 
 async function uploadMultiplasImagens(arquivos, supabase) {
-    const urls = []; 
+    const urls = [];
 
     for (let i = 0; i < arquivos.length; i++) {
         const file = arquivos[i].file;
@@ -83,7 +83,7 @@ async function uploadMultiplasImagens(arquivos, supabase) {
         urls.push(publicUrlData.publicUrl);
     }
 
-    return urls; 
+    return urls;
 }
 
 function renderizarPreviews() {
@@ -91,7 +91,7 @@ function renderizarPreviews() {
     const fileInput = document.getElementById('prod-images-file');
     if (!dropZone) return;
 
-    dropZone.innerHTML = ''; 
+    dropZone.innerHTML = '';
 
     if (arrayArquivosImagens.length === 0) {
         const spanText = document.createElement('span');
@@ -103,7 +103,7 @@ function renderizarPreviews() {
         arrayArquivosImagens.forEach((item) => {
             const div = document.createElement('div');
             div.className = 'preview-card';
-            div.dataset.id = item.id; 
+            div.dataset.id = item.id;
 
             div.innerHTML = `
                 <div class="badge-capa">CAPA</div>
@@ -118,7 +118,7 @@ function renderizarPreviews() {
         addMoreCard.style.cssText = 'display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc; background: white; font-size: 32px; color: #ccc; cursor: pointer; width: 80px; height: 80px; border-radius: 6px;';
         addMoreCard.title = 'Adicionar mais imagens';
         addMoreCard.innerHTML = '+'; // Ícone do + corrigido
-        
+
         dropZone.appendChild(addMoreCard);
     }
 
@@ -127,7 +127,7 @@ function renderizarPreviews() {
     }
 }
 
-window.removerImagem = function(id) {
+window.removerImagem = function (id) {
     arrayArquivosImagens = arrayArquivosImagens.filter(img => img.id !== id);
     renderizarPreviews();
 };
@@ -275,7 +275,7 @@ function renderizarTagsManuais() {
     container.innerHTML = '';
 
     if (manualTagsSet.size === 0) {
-        container.innerHTML = '<span class="tags-placeholder-text">Nenhuma tag manual adicionada.</span>';
+        container.innerHTML = '<span class="tags-placeholder-text"><label style="margin-bottom: 0; color: var(--muted);">Nenhuma tag manual adicionada.</label></span>';
         return;
     }
 
@@ -305,7 +305,7 @@ function atualizarPreviewTagsAutomaticas() {
     container.innerHTML = '';
 
     if (filteredAutoTags.length === 0) {
-        container.innerHTML = '<span class="tags-placeholder-text">Nenhuma tag automática gerada.</span>';
+        container.innerHTML = '<span class="tags-placeholder-text"><label style="margin-bottom: 0; color: #738277;">Nenhuma tag automática gerada.</label></span>';
         return;
     }
 
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 3. Autenticação Supabase
+   // 3. Autenticação Supabase
     const supabase = await obterClienteSupabase();
     if (!supabase) {
         alert('Não foi possível inicializar a autenticação. Recarregue a página.');
@@ -391,6 +391,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Exibe a página somente após confirmar o perfil de admin
+    document.body.style.display = 'block';
+
     // 4. Drag & Drop no DropZone
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('prod-images-file');
@@ -404,16 +407,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 onEnd: function (evt) {
                     const itemMovido = arrayArquivosImagens.splice(evt.oldIndex, 1)[0];
                     arrayArquivosImagens.splice(evt.newIndex, 0, itemMovido);
-                    renderizarPreviews(); 
+                    renderizarPreviews();
                 },
             });
         }
 
         dropZone.addEventListener('click', (e) => {
             if (
-                e.target === dropZone || 
-                e.target.tagName === 'SPAN' || 
-                e.target.tagName === 'A' || 
+                e.target === dropZone ||
+                e.target.tagName === 'SPAN' ||
+                e.target.tagName === 'A' ||
                 e.target.classList.contains('add-more-card') ||
                 e.target.textContent === '+'
             ) {
@@ -424,19 +427,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             dropZone.innerHTML = `<span style="color: #00926b; font-weight: bold; width: 100%; text-align: center;">Comprimindo imagens...</span>`;
-            
+
             for (const file of files) {
                 const compressedFile = await comprimirImagem(file);
                 const previewUrl = URL.createObjectURL(compressedFile);
-                
+
                 arrayArquivosImagens.push({
                     id: Math.random().toString(36).substr(2, 9),
                     file: compressedFile,
                     previewUrl: previewUrl
                 });
             }
-            
-            fileInput.value = ''; 
+
+            fileInput.value = '';
             renderizarPreviews();
         });
     }

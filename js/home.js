@@ -129,6 +129,14 @@ const state = {
 // ====================================================================
 // 3. RENDERIZAÇÃO, SKELETON E PAGINAÇÃO
 // ====================================================================
+
+function sanitizarTextoSimples(htmlOuTexto) {
+    if (!htmlOuTexto) return '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlOuTexto;
+    return (tempDiv.textContent || tempDiv.innerText || '').replace(/\s+/g, ' ').trim();
+}
+
 function renderSkeletonLoaders(quantidade = 8) {
     const container = el('products');
     if (!container) return;
@@ -182,6 +190,8 @@ function renderPage(page = 1) {
     }
 
     pageItems.forEach(p => {
+        const descricaoLimpa = sanitizarTextoSimples(p.desc_text || p.desc);
+
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -194,7 +204,7 @@ function renderPage(page = 1) {
             </div>
             <div style="flex:1">
                 <div style="font-weight:700">${p.title}</div>
-                <div class="card-desc" title="${p.desc_text || p.desc}">${p.desc_text || p.desc}</div>
+                <div class="card-desc" title="${descricaoLimpa}">${descricaoLimpa}</div>
             </div>
             <div class="meta">
                 <div class="stock-status ${p.stock > 0 ? 'em-estoque' : 'esgotado'}">

@@ -1,6 +1,9 @@
 /* =========================================================
    PAINEL ADMINISTRATIVO - EQUIPE ALFA
    ========================================================= */
+body {
+    display: none;
+}
 
 *, *::before, *::after {
     box-sizing: border-box;

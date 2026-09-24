@@ -1,4 +1,4 @@
-main{
+main {
     gap: 10px;
 }
 
@@ -38,10 +38,6 @@ main{
     margin-left: 5px;
 }
 
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
 .product-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -54,20 +50,34 @@ main{
     width: 100%;
 }
 
-.comments-area{
+@media (min-width: 768px) {
+    .product-grid {
+        grid-template-columns: 1.2fr 1fr;
+    }
+
+    .comment-grid {
+        grid-template-columns: 450px auto;
+    }
+
+    .product-detalhes {
+        grid-column: 1 / -1;
+    }
+}
+
+.comments-area {
     color: var(--primary);
-    font-family:'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 50px;
     padding: 20px;
 }
 
-.divider{
-margin: 15px;
-height: 3px;
-width: 100%;
-max-width: 1100px;
-background-color: var(--primary-light);
-border-radius: var(--radius);
+.divider {
+    margin: 15px;
+    height: 3px;
+    width: 100%;
+    max-width: 1100px;
+    background-color: var(--primary-light);
+    border-radius: var(--radius);
 }
 
 .comment-grid {
@@ -311,7 +321,8 @@ border-radius: var(--radius);
     border-radius: 8px;
     cursor: pointer;
     object-fit: contain;
-    border: 2px solid transparent; /* Garante que ao passar o mouse não mova o layout */
+    border: 2px solid transparent;
+    /* Garante que ao passar o mouse não mova o layout */
     opacity: 0.7;
     transition: all 0.25s ease-in-out;
 }
@@ -416,6 +427,7 @@ border-radius: var(--radius);
     color: #d00;
     /* Vermelho para Esgotado */
 }
+
 .acoes {
     display: flex;
     flex-direction: column;
@@ -433,7 +445,7 @@ border-radius: var(--radius);
 
 .quantidade button {
     width: 40px;
-    height: 40px;
+    height: 34px;
     border: none;
     background: var(--primary);
     color: white;
@@ -448,8 +460,7 @@ border-radius: var(--radius);
 }
 
 .quantidade input {
-    width: 60px;
-    height: 40px;
+    width: 40px;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -520,8 +531,6 @@ border-radius: var(--radius);
 }
 
 .product-detalhes {
-    margin-top: 30px;
-    padding-top: 20px;
     border-top: 1px solid #eee;
 }
 
@@ -563,7 +572,7 @@ border-radius: var(--radius);
 
 .tab-content {
     display: none;
-    padding: 20px 0;
+    padding: 10px 12px;
 }
 
 .tab-content.active {
@@ -589,186 +598,162 @@ border-radius: var(--radius);
     width: 200px;
     color: #555;
 }
+/* =========================================================
+   ESTILIZAÇÃO DA DESCRIÇÃO FORMATADA DO PRODUTO (DESKTOP E MOBILE)
+   ========================================================= */
+.product-description-content {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #2b2b2b;
+    padding: 12px 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
 
-/* ==================== RESPONSIVIDADE MELHORADA (abaixo de 700px) ==================== */
+/* Parágrafos com espaçamento equilibrado */
+.product-description-content p {
+    margin: 0 0 14px 0 !important;
+    padding: 0;
+    line-height: 1.65;
+    color: #333333;
+}
+
+.product-description-content p:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Títulos com hierarquia visual clara */
+.product-description-content h1,
+.product-description-content h2,
+.product-description-content h3,
+.product-description-content h4 {
+    color: #111111;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 22px 0 10px 0;
+}
+
+.product-description-content h1 {
+    font-size: 1.25rem;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 6px;
+}
+
+.product-description-content h2 {
+    font-size: 1.15rem;
+    color: #1a1a1a;
+    border-left: 4px solid var(--primary);
+    padding-left: 10px;
+}
+
+.product-description-content h3 {
+    font-size: 1.05rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.product-description-content h4 {
+    font-size: 0.98rem;
+    color: #333333;
+    font-weight: 600;
+}
+
+/* Listas estilizadas (Marcadores com a cor da marca) */
+.product-description-content ul,
+.product-description-content ol {
+    margin: 10px 0 16px 0;
+    padding-left: 20px;
+}
+
+.product-description-content ul {
+    list-style: none;
+}
+
+.product-description-content ul li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #333333;
+}
+
+.product-description-content ul li::before {
+    content: "■";
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--primary);
+    font-size: 10px;
+}
+
+.product-description-content ol li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #333333;
+}
+
+/* Negritos, Links e Elementos Especiais */
+.product-description-content strong,
+.product-description-content b {
+    color: #111111;
+    font-weight: 600;
+}
+
+.product-description-content a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.product-description-content a:hover {
+    color: var(--primary-light);
+}
+
+.product-description-content blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    background: #f4f9f7;
+    border-left: 4px solid var(--primary);
+    color: #444444;
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+.product-description-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+.product-description-content table td,
+.product-description-content table th {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+}
+
+/* =========================================================
+   RESPONSIVIDADE (DISPOSITIVOS MÓVEIS < 700PX)
+   ========================================================= */
 @media (max-width: 700px) {
     .product-container {
-        padding: 0 25px;
+        padding: 0 15px;
         margin: 10px auto;
     }
 
     .product-grid {
         grid-template-columns: 1fr;
-        gap: 0px;
+        gap: 0;
         padding: 15px;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .comment-grid {
-        grid-template-columns: 1fr;
-        gap: 0px;
-        padding: 15px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .product-imagens {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .imagem-principal {
-        width: 100%;
-        max-width: 350px;
-    }
-
-    .miniaturas {
-        flex-direction: row;
-        width: 100%;
-        justify-content: center;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-right: 0;
-        gap: 8px;
-        scrollbar-width: none;
-    }
-
-    .miniaturas::-webkit-scrollbar {
-        display: none;
-    }
-
-    .miniaturas img {
-        width: 70px;
-        height: 70px;
-        border-radius: 6px;
-    }
-
-    .product-info {
-        align-items: center;
-        text-align: center;
-        width: 100%;
     }
 
     .product-info h1 {
         font-size: 22px;
     }
 
-    .preco-desconto {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: fit-content;
-        margin: 0 auto;
-    }
-
-    /* selo PIX sobre o preço */
-    .desconto-pix {
-        position: absolute;
-        top: -18px;
-        right: -15px;
-        font-size: 13px;
-        padding: 4px 10px;
-        border-radius: 6px;
-        background-color: #00b686;
-        color: #fff;
-        font-weight: 600;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        z-index: 2;
-        /* fica por cima, mas só do preço, não do preço antigo */
-    }
-
-    /* preço principal */
-    .preco-valor {
-        font-size: 42px;
-        font-weight: 700;
-        line-height: 1.2;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* preço antigo — agora abaixo e visível */
-    .preco-antigo {
-        display: none;
-    }
-
-    .preco-antigo-mobile {
-        display: flex;
-        font-size: 14px;
-        color: var(--muted);
-        text-decoration: line-through;
-        justify-content: left;
-    }
-
-    .parcelas {
-        font-size: 13px;
-    }
-
-    .estoque-status {
-        justify-content: center;
-    }
-
-    .acoes {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-
-   
-    /* ======== Quantidade (como no PC) ======== */
-    .quantidade {
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        justify-content: flex-start;
-        /* ← antes era flex-end */
-        align-items: center;
-        gap: 15px;
-        margin: 0 auto;
-    }
-
-    .quantidade button {
-        width: 44px;
-        height: 44px;
-        font-size: 22px;
-    }
-
-    .quantidade input {
-        width: 70px;
-        height: 44px;
-        font-size: 17px;
-    }
-
-    /* ======== Botões maiores e centralizados ======== */
-    .btn-comprar {
-        display: block;
-        width: 100%;
-        max-width: 420px;
-        /* força largura total mesmo em telas pequenas */
-        font-size: 17px;
-        padding: 16px;
-        border-radius: 10px;
-        text-align: center;
-        margin: 0 auto;
-        /* centraliza em navegadores antigos */
-    }
-
-    .btn-comprar.principal {
-        background: linear-gradient(90deg, var(--primary), var(--primary-light));
-        color: white;
-        box-shadow: 0 4px 15px rgba(0, 182, 134, 0.4);
-    }
-
-    .btn-comprar.secundario {
-        background: transparent;
-        color: var(--primary);
-        border: 2px solid rgba(0, 230, 160, 0.7);
-    }
-
-    /* Tabs e descrição */
     .tabs {
         gap: 10px;
         padding: 8px 10px;
@@ -786,8 +771,36 @@ border-radius: var(--radius);
     }
 
     .tab-content {
-        padding: 15px 5px;
-        text-align: left;
+        padding: 10px 0;
+    }
+
+    .product-description-content {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 5px 0;
+    }
+
+    .product-description-content h1 {
+        font-size: 1.15rem;
+    }
+
+    .product-description-content h2 {
+        font-size: 1.05rem;
+        padding-left: 8px;
+    }
+
+    .product-description-content h3 {
+        font-size: 0.98rem;
+    }
+
+    .product-description-content ul,
+    .product-description-content ol {
+        padding-left: 14px;
+    }
+
+    .product-description-content ul li {
+        padding-left: 16px;
+        margin-bottom: 6px;
     }
 
     #specsTable td {
@@ -803,5 +816,71 @@ border-radius: var(--radius);
         font-size: 12px;
         padding: 15px 0;
         text-align: center;
+    }
+}
+
+/* =========================================================
+   SISTEMA DE EXPANSÃO DA DESCRIÇÃO ("VER MAIS / VER MENOS")
+   ========================================================= */
+.product-description-content.expandable {
+    max-height: 260px;
+    overflow: hidden;
+    position: relative;
+    /* Animação mais longa e fluida ao abrir/fechar */
+    transition: max-height 0.75s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Gradiente de esmaecimento inferior */
+.product-description-content.expandable::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.product-description-content.expanded {
+    max-height: 3000px; /* Permite expansão total do conteúdo */
+}
+
+.product-description-content.expanded::after {
+    opacity: 0;
+}
+
+/* Botão "Ver mais" / "Ver menos" limpo */
+.btn-ver-mais-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.btn-ver-mais {
+    background: transparent;
+    border: none;
+    color: var(--primary, #00926b);
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-ver-mais:hover {
+    color: var(--primary-light, #00b37d);
+    text-decoration: underline;
+}
+/* Ajuste Fino Responsivo para Mobile */
+@media (max-width: 700px) {
+    .product-description-content.expandable {
+        max-height: 220px;
+    }
+    
+    .btn-ver-mais {
+        font-size: 14px;
     }
 }

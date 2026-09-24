@@ -536,18 +536,16 @@ main {
     font-size: 13px;
     color: var(--muted);
     margin-top: 6px;
-    line-height: 1.4; /* Altura de cada linha de texto */
-    
-    /* Mágica para cortar o texto com "..." */
+    line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Define quantas linhas aparecem antes de cortar */
+    -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    
-    /* Garante altura máxima fixa para todos os cards ficarem alinhados */
-    height: calc(13px * 1.4 * 2); /* tamanho da fonte * line-height * número de linhas */
+    max-height: 2.8em; /* 2 linhas * 1.4 line-height */
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .thumb {
