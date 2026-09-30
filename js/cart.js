@@ -148,6 +148,15 @@ window.finalizarPedidoWhatsApp = function finalizarPedidoWhatsApp() {
         return;
     }
 
+    // 🚀 REGISTRA COTAÇÕES NO ANALYTICS:
+    // Pega cada ID diferente no carrinho (a quantidade de unidades não altera a contagem de cotações)
+    const productIds = cartKeys.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+    const uniqueProductIds = [...new Set(productIds)];
+
+    if (uniqueProductIds.length > 0 && typeof registrarCotacaoAnalytics === 'function') {
+        registrarCotacaoAnalytics(uniqueProductIds);
+    }
+
     let mensagem = "Olá! Gostaria de finalizar o seguinte pedido na *Equipe Alfa*:\n\n*Itens do Pedido:*\n";
     let totalPix = 0;
 

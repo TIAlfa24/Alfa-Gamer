@@ -4,7 +4,6 @@
 function sanitizarHTMLDescricao(htmlTexto) {
     if (!htmlTexto) return '';
 
-    // 1. Compatibilidade com textos simples sem tags HTML
     const temHTML = /<[a-z][\s\S]*>/i.test(htmlTexto);
     let conteudoParaProcessar = htmlTexto;
     
@@ -15,7 +14,6 @@ function sanitizarHTMLDescricao(htmlTexto) {
             .join('');
     }
 
-    // 2. Cria documento DOM em memória para sanitização segura
     const doc = new DOMParser().parseFromString(conteudoParaProcessar, 'text/html');
 
     const allowedTags = [
@@ -57,13 +55,10 @@ function configurarDescricaoExpandivel() {
     const descElement = document.getElementById('productDescription');
     if (!descElement) return;
 
-    // Remove botão anterior se já existir na página
     const btnAntigo = descElement.parentElement.querySelector('.btn-ver-mais-container');
     if (btnAntigo) btnAntigo.remove();
 
     descElement.classList.remove('expandable', 'expanded');
-
-    // Altura limite em pixels para ativamento do corte
     const ALTURA_LIMITE = 260;
 
     setTimeout(() => {
@@ -96,17 +91,27 @@ function configurarDescricaoExpandivel() {
         }
     }, 150);
 }
+
+// ==========================================
+// COMPRA VIA WHATSAPP (BOTÃO COMPRAR AGORA)
+// ==========================================
 const WHATSAPP_PHONE = '5531983753432';
 
 window.comprarNoWhatsApp = function comprarNoWhatsApp() {
     const qtyInput = document.getElementById('qty');
-    const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+    const qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = parseInt(urlParams.get('id'));
-    const product = PRODUCTS.find(p => String(p.id) === String(productId));
+    const product = window.currentProduct || (window.PRODUCTS || []).find(p => String(p.id) === String(new URLSearchParams(window.location.search).get('id')));
 
-    if (!product) return;
+    if (!product) {
+        alert('⚠️ Não foi possível carregar os dados deste produto. Recarregue a página.');
+        return;
+    }
+
+    // 🚀 REGISTRA 1 COTAÇÃO PARA ESTE PRODUTO
+    if (typeof registrarCotacaoAnalytics === 'function') {
+        registrarCotacaoAnalytics([product.id]);
+    }
 
     const total = money(product.price * qty);
 
@@ -117,6 +122,7 @@ window.comprarNoWhatsApp = function comprarNoWhatsApp() {
             specsText += `\n• *${chave}:* ${valor}`;
         });
     }
+
     const mensagem = `Olá! Gostaria de comprar o seguinte produto:
 
 *Produto:* ${product.title}
@@ -124,6 +130,7 @@ window.comprarNoWhatsApp = function comprarNoWhatsApp() {
 *Preço Total:* ${total}${specsText}
 
 Ainda está disponível?`;
+
     const encodedMessage = encodeURIComponent(mensagem);
     const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
@@ -182,10 +189,12 @@ async function inicializarPaginaProduto() {
     }
 
     let product = null;
-    try {
-        const client = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
 
-        if (client) {
+    try {
+        // Usa a função correta que retorna a instância do cliente Supabase
+        const client = typeof inicializarSupabase === 'function' ? await inicializarSupabase() : null;
+
+        if (client && typeof client.from === 'function') {
             const { data, error } = await client
                 .from('produtos')
                 .select('*')
@@ -215,28 +224,33 @@ async function inicializarPaginaProduto() {
         return;
     }
 
+    window.currentProduct = product;
+
     if (!window.PRODUCTS) window.PRODUCTS = [];
     if (!window.PRODUCTS.some(p => String(p.id) === String(product.id))) {
         window.PRODUCTS.push(product);
     }
 
     const oldPrice = product.price * 1.15;
-    document.getElementById('productOldPrice').textContent = money(oldPrice);
-    document.getElementById('productName').textContent = product.title;
-    document.getElementById('productTitle').textContent = product.title;
+    if (document.getElementById('productOldPrice')) document.getElementById('productOldPrice').textContent = money(oldPrice);
+    if (document.getElementById('productName')) document.getElementById('productName').textContent = product.title;
+    if (document.getElementById('productTitle')) document.getElementById('productTitle').textContent = product.title;
 
     const catLink = document.getElementById('categoryLink');
     const subCatLink = document.getElementById('subcategoryLink');
-    catLink.textContent = product.category.charAt(0).toUpperCase() + product.category.slice(1);
-    subCatLink.textContent = product.subcategory.charAt(0).toUpperCase() + product.subcategory.slice(1);
-    catLink.href = `/?cat=${encodeURIComponent(product.category)}`;
-    subCatLink.href = `/?cat=${encodeURIComponent(product.category)}&subcat=${encodeURIComponent(product.subcategory)}`;
+    if (catLink && product.category) {
+        catLink.textContent = product.category.charAt(0).toUpperCase() + product.category.slice(1);
+        catLink.href = `/?cat=${encodeURIComponent(product.category)}`;
+    }
+    if (subCatLink && product.subcategory) {
+        subCatLink.textContent = product.subcategory.charAt(0).toUpperCase() + product.subcategory.slice(1);
+        subCatLink.href = `/?cat=${encodeURIComponent(product.category)}&subcat=${encodeURIComponent(product.subcategory)}`;
+    }
 
-    document.getElementById('productPrice').textContent = money(product.price);
-    document.getElementById('productOldPriceMobile').textContent = money(oldPrice);
-    document.getElementById('productInstallments').textContent = `em até 12x de ${money(product.price / 12)} sem juros`;
+    if (document.getElementById('productPrice')) document.getElementById('productPrice').textContent = money(product.price);
+    if (document.getElementById('productOldPriceMobile')) document.getElementById('productOldPriceMobile').textContent = money(oldPrice);
+    if (document.getElementById('productInstallments')) document.getElementById('productInstallments').textContent = `em até 12x de ${money(product.price / 12)} sem juros`;
 
-    // Renderização sanitizada da descrição + Ativação do "Ver Mais / Ver Menos"
     const descElement = document.getElementById('productDescription');
     if (descElement) {
         const rawDesc = product.desc_text || product.desc || '';
@@ -244,7 +258,9 @@ async function inicializarPaginaProduto() {
         configurarDescricaoExpandivel();
     }
 
-    carregarImagensProduto(product.id);
+    if (typeof carregarImagensProduto === 'function') {
+        carregarImagensProduto(product.id);
+    }
     if (typeof loadReviews === 'function') {
         loadReviews(product.id);
     }
@@ -261,25 +277,27 @@ async function inicializarPaginaProduto() {
         btnComprarSecundario.onclick = window.comprarNoWhatsApp;
     }
 
-    if (product.stock > 0) {
-        stockStatusEl.textContent = 'Em Estoque';
-        stockStatusEl.classList.add('em-estoque');
-        stockStatusEl.classList.remove('esgotado');
-        if (qtyInput) qtyInput.max = product.stock;
-    } else {
-        stockStatusEl.textContent = 'Esgotado';
-        stockStatusEl.classList.add('esgotado');
-        stockStatusEl.classList.remove('em-estoque');
-        if (btnComprarPrincipal) btnComprarPrincipal.style.display = 'none';
-        if (btnComprarSecundario) btnComprarSecundario.style.display = 'none';
-        if (quantidadeContainer) quantidadeContainer.style.display = 'none';
-        if (freteContainer) freteContainer.style.display = 'none';
+    if (stockStatusEl) {
+        if (product.stock > 0) {
+            stockStatusEl.textContent = 'Em Estoque';
+            stockStatusEl.classList.add('em-estoque');
+            stockStatusEl.classList.remove('esgotado');
+            if (qtyInput) qtyInput.max = product.stock;
+        } else {
+            stockStatusEl.textContent = 'Esgotado';
+            stockStatusEl.classList.add('esgotado');
+            stockStatusEl.classList.remove('em-estoque');
+            if (btnComprarPrincipal) btnComprarPrincipal.style.display = 'none';
+            if (btnComprarSecundario) btnComprarSecundario.style.display = 'none';
+            if (quantidadeContainer) quantidadeContainer.style.display = 'none';
+            if (freteContainer) freteContainer.style.display = 'none';
 
-        const btnEsgotado = document.createElement('button');
-        btnEsgotado.className = 'btn-comprar esgotado';
-        btnEsgotado.textContent = '🔒 Esgotado';
-        btnEsgotado.disabled = true;
-        if (acoesContainer) acoesContainer.appendChild(btnEsgotado);
+            const btnEsgotado = document.createElement('button');
+            btnEsgotado.className = 'btn-comprar esgotado';
+            btnEsgotado.textContent = '🔒 Esgotado';
+            btnEsgotado.disabled = true;
+            if (acoesContainer) acoesContainer.appendChild(btnEsgotado);
+        }
     }
 
     const specsTable = document.getElementById('specsTable');
@@ -294,19 +312,19 @@ async function inicializarPaginaProduto() {
 
     window.adjustQty = function adjustQty(delta) {
         const input = document.getElementById('qty');
-        const maxQty = parseInt(input.max) || 99;
-        const newValue = Math.max(1, Math.min(maxQty, parseInt(input.value) + delta));
+        const maxQty = parseInt(input.max, 10) || 99;
+        const newValue = Math.max(1, Math.min(maxQty, (parseInt(input.value, 10) || 1) + delta));
         input.value = newValue;
     };
 
     const qtyInputField = document.getElementById('qty');
     if (qtyInputField) {
         qtyInputField.addEventListener('input', () => {
-            const max = parseInt(qtyInputField.max) || 99;
-            const val = parseInt(qtyInputField.value);
+            const max = parseInt(qtyInputField.max, 10) || 99;
+            const val = parseInt(qtyInputField.value, 10);
             if (val > max) {
                 qtyInputField.value = max;
-                showLimitNotification();
+                if (typeof showLimitNotification === 'function') showLimitNotification();
             } else if (val < 1) {
                 qtyInputField.value = 1;
             }
@@ -314,15 +332,17 @@ async function inicializarPaginaProduto() {
     }
 
     window.addToCartAndNavigate = function addToCartAndNavigate() {
-        const qty = parseInt(document.getElementById('qty').value);
-        addToCart(product.id, qty);
+        const qty = parseInt(document.getElementById('qty').value, 10) || 1;
+        if (typeof addToCart === 'function') {
+            addToCart(product.id, qty);
+        }
     };
 
     window.trocarImagem = function trocarImagem(src) {
-        document.getElementById('mainImage').src = src;
+        const mainImg = document.getElementById('mainImage');
+        if (mainImg) mainImg.src = src;
     };
 
-    // Inicializa a navegação das abas
     inicializarAbas();
 }
 

@@ -1,5 +1,5 @@
 // ==========================================
-// FUNÇÕES DE SUPABASE E HELPERS
+// 1. SUPABASE CLIENTE & HELPERS DE AUTENTICAÇÃO
 // ==========================================
 async function obterClienteSupabase() {
     if (window.supabaseClient?.auth) return window.supabaseClient;
@@ -8,367 +8,257 @@ async function obterClienteSupabase() {
         : null;
 }
 
-async function cadastrarNovoProduto(produtoData) {
+let trafficChartInstance = null;
+let deviceChartInstance = null;
+let quotesChartInstance = null;
+
+// ==========================================
+// 2. FILTRO DE DATAS
+// ==========================================
+function obterDataInicioFiltro(periodo) {
+    const agora = new Date();
+    if (periodo === 'hoje') {
+        agora.setHours(0, 0, 0, 0);
+        return agora.toISOString();
+    } else if (periodo === '30dias') {
+        agora.setDate(agora.getDate() - 30);
+        return agora.toISOString();
+    } else {
+        agora.setDate(agora.getDate() - 7);
+        return agora.toISOString();
+    }
+}
+
+// ==========================================
+// 3. CARREGAMENTO PRINCIPAL DO DASHBOARD
+// ==========================================
+async function carregarDashboard(periodo = '7dias') {
     const supabase = await obterClienteSupabase();
-    if (!supabase) {
-        alert('⚠️ Sistema de banco de dados não inicializado.');
-        return false;
-    }
+    if (!supabase) return;
 
-    const { error } = await supabase
+    const dataInicio = obterDataInicioFiltro(periodo);
+
+    // A. PRODUTOS NO CATÁLOGO (COUNT REAL DA TABELA 'produtos')
+    const { count: totalCatCount } = await supabase
         .from('produtos')
-        .insert([produtoData]);
+        .select('*', { count: 'exact', head: true });
 
-    if (error) {
-        alert('❌ Erro ao cadastrar produto: ' + error.message);
-        return false;
-    } else {
-        alert('✅ Produto inserido com sucesso!');
-        document.getElementById('form-cadastro-produto').reset();
-        return true;
+    const elTotalProducts = document.getElementById('kpi-total-products');
+    if (elTotalProducts) elTotalProducts.textContent = totalCatCount || 0;
+
+    // B. BUSCA EVENTOS NO ANALYTICS NO PERÍODO
+    const { data: analyticsData, error: errAnalytics } = await supabase
+        .from('analytics')
+        .select('id, event_type, page_path, produto_id, session_id, created_at, produtos(id, title, images, price)')
+        .gte('created_at', dataInicio);
+
+    if (errAnalytics) {
+        console.error('Erro ao buscar analytics:', errAnalytics);
+        return;
     }
-}
 
-// Gerador de Tags Automáticas
-function gerarTagsAutomaticas(titulo, descTexto, specsObj) {
-    const valoresSpecs = Object.values(specsObj).join(' ');
-    const descLimpa = (descTexto || '').replace(/<[^>]*>?/gm, ' ');
-    const textoCompleto = `${titulo} ${descLimpa}${valoresSpecs}`.toLowerCase();
+    const eventos = analyticsData || [];
 
-    const palavras = textoCompleto
-        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
-        .split(/\s+/)
-        .filter(p => p.length > 3);
+    // C. VISITANTES ÚNICOS
+    const sessoesUnicas = new Set(eventos.map(e => e.session_id).filter(Boolean)).size;
+    const elVisitors = document.getElementById('kpi-visitors');
+    if (elVisitors) elVisitors.textContent = sessoesUnicas;
 
-    return [...new Set(palavras)];
+    // D. TOTAL DE COTAÇÕES (Eventos do tipo 'quote')
+    const cotacoesEventos = eventos.filter(e => e.event_type === 'quote');
+    const elQuotes = document.getElementById('kpi-quotes');
+    if (elQuotes) elQuotes.textContent = cotacoesEventos.length;
+
+    // E. PRODUTOS DESTAQUE
+    renderizarTopProduto(eventos.filter(e => e.event_type === 'product_view'), 'top-viewed-container', 'visualizações');
+    renderizarTopProduto(cotacoesEventos, 'top-quoted-container', 'cotações');
+
+    // F. DESENHAR OS 3 GRÁFICOS
+    renderizarGraficoTrafego(eventos);
+    renderizarGraficoDispositivos(eventos);
+    renderizarGraficoCotacoes(cotacoesEventos);
 }
 
 // ==========================================
-// GERENCIAMENTO DE MÚLTIPLAS IMAGENS
+// 4. RENDERIZAÇÃO DOS PRODUTOS DESTAQUE
 // ==========================================
-let arrayArquivosImagens = [];
+function renderizarTopProduto(listaEventos, containerId, sufixoTexto) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-async function comprimirImagem(file) {
-    const options = {
-        maxSizeMB: 0.3,
-        maxWidthOrHeight: 1200,
-        useWebWorker: true
-    };
-    try {
-        return await imageCompression(file, options);
-    } catch (error) {
-        console.error("Erro ao comprimir imagem:", error);
-        return file;
-    }
-}
+    const validos = listaEventos.filter(e => e.produtos);
 
-async function uploadMultiplasImagens(arquivos, supabase) {
-    const urls = [];
-
-    for (let i = 0; i < arquivos.length; i++) {
-        const file = arquivos[i].file;
-        const fileExt = file.name.split('.').pop();
-        const fileName = `images/products/${Date.now()}_img_${i + 1}.${fileExt}`;
-
-        const { error } = await supabase.storage
-            .from('produtos')
-            .upload(fileName, file);
-
-        if (error) throw error;
-
-        const { data: publicUrlData } = supabase.storage
-            .from('produtos')
-            .getPublicUrl(fileName);
-
-        urls.push(publicUrlData.publicUrl);
+    if (validos.length === 0) {
+        container.innerHTML = `<p style="font-size: 13px; color: #888; margin: 0; font-style: italic;">Nenhum dado registrado no período.</p>`;
+        return;
     }
 
-    return urls;
-}
+    const contagem = {};
+    let campeao = null;
+    let maxCount = 0;
 
-function renderizarPreviews() {
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('prod-images-file');
-    if (!dropZone) return;
+    validos.forEach(e => {
+        const p = e.produtos;
+        if (!p) return;
+        contagem[p.id] = contagem[p.id] || { produto: p, total: 0 };
+        contagem[p.id].total += 1;
 
-    dropZone.innerHTML = '';
+        if (contagem[p.id].total > maxCount) {
+            maxCount = contagem[p.id].total;
+            campeao = contagem[p.id];
+        }
+    });
 
-    if (arrayArquivosImagens.length === 0) {
-        const spanText = document.createElement('span');
-        spanText.style.color = '#555';
-        spanText.style.pointerEvents = 'none';
-        spanText.innerHTML = '<a>Clique aqui ou arraste as imagens para anexar</a>';
-        dropZone.appendChild(spanText);
+    if (campeao) {
+        const prod = campeao.produto;
+        let imgSrc = '/images/products/placeholder.png';
+        if (Array.isArray(prod.images) && prod.images.length > 0) {
+            imgSrc = prod.images[0];
+        }
+
+        container.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="${imgSrc}" alt="${prod.title}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 6px; background: #f8f9fa; border: 1px solid #eee;" onerror="this.src='/images/products/placeholder.png'">
+                <div>
+                    <h4 style="margin: 0; font-size: 14px; color: #2c3e50;">${prod.title}</h4>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--primary, #00926b); font-weight: 700;">${campeao.total} ${sufixoTexto}</p>
+                </div>
+            </div>
+        `;
     } else {
-        arrayArquivosImagens.forEach((item) => {
-            const div = document.createElement('div');
-            div.className = 'preview-card';
-            div.dataset.id = item.id;
-
-            div.innerHTML = `
-                <div class="badge-capa">CAPA</div>
-                <img src="${item.previewUrl}" alt="Preview">
-                <button type="button" class="btn-remover-img" onclick="event.stopPropagation(); removerImagem('${item.id}')">x</button>
-            `;
-            dropZone.appendChild(div);
-        });
-
-        const addMoreCard = document.createElement('div');
-        addMoreCard.className = 'preview-card add-more-card';
-        addMoreCard.style.cssText = 'display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc; background: white; font-size: 32px; color: #ccc; cursor: pointer; width: 80px; height: 80px; border-radius: 6px;';
-        addMoreCard.title = 'Adicionar mais imagens';
-        addMoreCard.innerHTML = '+'; // Ícone do + corrigido
-
-        dropZone.appendChild(addMoreCard);
-    }
-
-    if (fileInput) {
-        dropZone.appendChild(fileInput);
+        container.innerHTML = `<p style="font-size: 13px; color: #888; margin: 0; font-style: italic;">Nenhum dado registrado no período.</p>`;
     }
 }
 
-window.removerImagem = function (id) {
-    arrayArquivosImagens = arrayArquivosImagens.filter(img => img.id !== id);
-    renderizarPreviews();
+// ==========================================
+// 5. GRÁFICOS (CHART.JS)
+// ==========================================
+
+// GRÁFICO 1: FLUXO DE ACESSOS
+function renderizarGraficoTrafego(eventos) {
+    const canvas = document.getElementById('trafficChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const ctx = canvas.getContext('2d');
+
+    const datas = {};
+    eventos.forEach(e => {
+        const d = new Date(e.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        datas[d] = (datas[d] || 0) + 1;
+    });
+
+    const labels = Object.keys(datas);
+    const dataValues = Object.values(datas);
+
+    if (trafficChartInstance) trafficChartInstance.destroy();
+
+    trafficChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels.length ? labels : ['Sem dados'],
+            datasets: [{
+                label: 'Acessos',
+                data: dataValues.length ? dataValues : [0],
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+// GRÁFICO 2: DISPOSITIVOS
+function renderizarGraficoDispositivos(eventos) {
+    const canvas = document.getElementById('deviceChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const ctx = canvas.getContext('2d');
+
+    let mobile = 0;
+    let desktop = 0;
+
+    eventos.forEach(e => {
+        if (e.page_path && e.page_path.includes('mobile')) {
+            mobile++;
+        } else {
+            desktop++;
+        }
+    });
+
+    if (deviceChartInstance) deviceChartInstance.destroy();
+
+    deviceChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Desktop', 'Mobile'],
+            datasets: [{
+                data: (mobile === 0 && desktop === 0) ? [1, 0] : [desktop, mobile],
+                backgroundColor: ['#2c3e50', '#00926b']
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+// GRÁFICO 3: COTAÇÕES AO LONGO DO TEMPO
+function renderizarGraficoCotacoes(cotacoesEventos) {
+    const canvas = document.getElementById('quotesChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const ctx = canvas.getContext('2d');
+
+    const datas = {};
+    cotacoesEventos.forEach(e => {
+        const d = new Date(e.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        datas[d] = (datas[d] || 0) + 1;
+    });
+
+    const labels = Object.keys(datas);
+    const dataValues = Object.values(datas);
+
+    if (quotesChartInstance) quotesChartInstance.destroy();
+
+    quotesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels.length ? labels : ['Sem cotações'],
+            datasets: [{
+                label: 'Cotações',
+                data: dataValues.length ? dataValues : [0],
+                backgroundColor: '#00926b',
+                borderRadius: 4
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+}
+
+window.atualizarPeriodoDashboard = function (periodo) {
+    carregarDashboard(periodo);
 };
 
 // ==========================================
-// ESTADO E GESTÃO DAS ESPECIFICAÇÕES TÉCNICAS
-// ==========================================
-let productSpecsList = [];
-
-function adicionarEspecificacao() {
-    const keyInput = document.getElementById('spec-key-input');
-    const valInput = document.getElementById('spec-val-input');
-
-    if (!keyInput || !valInput) return;
-
-    const chave = keyInput.value.trim();
-    const valor = valInput.value.trim();
-
-    if (!chave || !valor) {
-        alert('⚠️ Preencha o nome da especificação e o valor antes de adicionar.');
-        return;
-    }
-
-    const indexExistente = productSpecsList.findIndex(
-        item => item.key.toLowerCase() === chave.toLowerCase()
-    );
-
-    if (indexExistente !== -1) {
-        if (confirm(`A especificação "${chave}" já existe. Deseja atualizar o valor para "${valor}"?`)) {
-            productSpecsList[indexExistente].val = valor;
-        } else {
-            return;
-        }
-    } else {
-        productSpecsList.push({ key: chave, val: valor });
-    }
-
-    keyInput.value = '';
-    valInput.value = '';
-    keyInput.focus();
-
-    renderizarEspecificacoes();
-    atualizarPreviewTagsAutomaticas();
-}
-
-function removerEspecificacao(index) {
-    productSpecsList.splice(index, 1);
-    renderizarEspecificacoes();
-    atualizarPreviewTagsAutomaticas();
-}
-
-function editarEspecificacao(index) {
-    const item = productSpecsList[index];
-    if (!item) return;
-
-    const keyInput = document.getElementById('spec-key-input');
-    const valInput = document.getElementById('spec-val-input');
-
-    if (keyInput && valInput) {
-        keyInput.value = item.key;
-        valInput.value = item.val;
-        keyInput.focus();
-    }
-
-    removerEspecificacao(index);
-}
-
-function renderizarEspecificacoes() {
-    const container = document.getElementById('specs-list-container');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (productSpecsList.length === 0) {
-        return;
-    }
-
-    productSpecsList.forEach((item, index) => {
-        const row = document.createElement('div');
-        row.className = 'spec-item-row';
-        row.innerHTML = `
-            <div class="spec-item-info">
-                <span class="spec-key">${item.key}</span>
-                <span class="spec-arrow">→</span>
-                <span class="spec-val">${item.val}</span>
-            </div>
-            <div class="spec-item-actions">
-                <button type="button" class="btn-spec-edit" title="Editar especificação" onclick="editarEspecificacao(${index})">Editar</button>
-                <button type="button" class="btn-spec-remove" title="Remover especificação" onclick="removerEspecificacao(${index})">&times;</button>
-            </div>
-        `;
-        container.appendChild(row);
-    });
-}
-
-function obterSpecsJSON() {
-    const specsObj = {};
-    productSpecsList.forEach(item => {
-        if (item.key && item.val) {
-            specsObj[item.key] = item.val;
-        }
-    });
-    return specsObj;
-}
-
-window.removerEspecificacao = removerEspecificacao;
-window.editarEspecificacao = editarEspecificacao;
-
-// ==========================================
-// ESTADO E GESTÃO DAS TAGS VISUAIS
-// ==========================================
-let manualTagsSet = new Set();
-let removedAutoTagsSet = new Set();
-
-function normalizarTag(tag) {
-    return tag.trim().toLowerCase().replace(/,/g, '');
-}
-
-function adicionarTagManual(tagTexto) {
-    const tagLimpa = normalizarTag(tagTexto);
-    if (!tagLimpa) return;
-
-    if (manualTagsSet.has(tagLimpa)) return;
-
-    manualTagsSet.add(tagLimpa);
-    renderizarTagsManuais();
-    atualizarPreviewTagsAutomaticas();
-}
-
-function removerTagManual(tagTexto) {
-    manualTagsSet.delete(tagTexto);
-    renderizarTagsManuais();
-    atualizarPreviewTagsAutomaticas();
-}
-
-function removerTagAutomatica(tagTexto) {
-    removedAutoTagsSet.add(tagTexto);
-    atualizarPreviewTagsAutomaticas();
-}
-
-function renderizarTagsManuais() {
-    const container = document.getElementById('manual-tags-list');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (manualTagsSet.size === 0) {
-        container.innerHTML = '<span class="tags-placeholder-text"><label style="margin-bottom: 0; color: var(--muted);">Nenhuma tag manual adicionada.</label></span>';
-        return;
-    }
-
-    manualTagsSet.forEach(tag => {
-        const chip = document.createElement('div');
-        chip.className = 'tag-chip manual-tag';
-        chip.innerHTML = `
-            <span>${tag}</span>
-            <span class="tag-badge">manual</span>
-            <button type="button" class="btn-remove-tag" title="Remover tag" onclick="removerTagManual('${tag}')">&times;</button>
-        `;
-        container.appendChild(chip);
-    });
-}
-
-function atualizarPreviewTagsAutomaticas() {
-    const container = document.getElementById('auto-tags-list');
-    if (!container) return;
-
-    const titulo = document.getElementById('prod-title')?.value || '';
-    const descTexto = window.quillEditor ? window.quillEditor.getText() : (document.getElementById('editor-desc')?.innerText || '');
-    const specsJSON = obterSpecsJSON();
-
-    const rawAutoTags = gerarTagsAutomaticas(titulo, descTexto, specsJSON);
-    const filteredAutoTags = rawAutoTags.filter(tag => !removedAutoTagsSet.has(tag) && !manualTagsSet.has(tag));
-
-    container.innerHTML = '';
-
-    if (filteredAutoTags.length === 0) {
-        container.innerHTML = '<span class="tags-placeholder-text"><label style="margin-bottom: 0; color: #738277;">Nenhuma tag automática gerada.</label></span>';
-        return;
-    }
-
-    filteredAutoTags.forEach(tag => {
-        const chip = document.createElement('div');
-        chip.className = 'tag-chip auto-tag';
-        chip.innerHTML = `
-            <span>${tag}</span>
-            <span class="tag-badge">auto</span>
-            <button type="button" class="btn-remove-tag" title="Descartar tag automática" onclick="removerTagAutomatica('${tag}')">&times;</button>
-        `;
-        container.appendChild(chip);
-    });
-}
-
-function obterTagsFinais() {
-    const titulo = document.getElementById('prod-title')?.value || '';
-    const descTexto = window.quillEditor ? window.quillEditor.getText() : (document.getElementById('editor-desc')?.innerText || '');
-    const specsJSON = obterSpecsJSON();
-
-    const rawAutoTags = gerarTagsAutomaticas(titulo, descTexto, specsJSON);
-    const validAutoTags = rawAutoTags.filter(tag => !removedAutoTagsSet.has(tag));
-
-    return [...new Set([...manualTagsSet, ...validAutoTags])];
-}
-
-window.removerTagManual = removerTagManual;
-window.removerTagAutomatica = removerTagAutomatica;
-
-// ==========================================
-// INICIALIZAÇÃO DA PÁGINA
+// 6. INICIALIZAÇÃO & AUTENTICAÇÃO DO ADMIN
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. MENU HAMBÚRGUER MOBILE (Garantido na inicialização da página)
+    // Menu Drawer
+    const userDrawer = document.getElementById('userDrawer');
+    const openUDrawerBtn = document.getElementById('openUDrawer');
+
+    openUDrawerBtn?.addEventListener('click', () => {
+        userDrawer?.classList.toggle('batata');
+    });
+
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');
+    hamburger?.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu?.classList.toggle('active');
+    });
 
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            const isNowActive = !hamburger.classList.contains('active');
-            hamburger.classList.toggle('active', isNowActive);
-            navMenu.classList.toggle('active', isNowActive);
-        });
-    }
-
-    // 2. Editor Quill
-    const editorContainer = document.getElementById('editor-desc');
-    if (editorContainer) {
-        window.quillEditor = new Quill('#editor-desc', {
-            theme: 'snow',
-            placeholder: 'Escreva a descrição detalhada do produto aqui...'
-        });
-
-        window.quillEditor.on('text-change', () => {
-            atualizarPreviewTagsAutomaticas();
-        });
-    }
-
-   // 3. Autenticação Supabase
+    // Autenticação
     const supabase = await obterClienteSupabase();
     if (!supabase) {
-        alert('Não foi possível inicializar a autenticação. Recarregue a página.');
-        window.location.replace('/auth/login');
+        document.body.style.display = 'block';
         return;
     }
 
@@ -391,209 +281,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Exibe a página somente após confirmar o perfil de admin
     document.body.style.display = 'block';
-
-    // 4. Drag & Drop no DropZone
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('prod-images-file');
-
-    if (dropZone && fileInput) {
-        if (typeof Sortable !== 'undefined') {
-            new Sortable(dropZone, {
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                filter: '.add-more-card',
-                onEnd: function (evt) {
-                    const itemMovido = arrayArquivosImagens.splice(evt.oldIndex, 1)[0];
-                    arrayArquivosImagens.splice(evt.newIndex, 0, itemMovido);
-                    renderizarPreviews();
-                },
-            });
-        }
-
-        dropZone.addEventListener('click', (e) => {
-            if (
-                e.target === dropZone ||
-                e.target.tagName === 'SPAN' ||
-                e.target.tagName === 'A' ||
-                e.target.classList.contains('add-more-card') ||
-                e.target.textContent === '+'
-            ) {
-                fileInput.click();
-            }
-        });
-
-        fileInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            dropZone.innerHTML = `<span style="color: #00926b; font-weight: bold; width: 100%; text-align: center;">Comprimindo imagens...</span>`;
-
-            for (const file of files) {
-                const compressedFile = await comprimirImagem(file);
-                const previewUrl = URL.createObjectURL(compressedFile);
-
-                arrayArquivosImagens.push({
-                    id: Math.random().toString(36).substr(2, 9),
-                    file: compressedFile,
-                    previewUrl: previewUrl
-                });
-            }
-
-            fileInput.value = '';
-            renderizarPreviews();
-        });
-    }
-
-    // 5. Handlers do Construtor de Especificações
-    const keyInput = document.getElementById('spec-key-input');
-    const valInput = document.getElementById('spec-val-input');
-    const btnAddSpec = document.getElementById('btn-add-spec');
-
-    if (btnAddSpec) {
-        btnAddSpec.addEventListener('click', adicionarEspecificacao);
-    }
-
-    if (keyInput) {
-        keyInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                valInput?.focus();
-            }
-        });
-    }
-
-    if (valInput) {
-        valInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                adicionarEspecificacao();
-            }
-        });
-    }
-
-    // 6. Handlers de Tags Manuais e Ouvintes
-    const inputManual = document.getElementById('input-tag-manual');
-    const btnAddManual = document.getElementById('btn-add-tag-manual');
-
-    if (inputManual) {
-        inputManual.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                adicionarTagManual(inputManual.value);
-                inputManual.value = '';
-            }
-        });
-    }
-
-    if (btnAddManual && inputManual) {
-        btnAddManual.addEventListener('click', () => {
-            adicionarTagManual(inputManual.value);
-            inputManual.value = '';
-        });
-    }
-
-    document.getElementById('prod-title')?.addEventListener('input', atualizarPreviewTagsAutomaticas);
-
-    // Inicialização da interface
-    renderizarEspecificacoes();
-    renderizarTagsManuais();
-    atualizarPreviewTagsAutomaticas();
-
-    // 7. Envio do Formulário
-    const formCadastro = document.getElementById('form-cadastro-produto');
-    if (formCadastro) {
-        formCadastro.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const btn = document.getElementById('btn-salvar') || formCadastro.querySelector('button[type="submit"]');
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = '⏳ Fazendo upload e Salvando...';
-            }
-
-            try {
-                const categories = [...document.querySelectorAll('input[name="prod-category"]:checked')].map(input => input.value);
-                const subcategories = [...document.querySelectorAll('input[name="prod-subcategory"]:checked')].map(input => input.value);
-
-                if (!categories.length || !subcategories.length) {
-                    throw new Error('Selecione pelo menos uma categoria e uma subcategoria.');
-                }
-
-                if (arrayArquivosImagens.length === 0) {
-                    throw new Error('Você deve anexar pelo menos uma imagem.');
-                }
-
-                const specsJSON = obterSpecsJSON();
-
-                if (!window.quillEditor || window.quillEditor.getText().trim().length === 0) {
-                    throw new Error('A descrição não pode estar vazia.');
-                }
-                const descricaoHTML = window.quillEditor.root.innerHTML;
-                const titulo = document.getElementById('prod-title').value;
-
-                const tagsFinais = obterTagsFinais();
-
-                const arrayPathsImagens = await uploadMultiplasImagens(arrayArquivosImagens, supabase);
-
-                const produtoData = {
-                    title: titulo,
-                    category: categories.join(','),
-                    subcategory: subcategories.join(','),
-                    price: parseFloat(document.getElementById('prod-price').value),
-                    stock: parseInt(document.getElementById('prod-stock').value, 10),
-                    desc_text: descricaoHTML,
-                    images: arrayPathsImagens,
-                    tags: tagsFinais,
-                    specs: specsJSON
-                };
-
-                const success = await cadastrarNovoProduto(produtoData);
-
-                if (success) {
-                    if (window.quillEditor) window.quillEditor.setContents([]);
-                    arrayArquivosImagens = [];
-                    renderizarPreviews();
-
-                    manualTagsSet.clear();
-                    removedAutoTagsSet.clear();
-                    productSpecsList = [];
-
-                    renderizarEspecificacoes();
-                    renderizarTagsManuais();
-                    atualizarPreviewTagsAutomaticas();
-                }
-
-            } catch (erro) {
-                alert('⚠️ ' + erro.message);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = 'Cadastrar Produto';
-                }
-            }
-        });
-    }
+    carregarDashboard('7dias');
 });
 
 async function fazerLogout() {
     const supabase = await obterClienteSupabase();
-    if (!supabase) {
-        alert('⚠️ Sistema de autenticação não inicializado.');
-        window.location.href = '/auth/login';
-        return;
-    }
+    if (supabase) await supabase.auth.signOut();
+    window.location.href = '/auth/login';
+}
+window.fazerLogout = fazerLogout;
 
-    try {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            alert('❌ Erro ao fazer logout: ' + error.message);
-            return;
+// Inicialização do Editor Quill para a Descrição Detalhada
+const editorContainer = document.getElementById('editor-desc');
+if (editorContainer) {
+    window.quillEditor = new Quill('#editor-desc', {
+        theme: 'snow',
+        placeholder: 'Escreva a descrição detalhada do produto aqui...'
+    });
+
+    window.quillEditor.on('text-change', () => {
+        if (typeof atualizarPreviewTagsAutomaticas === 'function') {
+            atualizarPreviewTagsAutomaticas();
         }
-        alert('✅ Logout realizado com sucesso!');
-        window.location.href = '/auth/login';
-    } catch (err) {
-        console.error('Erro no logout:', err);
-        alert('⚠️ Erro ao fazer logout, mas desconectando mesmo assim...');
-        window.location.href = '/auth/login';
-    }
+    });
 }

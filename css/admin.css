@@ -5,7 +5,9 @@ body {
     display: none;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -92,9 +94,53 @@ header {
     transform: rotate(-45deg) translate(5px, -5px);
 }
 
+.user-drawer_button {
+    display: flex;
+    background-color: transparent;
+    border: none;
+}
+
+.user-drawer_button img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.user-drawer {
+    position: absolute;
+    top: 20px;
+    right: 125px;
+    width: 320px;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    color: #f1f1f1;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 400ms cubic-bezier(.2, .9, .3, 1), transform 400ms cubic-bezier(.2, .9, .3, 1);
+    pointer-events: none;
+    z-index: 999;
+}
+
+.user-drawer.batata {
+    opacity: 1;
+    transform: translateY(100px);
+    pointer-events: auto;
+}
+
 /* ---------------------------------------------------------
    CONTAINER PRINCIPAL E CARDS (DESKTOP)
    --------------------------------------------------------- */
+main.admin-container {
+    width: calc(100% - 48px) !important;
+    max-width: 1400px !important;
+    margin: 28px auto !important;
+    padding: 28px !important;
+    grid-template-columns: none;
+}
 
 .admin-container {
     width: min(1320px, calc(100% - 48px));
@@ -277,7 +323,7 @@ header {
     gap: 15px;
     align-items: center;
     justify-content: center;
-    min-height: 160px;
+    min-height: 216px;
 }
 
 #drop-zone:hover {
@@ -578,5 +624,460 @@ header {
 
     .btn-submit-main {
         width: 100%;
+    }
+}
+/* =========================================================
+   DASHBOARD — LAYOUT PRINCIPAL
+   ========================================================= */
+
+.dashboard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.dashboard-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    padding: 22px 24px;
+
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 12px;
+}
+
+.dashboard-header-info {
+    min-width: 0;
+    
+}
+
+.dashboard-header-info h1 {
+    margin: 0;
+
+    color: var(--primary, #00926b);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.dashboard-header-info p {
+    margin: 5px 0 0;
+
+    color: #666;
+    font-size: 13px;
+}
+
+.dashboard-period {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+.dashboard-period label {
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   SEÇÕES
+   ========================================================= */
+
+.dashboard-section {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.dashboard-section-title {
+    margin: 12px 0px 0px 0px;
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   ACESSO RÁPIDO
+   ========================================================= */
+
+.shortcuts-grid {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.shortcut-card {
+    min-width: 0;
+    min-height: 82px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 16px 18px;
+
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    border-radius: 10px;
+
+    color: inherit;
+    text-decoration: none;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.shortcut-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #00926b;
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
+}
+
+.shortcut-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color:var(--primary);
+}
+
+.shortcut-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.shortcut-icon {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 22px;
+}
+
+.shortcut-icon.add {
+    background: #eef2f7;
+    color: #2c3e50;
+}
+
+.shortcut-card:hover .shortcut-icon.add {
+    background: #e6f4f0;
+}
+
+
+.shortcut-icon.edit {
+    background: #eef2f7;
+    color: #2c3e50;
+}
+
+.shortcut-card:hover .shortcut-icon.edit {
+    background: #e6f4f0;
+}
+
+
+/* =========================================================
+   KPIs
+   ========================================================= */
+
+.kpi-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.kpi-card {
+    min-width: 0;
+    min-height: 125px;
+
+    padding: 18px 20px;
+
+    background: #fff;
+
+    border: 1px solid #e1e8ed;
+    border-left: 4px solid var(--kpi-color, #00926b);
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+}
+
+.kpi-label {
+    display: block;
+
+    color: #666;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    margin: 10px 0 4px;
+
+    color: #2c3e50;
+
+    font-size: 30px;
+    line-height: 1;
+
+    font-weight: 700;
+}
+
+.kpi-subtext {
+    color: #888;
+    font-size: 11px;
+}
+
+/* =========================================================
+   DESTAQUES
+   ========================================================= */
+
+.highlights-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.highlight-card {
+    min-width: 0;
+    min-height: 150px;
+
+    padding: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e1e8ed;
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+}
+
+.highlight-card-header {
+    display: flex;
+    align-items: center;
+
+    padding-bottom: 11px;
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.highlight-card-header h3 {
+    margin: 0;
+
+    color: #2c3e50;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.highlight-content {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.highlight-thumb {
+    width: 70px;
+    height: 70px;
+
+    flex: 0 0 70px;
+
+    object-fit: contain;
+
+    background: #f8f9fa;
+
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.highlight-details {
+    min-width: 0;
+}
+
+.highlight-details h4 {
+    margin: 0;
+
+    overflow: hidden;
+
+    color: #2c3e50;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.highlight-details p {
+    margin: 6px 0 0;
+
+    color: #00926b;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   GRÁFICOS
+   ========================================================= */
+
+.charts-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.chart-card {
+    min-width: 0;
+
+    padding: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e1e8ed;
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+}
+
+/* gráfico principal ocupa a linha inteira */
+.chart-card.wide {
+    grid-column: 1 / -1;
+}
+
+.chart-card-header {
+    display: flex;
+    align-items: center;
+
+    padding-bottom: 11px;
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-card-header h3 {
+    margin: 0;
+
+    color: #2c3e50;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.chart-container {
+    position: relative;
+
+    width: 100%;
+    height: 260px;
+}
+
+.chart-card.wide .chart-container {
+    height: 300px;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    main.admin-container {
+        width: calc(100% - 32px) !important;
+        padding: 20px !important;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card.wide {
+        grid-column: auto;
+    }
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    main.admin-container {
+        width: calc(100% - 20px) !important;
+        padding: 14px !important;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-period {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dashboard-period select {
+        flex: 1;
+    }
+
+    .shortcuts-grid,
+    .highlights-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
     }
 }
