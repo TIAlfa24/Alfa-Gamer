@@ -21,8 +21,9 @@
     >
 
     <!-- Estilos -->
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/home.css">
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin.css?v=20261002">
     <link rel="stylesheet" href="/css/background.css">
 
     <!-- Bibliotecas externas -->
@@ -37,8 +38,8 @@
     ></script>
 
     <!-- Scripts da aplicação -->
-    <script src="/js/global.js?v=20260905" defer></script>
-    <script src="/js/admin.js?v=20260905" defer></script>
+    <script src="/js/global.js?v=20261002" defer></script>
+    <script src="/js/admin.js?v=20261002" defer></script>
     <script src="/js/background.js?v=20260907" defer></script>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -53,7 +54,10 @@
                 <div></div>
             </div>
             <nav class="navbar" id="navMenu">
-                <button class="user-drawer_button" id="openUDrawer" title="Opções de Usuário">
+                <a href="/admin/" aria-current="page">Painel</a>
+                <a href="/admin/editar/">Gerenciar produtos</a>
+                <a href="/admin/novo/">Novo produto</a>
+                <button class="user-drawer_button" id="openUDrawer" type="button" title="Opções de usuário" aria-label="Opções de usuário" aria-controls="userDrawer" aria-expanded="false">
                     <img src="/images/usefull-icons/person.png" alt="Usuário" height="35px">
                 </button>
             </nav>
@@ -61,7 +65,16 @@
     </header>
 
     <div class="user-drawer" id="userDrawer" aria-hidden="true">
-        a
+        <p class="user-drawer-title">Administração</p>
+        <nav class="user-drawer-links" aria-label="Atalhos administrativos">
+            <a href="/admin/"><span class="material-icons" aria-hidden="true">dashboard</span>Painel</a>
+            <a href="/admin/editar/"><span class="material-icons" aria-hidden="true">inventory_2</span>Gerenciar produtos</a>
+            <a href="/admin/novo/"><span class="material-icons" aria-hidden="true">add_box</span>Novo produto</a>
+            <a href="/"><span class="material-icons" aria-hidden="true">storefront</span>Ver loja</a>
+        </nav>
+        <button class="user-drawer-logout" id="adminLogout" type="button">
+            <span class="material-icons" aria-hidden="true">logout</span>Sair
+        </button>
     </div>
 
     <main class="admin-container">
@@ -92,7 +105,7 @@
                             <p>Cadastrar novos itens</p>
                         </div>
                     </a>
-                    <a href="/admin/gerenciar.html" class="shortcut-card">
+                    <a href="/admin/editar/" class="shortcut-card">
                         <div class="shortcut-icon edit"><i class="material-icons", style="font-size:32px;">edit</i></div>
                         <div class="shortcut-info">
                             <h3>Editar / Remover</h3>

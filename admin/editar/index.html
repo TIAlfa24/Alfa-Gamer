@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gerenciar Produtos - Alfa Gamer</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/global.css">
+	<link rel="stylesheet" href="/css/home.css">
+	<link rel="stylesheet" href="/css/admin.css?v=20261002">
+	<link rel="stylesheet" href="/css/background.css">
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js" defer></script>
+	<script src="https://cdn.quilljs.com/1.3.6/quill.min.js" defer></script>
+	<script src="/js/global.js?v=20261002" defer></script>
+	<script src="/js/admin-manage.js?v=20261002" defer></script>
+	<script src="/js/background.js?v=20260907" defer></script>
+</head>
+<body>
+	<canvas id="bgCanvas"></canvas>
+	<header>
+		<div class="header-container">
+			<a href="/"><img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"></a>
+			<div class="hamburger" id="hamburger" aria-label="Abrir menu"><div></div><div></div><div></div></div>
+			<nav class="navbar" id="navMenu">
+				<a href="/admin/">Painel</a>
+				<a href="/admin/editar/" aria-current="page">Gerenciar produtos</a>
+				<a href="/admin/novo/">Novo produto</a>
+				<button class="user-drawer_button" id="openUDrawer" type="button" title="Opções de usuário" aria-label="Opções de usuário" aria-controls="userDrawer" aria-expanded="false">
+					<img src="/images/usefull-icons/person.png" alt="Usuário" height="35">
+				</button>
+			</nav>
+		</div>
+	</header>
+	<div class="user-drawer" id="userDrawer" aria-hidden="true">
+		<p class="user-drawer-title">Administração</p>
+		<nav class="user-drawer-links" aria-label="Atalhos administrativos">
+			<a href="/admin/"><span class="material-icons" aria-hidden="true">dashboard</span>Painel</a>
+			<a href="/admin/editar/"><span class="material-icons" aria-hidden="true">inventory_2</span>Gerenciar produtos</a>
+			<a href="/admin/novo/"><span class="material-icons" aria-hidden="true">add_box</span>Novo produto</a>
+			<a href="/"><span class="material-icons" aria-hidden="true">storefront</span>Ver loja</a>
+		</nav>
+		<button class="user-drawer-logout" id="adminLogout" type="button">
+			<span class="material-icons" aria-hidden="true">logout</span>Sair
+		</button>
+	</div>
+
+	<main class="admin-container admin-manage-container">
+		<section id="product-list-view">
+			<div class="admin-header-title manage-heading">
+				<div>
+					<h1>Gerenciar Produtos</h1>
+					<p>Consulte, edite ou remova produtos do catálogo.</p>
+				</div>
+				<a class="btn-submit-main manage-new-product" href="/admin/novo/">Adicionar produto</a>
+			</div>
+			<div class="manage-toolbar">
+				<label class="manage-search">
+					<span class="material-icons" aria-hidden="true">search</span>
+					<input id="product-search" class="input-field" type="search" placeholder="Buscar por nome ou categoria" aria-label="Buscar produtos">
+				</label>
+				<label class="manage-filter-label" for="category-filter">Categoria</label>
+				<select id="category-filter" class="input-field"><option value="">Todas</option></select>
+				<span class="manage-count" id="product-count" aria-live="polite"></span>
+			</div>
+			<div id="product-list" class="manage-product-list" aria-live="polite">
+				<p class="manage-message">Carregando produtos...</p>
+			</div>
+		</section>
+
+		<section id="product-edit-view" hidden>
+			<div class="admin-header-title manage-heading">
+				<div>
+					<h1>Editar Produto</h1>
+					<p id="edit-product-subtitle">Altere os dados do produto selecionado.</p>
+				</div>
+				<button type="button" id="cancel-edit-top" class="manage-secondary-button">Voltar à lista</button>
+			</div>
+
+			<form id="form-editar-produto" class="admin-form-grid">
+				<div class="admin-grid-row cols-2-desktop">
+					<div class="admin-card">
+						<div class="admin-card-header"><h2>Informações Principais</h2></div>
+						<div class="form-group">
+							<label for="edit-title">Título do Produto*</label>
+							<input type="text" id="edit-title" class="input-field" required>
+						</div>
+						<div class="form-group">
+							<label>Categoria*</label>
+							<fieldset class="category-container manage-checkboxes">
+								<label><input type="checkbox" name="edit-category" value="computadores"> Computadores</label>
+								<label><input type="checkbox" name="edit-category" value="perifericos"> Periféricos</label>
+								<label><input type="checkbox" name="edit-category" value="hardware"> Hardware</label>
+							</fieldset>
+						</div>
+						<div class="form-group">
+							<label>Subcategoria*</label>
+							<div class="category-grid">
+								<fieldset class="category-container">
+									<legend>Computadores</legend>
+									<label><input type="checkbox" name="edit-subcategory" value="desktops"> Desktops</label>
+									<label><input type="checkbox" name="edit-subcategory" value="notebooks"> Notebooks</label>
+									<label><input type="checkbox" name="edit-subcategory" value="gamer"> Gamers</label>
+									<label><input type="checkbox" name="edit-subcategory" value="office"> Office</label>
+									<label><input type="checkbox" name="edit-subcategory" value="all-in-one"> All-in-One</label>
+								</fieldset>
+								<fieldset class="category-container">
+									<legend>Periféricos</legend>
+									<label><input type="checkbox" name="edit-subcategory" value="mouses"> Mouses</label>
+									<label><input type="checkbox" name="edit-subcategory" value="mousepads"> Mousepads</label>
+									<label><input type="checkbox" name="edit-subcategory" value="teclados"> Teclados</label>
+									<label><input type="checkbox" name="edit-subcategory" value="headsets"> Headsets</label>
+									<label><input type="checkbox" name="edit-subcategory" value="monitores"> Monitores</label>
+									<label><input type="checkbox" name="edit-subcategory" value="webcams"> Webcams</label>
+								</fieldset>
+								<fieldset class="category-container">
+									<legend>Hardware</legend>
+									<label><input type="checkbox" name="edit-subcategory" value="processadores"> Processadores</label>
+									<label><input type="checkbox" name="edit-subcategory" value="placas-de-video"> Placas de vídeo</label>
+									<label><input type="checkbox" name="edit-subcategory" value="placa-mae"> Placas-mãe</label>
+									<label><input type="checkbox" name="edit-subcategory" value="memorias-ram"> Memórias RAM</label>
+									<label><input type="checkbox" name="edit-subcategory" value="armazenamento"> Armazenamento</label>
+									<label><input type="checkbox" name="edit-subcategory" value="fontes"> Fontes</label>
+									<label><input type="checkbox" name="edit-subcategory" value="gabinetes"> Gabinetes</label>
+									<label><input type="checkbox" name="edit-subcategory" value="coolers"> Coolers</label>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+					<div class="right-column-group">
+						<div class="admin-card">
+							<div class="admin-card-header"><h2>Preço e Estoque</h2></div>
+							<div class="form-row-inner cols-2-inner">
+								<div class="form-group">
+									<label for="edit-price">Preço (R$)*</label>
+									<input type="number" step="0.01" min="0" id="edit-price" class="input-field" required>
+								</div>
+								<div class="form-group">
+									<label for="edit-stock">Estoque*</label>
+									<input type="number" step="1" min="0" id="edit-stock" class="input-field" required>
+								</div>
+							</div>
+						</div>
+						<div class="admin-card">
+							<div class="admin-card-header"><h2>Imagens do Produto*</h2></div>
+							<div class="form-group">
+								<small class="help-text">A primeira imagem será a capa. Arraste para reordenar ou adicione novas imagens.</small>
+								<div id="edit-drop-zone" class="manage-drop-zone" tabindex="0" role="button" aria-label="Adicionar imagens ao produto">
+									<input type="file" id="edit-images-file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="admin-card full-width">
+					<div class="admin-card-header"><h2>Tags do Produto</h2></div>
+					<div class="form-group">
+						<label for="edit-tags">Tags separadas por vírgula</label>
+						<input type="text" id="edit-tags" class="input-field" placeholder="Ex.: gamer, ryzen, computador">
+					</div>
+				</div>
+
+				<div class="admin-card full-width">
+					<div class="admin-card-header"><h2>Descrição e Especificações</h2></div>
+					<div class="admin-grid-row cols-2-desktop desc-specs-grid">
+						<div class="form-group">
+							<label>Descrição Detalhada*</label>
+							<div id="edit-description" class="manage-description-editor"></div>
+						</div>
+						<div class="form-group">
+							<label>Especificações Técnicas</label>
+							<div class="specs-builder-inputs">
+								<input type="text" id="edit-spec-key" class="input-field" placeholder="Especificação">
+								<input type="text" id="edit-spec-value" class="input-field" placeholder="Valor">
+								<button type="button" id="edit-add-spec" class="btn-tag-add">Adicionar</button>
+							</div>
+							<div id="edit-specs-list" class="specs-list-container"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="admin-actions manage-form-actions">
+					<button type="button" id="cancel-edit" class="manage-secondary-button">Cancelar</button>
+					<button type="submit" id="save-edit" class="btn-submit-main">Salvar alterações</button>
+				</div>
+			</form>
+		</section>
+	</main>
+	<div id="manage-toast" class="manage-toast" role="status" aria-live="polite"></div>
+</body>
+</html>

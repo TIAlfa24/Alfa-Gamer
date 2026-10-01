@@ -383,6 +383,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.addEventListener('touchstart', closeDropdown);
     }
 
+    // Accordion dos filtros por categoria
+    document.querySelectorAll('.cat-toggle').forEach(button => {
+        const panel = button.nextElementSibling;
+        if (!panel || !panel.classList.contains('subcats')) return;
+
+        button.setAttribute('aria-expanded', String(panel.classList.contains('open')));
+
+        button.addEventListener('click', () => {
+            const willOpen = !button.classList.contains('active');
+            button.classList.toggle('active', willOpen);
+            panel.classList.toggle('open', willOpen);
+            button.setAttribute('aria-expanded', String(willOpen));
+        });
+    });
+
     // Eventos de Filtro e Busca
     if (el('applyFilters')) el('applyFilters').addEventListener('click', applyFilters);
     if (el('clearFilters')) el('clearFilters').addEventListener('click', clearFilters);

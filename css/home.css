@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-:root {
-    --primary: #00926b;
-    --primary-light: #00b37d;
-    --muted: #757575;
-    --card: #222222;
-    --bg: #d3d3d3;
-    --radius: 10px;
-    --gap: 16px;
-    --containers: #f9f9f9;
-    --header: #111111;
-}
-
 html {
     scrollbar-width: thin;
     scrollbar-color: #5c5c5c rgba(0, 0, 0, 0.856);
@@ -30,96 +18,6 @@ body {
     background-color: var(--bg);
     color: black;
     overflow-x: hidden;
-}
-
-/* ================= HEADER ================= */
-header {
-    background-color: var(--header);
-    color: white;
-    padding: 15px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-
-.header-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 999;
-}
-
-.logo {
-    height: 90px;
-    width: auto;
-}
-
-.hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 25px;
-    height: 20px;
-    cursor: pointer;
-    z-index: 1100;
-}
-
-.hamburger div {
-    height: 3px;
-    background-color: #f1f1f1;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.hamburger.active div:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active div:nth-child(2) {
-    opacity: 0;
-}
-
-.hamburger.active div:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-}
-
-.navbar {
-    display: flex;
-    align-items: center;
-}
-
-.navbar a {
-    color: #ffffff;
-    text-decoration: none;
-    margin-left: 20px;
-    font-weight: 600;
-    font-size: 16px;
-    position: relative;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.navbar a::after {
-    content: "";
-    position: absolute;
-    /* Alterado de fixed para absolute */
-    bottom: -4px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background-color: var(--primary-light);
-    transition: width 0.3s ease;
-}
-
-.navbar a:hover {
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-.navbar a:hover::after {
-    width: 100%;
 }
 
 /* ================= CART ================= */
@@ -153,8 +51,8 @@ header {
 }
 
 .cart-drawer {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 127px;
     right: 100px;
     width: 320px;
     background: var(--card);
@@ -163,7 +61,7 @@ header {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     color: #f1f1f1;
     opacity: 0;
-    transform: translateY(-100%);
+    transform: translateY(calc(-100% - 127px));
     transition: opacity 400ms cubic-bezier(.2, .9, .3, 1), transform 400ms cubic-bezier(.2, .9, .3, 1);
     pointer-events: none;
     z-index: 999;
@@ -171,7 +69,7 @@ header {
 
 .cart-drawer.open {
     opacity: 1;
-    transform: translateY(100px);
+    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -525,6 +423,7 @@ main {
     flex-direction: column;
     gap: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 0.35s ease-out forwards;
 }
 
 .card:hover {
@@ -611,36 +510,6 @@ main {
     display: none;
 }
 
-input[type="text"],
-input[type="number"],
-input[type="password"],
-input[type="email"],
-input[type="search"],
-input[type="url"],
-input[type="tel"],
-textarea,
-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #afafaf;
-    color: #333;
-    transition: border-color 0.2s ease;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus,
-input[type="search"]:focus,
-input[type="url"]:focus,
-input[type="tel"]:focus,
-textarea:focus,
-select:focus {
-    border-color: #00b686;
-    box-shadow: 0 0 5px #ebebeb;
-    outline: none;
-}
 /* ================= PAGINATION (MINIMALISTA) ================= */
 .pagination {
     margin-top: 24px;
@@ -734,6 +603,15 @@ footer {
     box-shadow: 0 5px 30px var(--card);
 }
 
+.draggable-cart-widget.animating .draggable-cart-header img {
+    animation: blackhole-out 420ms cubic-bezier(.4, 0, .2, 1);
+    transform-origin: center center;
+}
+
+.draggable-cart-widget.is-open .draggable-cart-header img {
+    transform: rotate(180deg) scale(1.08);
+}
+
 .draggable-cart-header {
     display: flex;
     justify-content: center;
@@ -750,6 +628,13 @@ footer {
     height: auto;
     display: block;
     object-fit: contain;
+    transition: transform 0.35s ease, opacity 0.25s ease, filter 0.25s ease;
+    transform-origin: center center;
+}
+
+.draggable-cart-widget.is-open .draggable-cart-header img {
+    transform: rotate(180deg) scale(1.08);
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
 }
 
 .draggable-cart-badge {
@@ -808,6 +693,11 @@ footer {
         filter: blur(8px);
         border-radius: 50%;
     }
+}
+
+.cart-icon.animating {
+    animation: blackhole-out 420ms cubic-bezier(.4, 0, .2, 1);
+    transform-origin: center center;
 }
 
 .anim-blackhole {
@@ -1271,6 +1161,25 @@ label {
         margin-left: auto;
         position: relative;
         z-index: 2;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        flex: 0 0 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-btn2 .cart-icon {
+        width: 35px;
+        height: 35px;
+        padding-left: 0 !important;
+        object-fit: contain;
+    }
+
+    .cart-btn2 .cart-count {
+        top: 0;
+        right: 0;
     }
 
     .carrossel-de-propagandas {
@@ -1424,10 +1333,6 @@ label {
         opacity: 1; 
         transform: translateY(0); 
     }
-}
-
-.card {
-    animation: fadeIn 0.35s ease-out forwards;
 }
 
 /* Esqueleto de carregamento (Skeleton Screen) */

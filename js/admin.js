@@ -240,21 +240,6 @@ window.atualizarPeriodoDashboard = function (periodo) {
 // 6. INICIALIZAÇÃO & AUTENTICAÇÃO DO ADMIN
 // ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // Menu Drawer
-    const userDrawer = document.getElementById('userDrawer');
-    const openUDrawerBtn = document.getElementById('openUDrawer');
-
-    openUDrawerBtn?.addEventListener('click', () => {
-        userDrawer?.classList.toggle('batata');
-    });
-
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('navMenu');
-    hamburger?.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu?.classList.toggle('active');
-    });
-
     // Autenticação
     const supabase = await obterClienteSupabase();
     if (!supabase) {
@@ -284,13 +269,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.style.display = 'block';
     carregarDashboard('7dias');
 });
-
-async function fazerLogout() {
-    const supabase = await obterClienteSupabase();
-    if (supabase) await supabase.auth.signOut();
-    window.location.href = '/auth/login';
-}
-window.fazerLogout = fazerLogout;
 
 // Inicialização do Editor Quill para a Descrição Detalhada
 const editorContainer = document.getElementById('editor-desc');

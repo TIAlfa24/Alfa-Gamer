@@ -228,6 +228,51 @@ function setCartOpen(isOpen) {
         }
     }
 
+    const widget = document.getElementById('draggableCartWidget');
+    const widgetImg = widget?.querySelector('img');
+    const cartIcons = document.querySelectorAll('#openCartHeader .cart-icon, #openCartNav .cart-icon');
+
+    const applyWidgetState = () => {
+        if (widget) {
+            widget.classList.toggle('is-open', isOpen);
+            widget.classList.remove('animating');
+        }
+        if (widgetImg) {
+            widgetImg.src = isOpen ? '/images/usefull-icons/close-cart.png' : '/images/usefull-icons/cart.png';
+            widgetImg.alt = isOpen ? 'Fechar carrinho' : 'Carrinho';
+        }
+        cartIcons.forEach(icon => {
+            icon.classList.remove('animating');
+            icon.src = isOpen ? '/images/usefull-icons/close-cart.png' : '/images/usefull-icons/cart.png';
+            icon.alt = isOpen ? 'Fechar carrinho' : 'Carrinho';
+        });
+    };
+
+    if (widget && widget.dataset.cartState !== undefined && widget.dataset.cartState !== String(isOpen)) {
+        widget.classList.remove('animating');
+        void widget.offsetWidth;
+        widget.classList.add('animating');
+        cartIcons.forEach(icon => {
+            icon.classList.remove('animating');
+            void icon.offsetWidth;
+            icon.classList.add('animating');
+        });
+        setTimeout(() => {
+            applyWidgetState();
+            [widgetImg, ...cartIcons].forEach(icon => {
+                if (!icon) return;
+                icon.classList.remove('anim-jump');
+                void icon.offsetWidth;
+                icon.classList.add('anim-jump');
+            });
+        }, 420);
+    } else {
+        applyWidgetState();
+    }
+    if (widget) {
+        widget.dataset.cartState = String(isOpen);
+    }
+
     const cartDrawer = el('cartDrawer');
     const bottomSheet = el('cartBottomSheet');
     const isMobile = window.innerWidth <= 768;
@@ -280,9 +325,49 @@ function setupHamburgerMenu() {
     }
 }
 
+function setupAdminNavigation() {
+    const drawer = el('userDrawer');
+    const trigger = el('openUDrawer');
+    if (!drawer || !trigger) return;
+
+    const setDrawerOpen = isOpen => {
+        drawer.classList.toggle('is-open', isOpen);
+        drawer.setAttribute('aria-hidden', String(!isOpen));
+        trigger.setAttribute('aria-expanded', String(isOpen));
+    };
+
+    trigger.addEventListener('click', () => {
+        setDrawerOpen(!drawer.classList.contains('is-open'));
+    });
+    document.addEventListener('click', event => {
+        if (!drawer.contains(event.target) && !trigger.contains(event.target)) {
+            setDrawerOpen(false);
+        }
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && drawer.classList.contains('is-open')) {
+            setDrawerOpen(false);
+            trigger.focus();
+        }
+    });
+    el('adminLogout')?.addEventListener('click', fazerLogout);
+}
+
+async function fazerLogout() {
+    const supabase = await inicializarSupabase();
+    if (supabase) {
+        const { error } = await supabase.auth.signOut();
+        if (error) console.error('Erro ao sair:', error);
+    }
+    window.location.replace('/auth/login');
+}
+window.fazerLogout = fazerLogout;
+
 function setupDraggableCartWidget() {
     const widget = el('draggableCartWidget');
     if (!widget) return;
+
+    widget.dataset.cartState = String(globalState.isCartOpen);
 
     let isDragging = false;
     let startX, startY, offsetX, offsetY;
@@ -409,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
 
     setupHamburgerMenu();
+    setupAdminNavigation();
     setupDraggableCartWidget();
 
     el('openCartHeader')?.addEventListener('click', toggleCart);

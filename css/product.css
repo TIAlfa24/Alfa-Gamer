@@ -88,20 +88,6 @@ main {
     width: 100%;
 }
 
-@media (min-width: 768px) {
-    .product-grid {
-        grid-template-columns: 1.2fr 1fr;
-    }
-
-    .comment-grid {
-        grid-template-columns: 450px auto;
-    }
-
-    .product-detalhes {
-        grid-column: 1 / -1;
-    }
-}
-
 .rating-container {
     height: 450px;
     width: 100%;
@@ -188,13 +174,6 @@ main {
 }
 
 /* Esconde scrollbar no Firefox */
-#reviewsList {
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE e Edge antigo */
-}
-
 .reviews {
     display: grid;
     gap: 12px;
@@ -391,15 +370,9 @@ main {
 }
 
 .parcelas {
-    font-size: 16px;
-    color: #333;
-    font-weight: 600;
-    margin-top: 10px;
-}
-
-.parcelas {
     font-size: 14px;
     color: var(--muted);
+    font-weight: 600;
     margin-top: 5px;
 }
 
