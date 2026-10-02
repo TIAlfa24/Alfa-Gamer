@@ -10,6 +10,67 @@
     --header: #111111;
 }
 
+.btn,
+.btn-comprar {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 33px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.btn:not(:disabled):hover,
+.btn-comprar:not(:disabled):hover {
+    transform: translateY(-1px);
+    background: #007b5b;
+    box-shadow: 0 4px 12px rgba(0, 146, 107, 0.18);
+}
+
+.btn.ghost,
+.btn-comprar.secundario {
+    border-color: #bdd8ca;
+    background: #fff;
+    color: #176247;
+    box-shadow: none;
+}
+
+.btn.ghost:not(:disabled):hover,
+.btn-comprar.secundario:not(:disabled):hover {
+    border-color: #bdd8ca;
+    background: #edf7f1;
+    color: #15563f;
+}
+
+.btn:disabled,
+.btn-comprar:disabled {
+    transition: none;
+    transform: none;
+    border-color: transparent;
+    background: #ccc;
+    color: #fff;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.btn:focus-visible,
+.btn-comprar:focus-visible {
+    outline: 3px solid rgba(0, 146, 107, 0.3);
+    outline-offset: 2px;
+}
+
 header {
     width: 100%;
     box-sizing: border-box;
@@ -25,10 +86,10 @@ header {
 .header-container {
     max-width: 1100px;
     margin: 0 auto;
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 999;
 }
 
 .logo {
@@ -129,4 +190,116 @@ select:focus {
     border-color: #00b686;
     box-shadow: 0 0 5px #ebebeb;
     outline: none;
+}
+
+footer {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.alfa-footer-trust {
+    max-width: 1200px;
+    border-top: 1px solid #bebebe;
+    color: #333333;
+    font-family: 'Poppins', sans-serif;
+    padding: 40px 20px 20px;
+    margin-top: 60px;
+    font-size: 13px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.footer-container h3 p {
+    color: var(--muted);
+}
+
+.footer-col h3 {
+    color: #505050;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 10px;
+}
+
+.footer-col h4 {
+    color: #505050;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 10px;
+}
+
+.footer-col p {
+    margin: 4px 0;
+    line-height: 1.5;
+    color: #333333;
+}
+
+.footer-col p a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 160ms ease;
+}
+
+.footer-col p a:hover,
+.footer-col p a:focus-visible {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.trust-badge {
+    margin-top: 8px !important;
+    color: #006b4f;
+    font-weight: 600;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 6px;
+}
+
+.footer-links a {
+    color: #111111;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid #bebebe;
+    text-align: center;
+    color: #444444;
+    font-size: 12px;
+}
+
+.footer-bottom p {
+    color: var(--muted);
+}
+
+@media (max-width: 700px) {
+    .btn,
+    .btn-comprar {
+        min-height: 44px;
+        padding: 9px 12px;
+        font-size: 13px;
+    }
 }

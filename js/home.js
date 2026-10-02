@@ -191,6 +191,9 @@ function renderPage(page = 1) {
 
     pageItems.forEach(p => {
         const descricaoLimpa = sanitizarTextoSimples(p.desc_text || p.desc);
+        const pixDiscount = Number(p.pix_discount ?? 15);
+        const priceBeforeDiscount = pixDiscount > 0 && pixDiscount < 100 ? p.price / (1 - pixDiscount / 100) : p.price;
+        const discountLabel = Number.isInteger(pixDiscount) ? pixDiscount : pixDiscount.toLocaleString('pt-BR');
 
         const card = document.createElement('div');
         card.className = 'card';
@@ -202,8 +205,8 @@ function renderPage(page = 1) {
                     onerror="this.onerror=null; this.src=DEFAULT_PRODUCT_IMAGE;"
                 >
             </div>
-            <div style="flex:1">
-                <div style="font-weight:700">${p.title}</div>
+            <div class="card-info">
+                <div class="card-title">${p.title}</div>
                 <div class="card-desc" title="${descricaoLimpa}">${descricaoLimpa}</div>
             </div>
             <div class="meta">
@@ -211,9 +214,9 @@ function renderPage(page = 1) {
                     ${p.stock > 0 ? 'Em Estoque' : 'Esgotado'}
                 </div>
                 <div class="price-container-card">
-                    <div class="price-old">${money(p.price * 1.15)}</div>
+                    <div class="price-old" ${pixDiscount <= 0 ? 'hidden' : ''}>${money(priceBeforeDiscount)}</div>
                     <div class="price-discounted">${money(p.price)}</div>
-                    <div class="discount-tag">15% OFF no PIX</div>
+                    <div class="discount-tag">${discountLabel}% OFF no PIX</div>
                 </div>
                 <div class="actions">
                     <button class="btn" data-id="${p.id}" onclick="addToCart(${p.id})" ${p.stock <= 0 ? 'disabled' : ''}>

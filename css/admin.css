@@ -35,12 +35,7 @@ body {
 
 .navbar a:hover,
 .navbar .logout-nav-btn:hover {
-    color: #00b37d;
     transform: translateY(-2px);
-}
-
-.navbar a[aria-current="page"] {
-    color: #00b37d;
 }
 
 .user-drawer_button {
@@ -335,8 +330,92 @@ main.admin-container {
     cursor: pointer;
 }
 
-.category-container input[type="checkbox"] {
+.category-grid .category-container input[type="checkbox"] {
     flex: 0 0 auto;
+    appearance: none;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    border: 1px solid #00926b;
+    border-radius: 35%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.category-grid .category-container input[type="checkbox"]:checked {
+    border: 2px solid #00926b;
+}
+
+.category-grid .category-container input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: #00926b;
+    transform: translate(-50%, -50%);
+}
+
+.admin-choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-choice-list label.radio-wrap {
+    justify-content: flex-start;
+    margin: 4px 0;
+    cursor: pointer;
+}
+
+.admin-choice-list .radio-rot {
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.admin-choice-list .radio-rot input[type="radio"],
+.admin-choice-list .radio-rot input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    border: 1px solid var(--primary);
+    border-radius: 35%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.admin-choice-list .radio-rot input[type="radio"]:checked,
+.admin-choice-list .radio-rot input[type="checkbox"]:checked {
+    border: 2px solid #00926b;
+}
+
+.admin-choice-list .radio-rot input[type="radio"]:checked::after,
+.admin-choice-list .radio-rot input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: #00926b;
+    transform: translate(-50%, -50%);
+}
+
+.image-url-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.image-url-entry .btn-tag-add {
+    white-space: nowrap;
 }
 
 #drop-zone {
@@ -970,6 +1049,10 @@ main.admin-container {
     }
 
     .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .image-url-entry {
         grid-template-columns: 1fr;
     }
 

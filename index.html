@@ -13,8 +13,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Loja - Computadores & Jogos</title>
-    <link rel="stylesheet" href="/css/global.css"/>
-    <link rel="stylesheet" href="/css/home.css?v=20261002"/>
+    <link rel="stylesheet" href="/css/global.css?v=20261002-6"/>
+    <link rel="stylesheet" href="/css/home.css?v=20261002-7"/>
     <link rel="stylesheet" href="/css/background.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -55,23 +55,22 @@
                     <span class="cart-count" id="cartCountNav">0</span>
                 </button>
             </nav>
+            
         </div>
     </header>
-
-    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-        <h3>Carrinho</h3>
-        <div class="cart-box">
-            <div id="cartItemsDesktop"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-            <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
-            <button class="btn ghost" id="closeCart">Fechar</button>
-        </div>
-    </div>
-
+<div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+                <h3>Carrinho</h3>
+                <div class="cart-box">
+                    <div id="cartItemsDesktop"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                    <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+                </div>
+                <div style="margin-top:12px;display:flex;gap:8px">
+                    <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
+                    <button class="btn ghost" id="closeCart">Fechar</button>
+                </div>
+            </div>
     <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
         <div class="cart-bottom-header">
             <h3>Carrinho</h3>
@@ -245,12 +244,9 @@
 
             <div class="footer-col">
                 <h4>Atendimento</h4>
-                <p>
                 <p>Segunda a Sexta: 09:00 às 18:00</p>
                 <p>Atendimento Online e Loja Física</p>
-                <ul class="footer-links">
-                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank">+55 (31) 98375-3432</a></p>
-                </ul>
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></p>
             </div>
 
             <div class="footer-col">
@@ -268,7 +264,7 @@
         </div>
     </footer>
 </body>
-    <script src="/js/global.js?v=20261001"></script>
+    <script src="/js/global.js?v=20261002-1"></script>
     <script src="/js/home.js?v=20260907"></script>
     <script src="/js/background.js?v=20260907"></script>
 </html>

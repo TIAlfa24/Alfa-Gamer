@@ -58,6 +58,7 @@ function normalizarProdutos(produtos) {
         category: p.category || 'outros',
         subcategory: p.subcategory || '',
         price: Number(p.price) || 0,
+        pix_discount: Number(p.pix_discount ?? 15),
         stock: Number(p.stock) || 0,
         desc_text: p.desc_text || p.desc || '',
         images: Array.isArray(p.images) ? p.images : (p.images ? [p.images] : []),
@@ -187,11 +188,14 @@ function updateCartUI() {
         if (!p) return;
         total += p.price * qty;
         count += qty;
+        const imageSrc = p.images?.[0] || DEFAULT_PRODUCT_IMAGE;
         itemsHtml += `
             <div class="cart-item">
-                <div class="thumb">${p.title.split(' ')[0]}</div>
+                <div class="thumb">
+                    <img src="${imageSrc}" alt="${p.title}" onerror="this.onerror=null; this.src='${DEFAULT_PRODUCT_IMAGE}';">
+                </div>
                 <div style="flex:1">
-                    <div style="font-weight:700">${p.title}</div>
+                    <div class="cart-item-title">${p.title}</div>
                     <div style="font-size:13px;color:var(--muted)">${money(p.price)} x${qty}</div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:6px">
@@ -532,21 +536,34 @@ function carregarImagensProduto(productId) {
 
     imagemPrincipal.onerror = () => { imagemPrincipal.src = DEFAULT_PRODUCT_IMAGE; };
     imagemPrincipal.src = imagens[0] || DEFAULT_PRODUCT_IMAGE;
+    imagemPrincipal.alt = produto.title || 'Imagem do produto';
 
-    miniaturasContainer.innerHTML = '';
+    miniaturasContainer.replaceChildren();
+    if (imagens.length < 2) return;
+
     imagens.forEach((src, index) => {
-        const img = document.createElement('img');
-        img.src = src || DEFAULT_PRODUCT_IMAGE;
-        img.alt = `${produto.title} - Imagem ${index + 1}`;
-        img.onerror = () => { img.src = DEFAULT_PRODUCT_IMAGE; };
-        img.onclick = () => {
-            if (typeof trocarImagem === 'function') {
-                trocarImagem(src || DEFAULT_PRODUCT_IMAGE);
-            } else {
-                imagemPrincipal.src = src || DEFAULT_PRODUCT_IMAGE;
-            }
-        };
-        miniaturasContainer.appendChild(img);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', `Exibir imagem ${index + 1} de ${produto.title || 'produto'}`);
+        button.setAttribute('aria-pressed', String(index === 0));
+
+        const thumbnail = document.createElement('img');
+        thumbnail.src = src || DEFAULT_PRODUCT_IMAGE;
+        thumbnail.alt = '';
+        thumbnail.loading = 'lazy';
+        thumbnail.decoding = 'async';
+        thumbnail.addEventListener('error', () => {
+            thumbnail.src = DEFAULT_PRODUCT_IMAGE;
+        }, { once: true });
+
+        button.addEventListener('click', () => {
+            imagemPrincipal.src = src || DEFAULT_PRODUCT_IMAGE;
+            miniaturasContainer.querySelectorAll('button').forEach(item => {
+                item.setAttribute('aria-pressed', String(item === button));
+            });
+        });
+        button.appendChild(thumbnail);
+        miniaturasContainer.appendChild(button);
     });
 }
 window.carregarImagensProduto = carregarImagensProduto;

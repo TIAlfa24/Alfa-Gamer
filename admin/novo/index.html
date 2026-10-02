@@ -90,11 +90,10 @@
 
                     <div class="form-group">
                         <label>Categoria*</label>
-                        <fieldset class="category-container" id="prod-category">
-                            <label><input type="checkbox" name="prod-category" value="computadores">
-                                Computadores</label>
-                            <label><input type="checkbox" name="prod-category" value="perifericos"> Periféricos</label>
-                            <label><input type="checkbox" name="prod-category" value="hardware"> Hardware</label>
+                        <fieldset class="category-container admin-choice-list" id="prod-category">
+                            <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="prod-category" value="computadores"></span> Computadores</label>
+                            <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="prod-category" value="perifericos"></span> Periféricos</label>
+                            <label class="radio-wrap"><span class="radio-rot"><input type="radio" name="prod-category" value="hardware"></span> Hardware</label>
                         </fieldset>
                     </div>
 
@@ -159,7 +158,7 @@
                             <div class="form-group">
                                 <label for="prod-pix-discount">Desconto PIX (%)*</label>
                                 <input type="number" id="prod-pix-discount" class="input-field" placeholder="Ex: 15"
-                                    value="15">
+                                    min="0" max="99.99" step="0.01" value="15" required>
                             </div>
                         </div>
 
@@ -180,11 +179,18 @@
                                 A primeira imagem será a <strong>capa do produto</strong>. Arraste para reordenar.
                             </small>
 
+                           
                             <div id="drop-zone">
                                 <span id="drop-zone-text"><a>Clique aqui ou arraste as imagens para anexar</a></span>
                                 <input type="file" id="prod-images-file" accept="image/png, image/jpeg, image/webp"
                                     multiple style="display: none;">
                             </div>
+                             <div class="image-url-entry">
+                                <input type="url" id="prod-image-url" class="input-field" placeholder="https://..." aria-label="Link direto da imagem">
+                                <button type="button" id="prod-add-image-url" class="btn-tag-add">Adicionar link</button>
+                            </div>
+                            <small class="help-text">Use um link direto e público para uma imagem.</small>
+
                         </div>
                     </div>
                 </div>

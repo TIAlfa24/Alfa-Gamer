@@ -168,6 +168,28 @@ async function prepararImagens(files) {
     renderizarImagensEdicao();
 }
 
+function adicionarImagemEdicaoPorUrl(input) {
+    const value = input.value.trim();
+    let imageUrl;
+    try {
+        imageUrl = new URL(value);
+    } catch {
+        mostrarFeedback('Informe um link válido para a imagem.', 'error');
+        return;
+    }
+    if (!['http:', 'https:'].includes(imageUrl.protocol)) {
+        mostrarFeedback('O link da imagem precisa começar com http:// ou https://.', 'error');
+        return;
+    }
+    if (imagensEdicao.some(item => item.url === imageUrl.href)) {
+        mostrarFeedback('Este link já foi adicionado.', 'error');
+        return;
+    }
+    imagensEdicao.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, url: imageUrl.href, previewUrl: imageUrl.href });
+    input.value = '';
+    renderizarImagensEdicao();
+}
+
 function renderizarSpecsEdicao() {
     const container = document.getElementById('edit-specs-list');
     container.replaceChildren();
@@ -219,12 +241,13 @@ function abrirEdicao(produto) {
     form.reset();
     document.getElementById('edit-title').value = produto.title || '';
     document.getElementById('edit-price').value = Number(produto.price) || 0;
+    document.getElementById('edit-pix-discount').value = Number(produto.pix_discount ?? 15);
     document.getElementById('edit-stock').value = Number(produto.stock) || 0;
     document.getElementById('edit-tags').value = Array.isArray(produto.tags) ? produto.tags.join(', ') : '';
     document.getElementById('edit-product-subtitle').textContent = produto.title || 'Altere os dados do produto selecionado.';
     const categorias = String(produto.category || '').split(',').map(value => value.trim());
     const subcategorias = String(produto.subcategory || '').split(',').map(value => value.trim());
-    document.querySelectorAll('input[name="edit-category"]').forEach(input => { input.checked = categorias.includes(input.value); });
+    document.querySelectorAll('input[name="edit-category"]').forEach(input => { input.checked = input.value === categorias[0]; });
     document.querySelectorAll('input[name="edit-subcategory"]').forEach(input => { input.checked = subcategorias.includes(input.value); });
     quillEdicao.root.innerHTML = produto.desc_text || produto.desc || '';
     especificacoesEdicao = Object.entries(produto.specs && typeof produto.specs === 'object' ? produto.specs : {}).map(([key, val]) => ({ key, val: String(val) }));
@@ -264,9 +287,11 @@ async function salvarEdicao(event) {
         const title = document.getElementById('edit-title').value.trim();
         const price = Number(document.getElementById('edit-price').value);
         const stock = Number(document.getElementById('edit-stock').value);
+        const pixDiscount = Number(document.getElementById('edit-pix-discount').value);
         if (!title) throw new Error('Informe o título do produto.');
-        if (!categories.length || !subcategories.length) throw new Error('Selecione pelo menos uma categoria e uma subcategoria.');
+        if (!categories.length || !subcategories.length) throw new Error('Selecione uma categoria e pelo menos uma subcategoria.');
         if (!Number.isFinite(price) || price < 0) throw new Error('Informe um preço válido.');
+        if (!Number.isFinite(pixDiscount) || pixDiscount < 0 || pixDiscount >= 100) throw new Error('Informe um desconto PIX entre 0% e 99,99%.');
         if (!Number.isInteger(stock) || stock < 0) throw new Error('Informe um estoque válido.');
         if (!imagensEdicao.length) throw new Error('O produto precisa ter pelo menos uma imagem.');
         if (!quillEdicao.getText().trim()) throw new Error('A descrição detalhada não pode ficar vazia.');
@@ -274,9 +299,10 @@ async function salvarEdicao(event) {
         const tags = [...new Set(document.getElementById('edit-tags').value.split(',').map(tag => tag.trim().toLowerCase()).filter(Boolean))];
         const produtoAtualizado = {
             title,
-            category: categories.join(','),
+            category: categories[0],
             subcategory: subcategories.join(','),
             price,
+            pix_discount: pixDiscount,
             stock,
             desc_text: quillEdicao.root.innerHTML,
             images: await enviarImagensEdicao(),
@@ -325,6 +351,15 @@ async function inicializarGerenciamento() {
     document.getElementById('product-search').addEventListener('input', renderizarProdutos);
     document.getElementById('category-filter').addEventListener('change', renderizarProdutos);
     document.getElementById('edit-add-spec').addEventListener('click', adicionarSpecEdicao);
+    const editImageUrlInput = document.getElementById('edit-image-url');
+    const addEditImageUrl = () => adicionarImagemEdicaoPorUrl(editImageUrlInput);
+    document.getElementById('edit-add-image-url').addEventListener('click', addEditImageUrl);
+    editImageUrlInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addEditImageUrl();
+        }
+    });
     document.getElementById('edit-spec-value').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); adicionarSpecEdicao(); } });
 
     const dropZone = document.getElementById('edit-drop-zone');

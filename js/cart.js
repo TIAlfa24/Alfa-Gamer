@@ -47,7 +47,8 @@ function renderCheckout() {
         totalItemsCount += qty;
 
         const pricePix = p.price;
-        const pricePrazo = p.price * 1.15;
+        const pixDiscount = Number(p.pix_discount ?? 15);
+        const pricePrazo = pixDiscount > 0 && pixDiscount < 100 ? p.price / (1 - pixDiscount / 100) : p.price;
 
         const itemPixTotal = pricePix * qty;
         const itemPrazoTotal = pricePrazo * qty;

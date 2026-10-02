@@ -201,7 +201,10 @@ function renderizarPreviews() {
         remove.textContent = '×';
         remove.addEventListener('click', () => {
             const index = imagensProduto.findIndex(imageItem => imageItem.id === item.id);
-            if (index >= 0) URL.revokeObjectURL(imagensProduto.splice(index, 1)[0].previewUrl);
+            if (index >= 0) {
+                const [removed] = imagensProduto.splice(index, 1);
+                if (removed.file) URL.revokeObjectURL(removed.previewUrl);
+            }
             renderizarPreviews();
         });
         card.append(badge, image, remove);
@@ -239,9 +242,39 @@ async function adicionarImagens(files) {
     renderizarPreviews();
 }
 
+function adicionarImagemPorUrl(input) {
+    const value = input.value.trim();
+    let imageUrl;
+    try {
+        imageUrl = new URL(value);
+    } catch {
+        alert('Informe um link válido para a imagem.');
+        return;
+    }
+    if (!['http:', 'https:'].includes(imageUrl.protocol)) {
+        alert('O link da imagem precisa começar com http:// ou https://.');
+        return;
+    }
+    if (imagensProduto.some(item => item.url === imageUrl.href)) {
+        alert('Este link já foi adicionado.');
+        return;
+    }
+    imagensProduto.push({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        url: imageUrl.href,
+        previewUrl: imageUrl.href
+    });
+    input.value = '';
+    renderizarPreviews();
+}
+
 async function uploadMultiplasImagens(supabase) {
     const urls = [];
     for (const [index, item] of imagensProduto.entries()) {
+        if (item.url) {
+            urls.push(item.url);
+            continue;
+        }
         const extension = item.file.name.split('.').pop() || 'jpg';
         const path = `images/products/${Date.now()}_${index}_${Math.random().toString(36).slice(2)}.${extension}`;
         const { error } = await supabase.storage.from('produtos').upload(path, item.file);
@@ -300,6 +333,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('prod-images-file');
+    const imageUrlInput = document.getElementById('prod-image-url');
+    const addImageUrl = () => adicionarImagemPorUrl(imageUrlInput);
+    document.getElementById('prod-add-image-url').addEventListener('click', addImageUrl);
+    imageUrlInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addImageUrl();
+        }
+    });
     dropZone.addEventListener('click', event => {
         if (event.target.closest('.btn-remover-img, .add-more-card')) return;
         if (event.target === dropZone || event.target.closest('.drop-zone-prompt')) fileInput.click();
@@ -375,21 +417,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.disabled = true;
         button.textContent = 'Enviando e salvando...';
         try {
-            const categories = [...document.querySelectorAll('input[name="prod-category"]:checked')]
-                .map(input => input.value);
+            const category = document.querySelector('input[name="prod-category"]:checked')?.value;
             const subcategories = [...document.querySelectorAll('input[name="prod-subcategory"]:checked')]
                 .map(input => input.value);
-            if (!categories.length || !subcategories.length) {
+            const pixDiscount = Number(document.getElementById('prod-pix-discount').value);
+            if (!category || !subcategories.length) {
                 throw new Error('Selecione pelo menos uma categoria e uma subcategoria.');
+            }
+            if (!Number.isFinite(pixDiscount) || pixDiscount < 0 || pixDiscount >= 100) {
+                throw new Error('Informe um desconto PIX entre 0% e 99,99%.');
             }
             if (!imagensProduto.length) throw new Error('Anexe pelo menos uma imagem.');
             if (!obterTextoDescricao()) throw new Error('A descrição detalhada não pode ficar vazia.');
 
             const product = {
                 title: document.getElementById('prod-title').value.trim(),
-                category: categories.join(','),
+                category,
                 subcategory: subcategories.join(','),
                 price: Number(document.getElementById('prod-price').value),
+                pix_discount: pixDiscount,
                 stock: Number.parseInt(document.getElementById('prod-stock').value, 10),
                 desc_text: editorDescricao.root.innerHTML,
                 images: await uploadMultiplasImagens(supabase),

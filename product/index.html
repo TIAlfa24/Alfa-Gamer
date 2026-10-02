@@ -13,19 +13,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Produto - Loja</title>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/home.css?v=20261002">
-    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/global.css?v=20261002-6">
+    <link rel="stylesheet" href="/css/home.css?v=20261002-7">
+    <link rel="stylesheet" href="/css/product.css?v=20261002-6">
+    <link rel="stylesheet" href="/css/background.css?v=20261002">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/global.js?v=20261001"></script>
-    <script src="/js/reviews.js?v=20260905"></script>
+    <script src="/js/global.js?v=20261002-1"></script>
+    <script src="/js/background.js?v=20261002" defer></script>
 </head>
 
-<body>
+<body class="product-page">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TSHH5MPH"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    <canvas id="bgCanvas" aria-hidden="true"></canvas>
     <div class="draggable-cart-widget" id="draggableCartWidget">
         <div class="draggable-cart-header">
             <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
@@ -54,23 +56,22 @@
                     <span class="cart-count" id="cartCountNav">0</span>
                 </button>
             </nav>
+            
         </div>
     </header>
-
-    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-        <h3>Carrinho</h3>
-        <div class="cart-box">
-            <div id="cartItemsDesktop"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-            <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
-            <button class="btn ghost" id="closeCart">Fechar</button>
-        </div>
-    </div>
-
+<div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+                <h3>Carrinho</h3>
+                <div class="cart-box">
+                    <div id="cartItemsDesktop"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                    <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+                </div>
+                <div style="margin-top:12px;display:flex;gap:8px">
+                    <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
+                    <button class="btn ghost" id="closeCart">Fechar</button>
+                </div>
+            </div>
     <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
         <div class="cart-bottom-header">
             <h3>Carrinho</h3>
@@ -86,90 +87,113 @@
         </div>
     </div>
 
-    <main class="product-container">
-        <nav class="breadcrumb">
-            <a href="/">Início</a> &gt;
-            <a href="#" id="categoryLink">Categoria</a> &gt;
-            <a href="#" id="subcategoryLink">Subcategoria </a> &gt;
-            <span id="productTitle">Nome do Produto </span>
+    <main class="product-container" aria-busy="true">
+        <nav class="breadcrumb" aria-label="Trilha de navegação">
+            <a href="/">Início</a>
+            <span class="breadcrumb-separator" id="categorySeparator" aria-hidden="true">&gt;</span>
+            <a href="#" id="categoryLink">Categoria</a>
+            <span class="breadcrumb-separator" id="subcategorySeparator" aria-hidden="true">&gt;</span>
+            <a href="#" id="subcategoryLink">Subcategoria</a>
+            <span class="breadcrumb-separator" id="productSeparator" aria-hidden="true">&gt;</span>
+            <span id="productTitle">Carregando produto</span>
         </nav>
 
-        <div class="product-grid">
+        <div class="product-load-state" id="productLoadStatus" role="status" hidden></div>
+
+        <div class="product-grid" id="productGrid">
             <div class="product-imagens">
                 <div class="imagem-principal">
-                    <img src="https://via.placeholder.com/500x500" alt="Produto" id="mainImage">
+                    <img src="/images/products/placeholder.png" alt="Imagem do produto" id="mainImage" fetchpriority="high">
                 </div>
-                <div class="miniaturas"></div>
+                <div class="miniaturas" aria-label="Outras imagens do produto"></div>
             </div>
 
             <div class="product-info">
+                <div class="product-categories" id="productCategories"></div>
                 <h1 id="productName">Nome do Produto</h1>
                 <div class="preco-container">
-                    <div class="preco-antigo-mobile">De: <span id="productOldPriceMobile">R$ 0,00</span></div>
-                    <div class="preco-antigo">De: <span id="productOldPrice">R$ 0,00</span></div>
+                    <div class="original-price-line">
+                        <span class="price-label">De:</span>
+                        <span class="product-old-price" id="productOldPrice">R$ 0,00</span>
+                    </div>
+                    <span class="pix-price-label">À vista no Pix</span>
                     <div class="preco-desconto">
                         <span class="preco-valor" id="productPrice">R$ 0,00</span>
-                        <span class="desconto-pix">15% OFF no PIX</span>
+                        <span class="discount-tag">15% OFF no PIX</span>
                     </div>
                     <div class="parcelas">
-                        <span id="productInstallments">em até 12x de R$ 0,00 sem juros</span>
+                        Consulte as condições de pagamento pelo WhatsApp.
                     </div>
                     <div class="estoque-status">
-                        <span id="stockStatus" class="em-estoque">Em Estoque</span>
+                        <span id="stockStatus" class="stock-status em-estoque">Consultando disponibilidade...</span>
                     </div>
                 </div>
                 <div class="acoes">
-                    <div class="quantidade">
-                        <button onclick="adjustQty(-1)">-</button>
-                        <input type="number" id="qty" value="1" min="1" max="99">
-                        <button onclick="adjustQty(1)">+</button>
+                    <div class="purchase-row">
+                        <div class="quantidade" aria-label="Quantidade">
+                            <button type="button" aria-label="Diminuir quantidade" onclick="adjustQty(-1)">−</button>
+                            <input type="number" id="qty" value="1" min="1" max="3" aria-label="Quantidade do produto">
+                            <button type="button" aria-label="Aumentar quantidade" onclick="adjustQty(1)">+</button>
+                        </div>
+                        <button type="button" class="btn-comprar principal" onclick="addToCartFromProduct()">Adicionar ao carrinho</button>
                     </div>
-                    <button class="btn-comprar principal" onclick="addToCartAndNavigate()">Adicionar ao
-                        Carrinho</button>
-                    <button class="btn-comprar secundario">Comprar Agora</button>
+                    <button type="button" class="btn-comprar secundario">Consultar pelo WhatsApp</button>
                 </div>
             </div>
 
             <div class="product-detalhes">
-                <div class="tabs">
-                    <button class="tab-btn active">Descrição</button>
-                    <button class="tab-btn">Especificações</button>
+                <div class="tabs" role="tablist" aria-label="Informações do produto">
+                    <button class="tab-btn active" id="descriptionTab" type="button" role="tab" aria-selected="true" aria-controls="descricao">Descrição</button>
+                    <button class="tab-btn" id="specificationsTab" type="button" role="tab" aria-selected="false" aria-controls="especificacoes" tabindex="-1">Especificações</button>
                     <div class="underline"></div>
                 </div>
 
-                <div id="descricao" class="tab-content active">
-                    <div id="productDescription" class="product-description-content">Descrição detalhada do produto...
-                    </div>
+                <div id="descricao" class="tab-content active" role="tabpanel" aria-labelledby="descriptionTab">
+                    <div id="productDescription" class="product-description-content"></div>
                 </div>
 
-                <div id="especificacoes" class="tab-content">
-                    <table id="specsTable"></table>
+                <div id="especificacoes" class="tab-content" role="tabpanel" aria-labelledby="specificationsTab" hidden>
+                    <p id="specsEmpty" class="specs-empty" hidden>As especificações não foram informadas para este produto.</p>
+                    <table id="specsTable"><tbody></tbody></table>
                 </div>
             </div>
         </div>
         <div class="divider"></div>
-        <div class="comment-grid">
-            <div class="rating-container">
-                <div class="big-score" id="avgScore">0.0</div>
-                <div>
-                    <div class="stars" id="avgStars"></div>
-                    <div class="meta"><span id="countReviews">0</span> avaliações</div>
-                    <div style="color:var(--muted);font-size:13px;padding-bottom: 30px;">
-                        Distribuição:
-                        <span id="distText">—</span>
-                    </div>
-                </div>
-            </div>
-            <div class="comments-list">
-                <div class="reviews" id="reviewsList" aria-live="polite"></div>
-                <button class="commentBtn" id="writeReviewBtn">Escrever uma avaliação</button>
-            </div>
-        </div>
+        <section class="reviews-unavailable" aria-labelledby="reviewsTitle">
+            <h2 id="reviewsTitle">Avaliações</h2>
+            <p>As avaliações deste produto não estão disponíveis no momento.</p>
+        </section>
     </main>
 
-    <footer>© Equipe Alfa Informática — Todos os direitos reservados</footer>
+    <footer class="alfa-footer-trust">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Alfa Segurança &amp; Tecnologia</h3>
+                <p><strong>CNPJ:</strong> 20.744.572/0001-92</p>
+                <p>Contagem - MG</p>
+                <p class="trust-badge">Compra 100% Segura &amp; Protegida</p>
+            </div>
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p>Segunda a Sexta: 09:00 às 18:00</p>
+                <p>Atendimento Online e Loja Física</p>
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></p>
+            </div>
+            <div class="footer-col">
+                <h4>Transparência</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="#">Termos de Serviço</a></li>
+                    <li><a href="#">Preferências de Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
+        </div>
+    </footer>
 
-    <script src="/js/product.js?v=20260905"></script>
+    <script src="/js/product.js?v=20261002-2"></script>
 </body>
 
 </html>
