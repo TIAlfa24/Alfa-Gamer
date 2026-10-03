@@ -13,13 +13,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    renderCheckout();
+    await renderCheckout();
 });
 
-function renderCheckout() {
+let checkoutRenderId = 0;
+
+function updateCheckoutItemsScrollLimit() {
+    const list = document.querySelector('.checkout-items-list');
+    if (!list) return;
+
+    const items = list.querySelectorAll('.cart-item');
+    if (items.length <= 4) {
+        list.classList.remove('is-scrollable');
+        list.style.removeProperty('--checkout-items-scroll-limit');
+        list.removeAttribute('tabindex');
+        list.removeAttribute('role');
+        list.removeAttribute('aria-label');
+        return;
+    }
+
+    list.classList.add('is-scrollable');
+    list.setAttribute('tabindex', '0');
+    list.setAttribute('role', 'region');
+    list.setAttribute('aria-label', 'Itens do carrinho');
+
+    const fourthItem = items[3];
+    const listTop = list.getBoundingClientRect().top;
+    const bottomMargin = Number.parseFloat(getComputedStyle(fourthItem).marginBottom) || 0;
+    const visibleHeight = Math.ceil(fourthItem.getBoundingClientRect().bottom - listTop + bottomMargin);
+
+    list.style.setProperty('--checkout-items-scroll-limit', `${visibleHeight}px`);
+}
+
+window.addEventListener('resize', () => {
+    window.requestAnimationFrame(updateCheckoutItemsScrollLimit);
+});
+
+function preloadCartImage(src) {
+    const fallback = typeof DEFAULT_PRODUCT_IMAGE !== 'undefined'
+        ? DEFAULT_PRODUCT_IMAGE
+        : '/images/products/placeholder.png';
+
+    return new Promise(resolve => {
+        const image = new Image();
+        let currentSrc = src || fallback;
+        const fallbackUrl = new URL(fallback, document.baseURI).href;
+        const finish = loadedSrc => resolve(loadedSrc);
+
+        image.onload = () => finish(currentSrc);
+        image.onerror = () => {
+            if (image.src !== fallbackUrl) {
+                currentSrc = fallback;
+                image.src = fallback;
+            } else {
+                finish(fallback);
+            }
+        };
+        image.src = currentSrc;
+        if (image.complete && image.naturalWidth > 0) finish(currentSrc);
+    });
+}
+
+async function renderCheckout() {
     const container = document.getElementById('checkoutCartItems');
     if (!container) return;
 
+    const renderId = ++checkoutRenderId;
+    container.setAttribute('aria-busy', 'true');
     const cart = window.globalState ? window.globalState.cart : {};
     const cartKeys = Object.keys(cart);
     if (cartKeys.length === 0) {
@@ -31,8 +91,21 @@ function renderCheckout() {
             </div>
         `;
         updateSummary(0, 0, 0);
+        container.setAttribute('aria-busy', 'false');
         return;
     }
+
+    const products = cartKeys
+        .map(id => (window.PRODUCTS || []).find(product => String(product.id) === String(id)))
+        .filter(Boolean);
+    const imageEntries = await Promise.all(products.map(async product => {
+        const source = product.images && product.images.length > 0 && product.images[0]
+            ? product.images[0]
+            : (typeof DEFAULT_PRODUCT_IMAGE !== 'undefined' ? DEFAULT_PRODUCT_IMAGE : '/images/products/placeholder.png');
+        return [String(product.id), await preloadCartImage(source)];
+    }));
+    if (renderId !== checkoutRenderId) return;
+    const imageSources = new Map(imageEntries);
 
     let html = '';
     let totalItemsCount = 0;
@@ -56,9 +129,8 @@ function renderCheckout() {
         totalPix += itemPixTotal;
         totalPrazo += itemPrazoTotal;
 
-        const imageSrc = (p.images && p.images.length > 0 && p.images[0])
-    ? p.images[0]
-    : (typeof DEFAULT_PRODUCT_IMAGE !== 'undefined' ? DEFAULT_PRODUCT_IMAGE : '/images/products/placeholder.png');
+        const imageSrc = imageSources.get(String(p.id))
+            || (typeof DEFAULT_PRODUCT_IMAGE !== 'undefined' ? DEFAULT_PRODUCT_IMAGE : '/images/products/placeholder.png');
 
         html += `
             <div class="cart-item" data-id="${p.id}">
@@ -90,8 +162,10 @@ function renderCheckout() {
         `;
     });
 
-    container.innerHTML = html;
+    container.innerHTML = `<div class="checkout-items-list">${html}</div>`;
+    updateCheckoutItemsScrollLimit();
     updateSummary(totalItemsCount, totalPix, totalPrazo);
+    container.setAttribute('aria-busy', 'false');
 }
 
 window.changeCheckoutQty = function changeCheckoutQty(id, delta) {

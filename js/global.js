@@ -528,18 +528,34 @@ function carregarImagensProduto(productId) {
     const imagemPrincipal = document.getElementById('mainImage');
     const miniaturasContainer = document.querySelector('.miniaturas');
 
-    if (!produto || !imagemPrincipal || !miniaturasContainer) return;
+    if (!produto || !imagemPrincipal || !miniaturasContainer) return Promise.resolve();
 
     const imagens = (produto.images && produto.images.length > 0 && produto.images[0])
         ? produto.images
         : [DEFAULT_PRODUCT_IMAGE];
 
-    imagemPrincipal.onerror = () => { imagemPrincipal.src = DEFAULT_PRODUCT_IMAGE; };
-    imagemPrincipal.src = imagens[0] || DEFAULT_PRODUCT_IMAGE;
+    const imagemFallback = DEFAULT_PRODUCT_IMAGE;
+    const imagemSolicitada = imagens[0] || imagemFallback;
+    let resolverImagem;
+    const imagemCarregada = new Promise(resolve => {
+        resolverImagem = resolve;
+        imagemPrincipal.onload = resolve;
+        imagemPrincipal.onerror = () => {
+            if (imagemPrincipal.src !== new URL(imagemFallback, document.baseURI).href) {
+                imagemPrincipal.src = imagemFallback;
+            } else {
+                resolve();
+            }
+        };
+    });
+    imagemPrincipal.src = imagemSolicitada;
+    if (imagemPrincipal.complete && imagemPrincipal.naturalWidth > 0) {
+        resolverImagem();
+    }
     imagemPrincipal.alt = produto.title || 'Imagem do produto';
 
     miniaturasContainer.replaceChildren();
-    if (imagens.length < 2) return;
+    if (imagens.length < 2) return imagemCarregada;
 
     imagens.forEach((src, index) => {
         const button = document.createElement('button');
@@ -565,6 +581,7 @@ function carregarImagensProduto(productId) {
         button.appendChild(thumbnail);
         miniaturasContainer.appendChild(button);
     });
+    return imagemCarregada;
 }
 window.carregarImagensProduto = carregarImagensProduto;
 

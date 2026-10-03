@@ -92,14 +92,123 @@ function configurarDescricaoExpandivel() {
     }, 150);
 }
 
+function renderizarDistribuicaoAvaliacoes() {
+    const chart = document.getElementById('ratingDistributionChart');
+    const legend = document.getElementById('ratingDistributionLegend');
+    const title = document.getElementById('ratingChartTitle');
+    const description = document.getElementById('ratingChartDescription');
+    if (!chart || !legend || !title || !description) return;
+
+    const data = [
+        { stars: 5, value: 12, color: '#00926b' },
+        { stars: 4, value: 8, color: '#00bd84' },
+        { stars: 3, value: 0, color: '#f1c40f' },
+        { stars: 2, value: 0, color: '#e67e22' },
+        { stars: 1, value: 0, color: '#e74c3c' }
+    ];
+    const centerX = 200;
+    const centerY = 200;
+    const outerRadius = 175;
+    const innerRadius = 75;
+    const totalSegments = 10;
+    const totalReviews = data.reduce((sum, item) => sum + item.value, 0);
+    const average = totalReviews > 0
+        ? data.reduce((sum, item) => sum + item.stars * item.value, 0) / totalReviews
+        : 0;
+
+    const starPoints = Array.from({ length: totalSegments }, (_, index) => {
+        const angle = (Math.PI * 2 * index) / totalSegments - Math.PI / 2;
+        const radius = index % 2 === 0 ? outerRadius : outerRadius * 0.45;
+        return {
+            x: centerX + Math.cos(angle) * radius,
+            y: centerY + Math.sin(angle) * radius
+        };
+    });
+
+    chart.replaceChildren(title, description);
+    legend.replaceChildren();
+    description.textContent = `${totalReviews} avaliações. Média de ${average.toFixed(1).replace('.', ',')} estrelas.`;
+
+    data.forEach((item, index) => {
+        const previousValley = (index * 2 - 1 + totalSegments) % totalSegments;
+        const tip = (index * 2) % totalSegments;
+        const nextValley = (index * 2 + 1) % totalSegments;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const [firstPoint, tipPoint, lastPoint] = [
+            starPoints[previousValley],
+            starPoints[tip],
+            starPoints[nextValley]
+        ];
+
+        path.setAttribute(
+            'd',
+            `M ${centerX} ${centerY} L ${firstPoint.x} ${firstPoint.y} L ${tipPoint.x} ${tipPoint.y} L ${lastPoint.x} ${lastPoint.y} Z`
+        );
+        path.classList.add('slice');
+        if (item.value > 0) {
+            path.classList.add('has-reviews');
+            path.style.setProperty('--slice-color', item.color);
+        }
+        path.setAttribute('aria-label', `${item.stars} estrelas: ${item.value} avaliações`);
+        chart.appendChild(path);
+
+        const legendItem = document.createElement('div');
+        legendItem.className = 'rating-distribution-legend-item';
+        const label = document.createElement('div');
+        label.className = 'rating-distribution-legend-label';
+        const color = document.createElement('span');
+        color.className = 'rating-distribution-legend-color';
+        color.style.backgroundColor = item.value > 0 ? item.color : '#303030';
+        const stars = document.createElement('span');
+        stars.textContent = `${item.stars} ${item.stars === 1 ? 'estrela' : 'estrelas'}`;
+        const count = document.createElement('span');
+        count.className = 'rating-distribution-legend-count';
+        count.textContent = `${item.value} avaliações`;
+
+        label.append(color, stars);
+        legendItem.append(label, count);
+        legend.appendChild(legendItem);
+    });
+
+    const outline = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    outline.setAttribute('points', starPoints.map(point => `${point.x},${point.y}`).join(' '));
+    outline.classList.add('star-outline');
+    chart.appendChild(outline);
+
+    const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    center.setAttribute('cx', String(centerX));
+    center.setAttribute('cy', String(centerY));
+    center.setAttribute('r', String(innerRadius));
+    center.classList.add('chart-center');
+    chart.appendChild(center);
+
+    const averageText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    averageText.setAttribute('x', String(centerX));
+    averageText.setAttribute('y', String(centerY - 8));
+    averageText.setAttribute('text-anchor', 'middle');
+    averageText.classList.add('chart-average');
+    averageText.textContent = totalReviews > 0 ? average.toFixed(1).replace('.', ',') : '—';
+    chart.appendChild(averageText);
+
+    const totalText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    totalText.setAttribute('x', String(centerX));
+    totalText.setAttribute('y', String(centerY + 20));
+    totalText.setAttribute('text-anchor', 'middle');
+    totalText.classList.add('chart-total');
+    totalText.textContent = `${totalReviews} avaliações`;
+    chart.appendChild(totalText);
+}
+
 function exibirEstadoProduto(mensagem, permitirNovaTentativa = false) {
     const main = document.querySelector('.product-container');
     const grid = document.getElementById('productGrid');
+    const skeleton = document.getElementById('productSkeleton');
     const status = document.getElementById('productLoadStatus');
     if (!main || !status) return;
 
     main.setAttribute('aria-busy', 'false');
     if (grid) grid.hidden = true;
+    if (skeleton) skeleton.hidden = true;
     status.hidden = false;
     status.replaceChildren();
 
@@ -224,7 +333,13 @@ function inicializarAbas() {
 // ==========================================
 async function inicializarPaginaProduto() {
     const main = document.querySelector('.product-container');
+    const grid = document.getElementById('productGrid');
+    const skeleton = document.getElementById('productSkeleton');
+    const loadStatus = document.getElementById('productLoadStatus');
     if (main) main.setAttribute('aria-busy', 'true');
+    if (grid) grid.hidden = true;
+    if (skeleton) skeleton.hidden = false;
+    if (loadStatus) loadStatus.hidden = true;
 
     const urlParams = new URLSearchParams(window.location.search);
     const rawId = urlParams.get('id');
@@ -317,7 +432,7 @@ async function inicializarPaginaProduto() {
     }
 
     if (typeof carregarImagensProduto === 'function') {
-        carregarImagensProduto(product.id);
+        await carregarImagensProduto(product.id);
     }
     const stockStatusEl = document.getElementById('stockStatus');
     const btnComprarPrincipal = document.querySelector('.btn-comprar.principal');
@@ -380,9 +495,8 @@ async function inicializarPaginaProduto() {
     if (specsEmpty) specsEmpty.hidden = specs.length > 0;
     if (specsTable) specsTable.hidden = specs.length === 0;
 
-    const grid = document.getElementById('productGrid');
     if (grid) grid.hidden = false;
-    const loadStatus = document.getElementById('productLoadStatus');
+    if (skeleton) skeleton.hidden = true;
     if (loadStatus) loadStatus.hidden = true;
     if (main) main.setAttribute('aria-busy', 'false');
 
@@ -425,4 +539,5 @@ async function inicializarPaginaProduto() {
     inicializarAbas();
 }
 
+renderizarDistribuicaoAvaliacoes();
 inicializarPaginaProduto();

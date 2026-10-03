@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/css/global.css?v=20261002-4">
     <link rel="stylesheet" href="/css/home.css">
     <link rel="stylesheet" href="/css/product.css">
-    <link rel="stylesheet" href="/css/cart.css">
+    <link rel="stylesheet" href="/css/cart.css?v=20261003-3">
     <link rel="stylesheet" href="/css/background.css?v=20261002">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/global.js?v=20261002"></script>
@@ -48,7 +48,29 @@
                         <h2>PRODUTO E SERVIÇO</h2>
                         <button class="btn-remover-todos" id="btnRemoveAll" onclick="clearCheckoutCart()">REMOVER TODOS OS PRODUTOS</button>
                     </div>
-                    <div id="checkoutCartItems">
+                    <div id="checkoutCartItems" aria-busy="true">
+                        <div class="checkout-skeleton" role="status" aria-label="Carregando itens do carrinho">
+                            <div class="checkout-skeleton-item" aria-hidden="true">
+                                <div class="skeleton-box checkout-skeleton-image"></div>
+                                <div class="checkout-skeleton-details">
+                                    <div class="skeleton-box checkout-skeleton-seller"></div>
+                                    <div class="skeleton-box checkout-skeleton-title"></div>
+                                    <div class="skeleton-box checkout-skeleton-subtitle"></div>
+                                </div>
+                                <div class="skeleton-box checkout-skeleton-actions"></div>
+                                <div class="skeleton-box checkout-skeleton-price"></div>
+                            </div>
+                            <div class="checkout-skeleton-item" aria-hidden="true">
+                                <div class="skeleton-box checkout-skeleton-image"></div>
+                                <div class="checkout-skeleton-details">
+                                    <div class="skeleton-box checkout-skeleton-seller"></div>
+                                    <div class="skeleton-box checkout-skeleton-title"></div>
+                                    <div class="skeleton-box checkout-skeleton-subtitle"></div>
+                                </div>
+                                <div class="skeleton-box checkout-skeleton-actions"></div>
+                                <div class="skeleton-box checkout-skeleton-price"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,6 +139,6 @@
             <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
         </div>
     </footer>
-    <script src="/js/cart.js?v=20261002"></script>
+    <script src="/js/cart.js?v=20261003-3"></script>
 </body>
 </html>

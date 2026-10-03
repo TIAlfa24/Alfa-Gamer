@@ -2,24 +2,24 @@
 <html lang="pt-BR">
 
 <head>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-372853735"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-372853735');
-        </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-372853735"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-372853735');
+    </script>
     <link rel="icon" href="/images/favicon.png" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Produto - Loja</title>
     <link rel="stylesheet" href="/css/global.css?v=20261002-6">
     <link rel="stylesheet" href="/css/home.css?v=20261002-7">
-    <link rel="stylesheet" href="/css/product.css?v=20261002-6">
+    <link rel="stylesheet" href="/css/product.css?v=20261002-7">
     <link rel="stylesheet" href="/css/background.css?v=20261002">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/global.js?v=20261002-1"></script>
+    <script src="/js/global.js?v=20261002-2"></script>
     <script src="/js/background.js?v=20261002" defer></script>
 </head>
 
@@ -53,22 +53,22 @@
                     <span class="cart-count" id="cartCountNav">0</span>
                 </button>
             </nav>
-            
+
         </div>
     </header>
-<div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-                <h3>Carrinho</h3>
-                <div class="cart-box">
-                    <div id="cartItemsDesktop"></div>
-                </div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-                    <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
-                </div>
-                <div style="margin-top:12px;display:flex;gap:8px">
-                    <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
-                    <button class="btn ghost" id="closeCart">Fechar</button>
-                </div>
-            </div>
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box">
+            <div id="cartItemsDesktop"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
     <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
         <div class="cart-bottom-header">
             <h3>Carrinho</h3>
@@ -95,12 +95,28 @@
             <span id="productTitle">Carregando produto</span>
         </nav>
 
+        <div class="product-skeleton" id="productSkeleton" role="status" aria-label="Carregando detalhes do produto">
+            <div class="skeleton-box skeleton-product-image"></div>
+            <div class="skeleton-product-info">
+                <div class="skeleton-box skeleton-product-category"></div>
+                <div class="skeleton-box skeleton-product-title"></div>
+                <div class="skeleton-box skeleton-product-price"></div>
+                <div class="skeleton-box skeleton-product-copy"></div>
+                <div class="skeleton-box skeleton-product-action"></div>
+            </div>
+            <div class="skeleton-product-details">
+                <div class="skeleton-box skeleton-product-heading"></div>
+                <div class="skeleton-box skeleton-product-copy"></div>
+                <div class="skeleton-box skeleton-product-copy short"></div>
+            </div>
+        </div>
         <div class="product-load-state" id="productLoadStatus" role="status" hidden></div>
 
-        <div class="product-grid" id="productGrid">
+        <div class="product-grid" id="productGrid" hidden>
             <div class="product-imagens">
                 <div class="imagem-principal">
-                    <img src="/images/products/placeholder.png" alt="Imagem do produto" id="mainImage" fetchpriority="high">
+                    <img src="/images/products/placeholder.png" alt="Imagem do produto" id="mainImage"
+                        fetchpriority="high">
                 </div>
                 <div class="miniaturas" aria-label="Outras imagens do produto"></div>
             </div>
@@ -132,7 +148,8 @@
                             <input type="number" id="qty" value="1" min="1" max="3" aria-label="Quantidade do produto">
                             <button type="button" aria-label="Aumentar quantidade" onclick="adjustQty(1)">+</button>
                         </div>
-                        <button type="button" class="btn-comprar principal" onclick="addToCartFromProduct()">Adicionar ao carrinho</button>
+                        <button type="button" class="btn-comprar principal" onclick="addToCartFromProduct()">Adicionar
+                            ao carrinho</button>
                     </div>
                     <button type="button" class="btn-comprar secundario">Consultar pelo WhatsApp</button>
                 </div>
@@ -140,8 +157,10 @@
 
             <div class="product-detalhes">
                 <div class="tabs" role="tablist" aria-label="Informações do produto">
-                    <button class="tab-btn active" id="descriptionTab" type="button" role="tab" aria-selected="true" aria-controls="descricao">Descrição</button>
-                    <button class="tab-btn" id="specificationsTab" type="button" role="tab" aria-selected="false" aria-controls="especificacoes" tabindex="-1">Especificações</button>
+                    <button class="tab-btn active" id="descriptionTab" type="button" role="tab" aria-selected="true"
+                        aria-controls="descricao">Descrição</button>
+                    <button class="tab-btn" id="specificationsTab" type="button" role="tab" aria-selected="false"
+                        aria-controls="especificacoes" tabindex="-1">Especificações</button>
                     <div class="underline"></div>
                 </div>
 
@@ -150,15 +169,31 @@
                 </div>
 
                 <div id="especificacoes" class="tab-content" role="tabpanel" aria-labelledby="specificationsTab" hidden>
-                    <p id="specsEmpty" class="specs-empty" hidden>As especificações não foram informadas para este produto.</p>
-                    <table id="specsTable"><tbody></tbody></table>
+                    <p id="specsEmpty" class="specs-empty" hidden>As especificações não foram informadas para este
+                        produto.</p>
+                    <table id="specsTable">
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
         <div class="divider"></div>
-        <section class="reviews-unavailable" aria-labelledby="reviewsTitle">
-            <h2 id="reviewsTitle">Avaliações</h2>
-            <p>As avaliações deste produto não estão disponíveis no momento.</p>
+        <section class="reviews">
+            <h3>Avaliações</h3>
+            <div class="reviews-container">
+                <div class="stars-area">
+                    <svg id="ratingDistributionChart" class="rating-distribution-chart"
+                        viewBox="0 0 400 400" role="img" aria-labelledby="ratingChartTitle ratingChartDescription">
+                        <title id="ratingChartTitle">Distribuição das avaliações</title>
+                        <desc id="ratingChartDescription"></desc>
+                    </svg>
+                    <div id="ratingDistributionLegend" class="rating-distribution-legend"></div>
+                </div>
+                <div class="comments-area">
+                    <button class="btn ghost" id="writeReviewBtn">Escrever uma avaliação</button>
+                    <p>Confira a distribuição das avaliações deste produto.</p>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -174,7 +209,8 @@
                 <h4>Atendimento</h4>
                 <p>Segunda a Sexta: 09:00 às 18:00</p>
                 <p>Atendimento Online e Loja Física</p>
-                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></p>
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31)
+                        98375-3432</a></p>
             </div>
             <div class="footer-col">
                 <h4>Transparência</h4>
@@ -190,7 +226,7 @@
         </div>
     </footer>
 
-    <script src="/js/product.js?v=20261002-2"></script>
+    <script src="/js/product.js?v=20261002-3"></script>
 </body>
 
 </html>
