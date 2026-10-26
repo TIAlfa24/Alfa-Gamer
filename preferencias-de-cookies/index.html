@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Google tag (gtag.js) — Consent Mode v2 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-372853735"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+
+        /* Nada é liberado antes do consentimento */
+        gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            functionality_storage: 'granted',
+            security_storage: 'granted',
+            wait_for_update: 500
+        });
+
+        gtag('js', new Date());
+        gtag('config', 'AW-372853735');
+    </script>
+
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Gerencie suas preferências de cookies e armazenamento local na loja Equipe Alfa.">
+    <title>Preferências de Cookies — Equipe Alfa</title>
+    <link rel="stylesheet" href="/css/global.css?v=20261002-6" />
+    <link rel="stylesheet" href="/css/home.css?v=20261005-1" />
+    <link rel="stylesheet" href="/css/background.css" />
+    <link rel="stylesheet" href="/css/legal.css?v=20261008-2" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/global.js?v=20261002-1" defer></script>
+    <script src="/js/background.js?v=20260907" defer></script>
+</head>
+
+<body>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="draggable-cart-widget" id="draggableCartWidget">
+        <div class="draggable-cart-header">
+            <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
+            <img src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+        </div>
+        <div class="draggable-cart-tooltip">Pressione para mover</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <a href="/"> <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"> </a>
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+                <span class="cart-count" id="cartCountHeader">0</span>
+            </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu">
+                <a href="#">Monte seu PC</a>
+                <a href="#">Cursos</a>
+                <a href="#">Sobre Nós</a>
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho">
+                    <img class="cart-icon" src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+                    <span class="cart-count" id="cartCountNav">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box"><div id="cartItemsDesktop"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
+    <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
+        <div class="cart-bottom-header">
+            <h3>Carrinho</h3>
+            <button id="closeCartBottom" class="btn ghost">Fechar</button>
+        </div>
+        <div class="cart-box" id="cartItemsMobile"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalMobile">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkoutMobile" onclick="window.location.href='/cart/'">Finalizar</button>
+        </div>
+    </div>
+
+    <main class="legal-main">
+        <div class="legal-hero">
+            <nav class="legal-breadcrumb" aria-label="Trilha de navegação">
+                <a href="/">Início</a>
+                <span aria-hidden="true">&gt;</span>
+                <span>Preferências de Cookies</span>
+            </nav>
+            <h1>Preferências de Cookies</h1>
+            <p class="legal-subtitle">
+                Você decide o que pode ser guardado no seu navegador. Nada é ativado sem a sua escolha —
+                e você pode mudar de ideia quando quiser, nesta mesma página.
+            </p>
+            <span class="legal-updated">🔒 Suas escolhas ficam apenas neste dispositivo</span>
+        </div>
+
+        <div class="legal-layout">
+            <aside class="legal-toc" aria-label="Índice">
+                <h3>Nesta página</h3>
+                <ol>
+                    <li><a href="#oque-sao">O que são cookies</a></li>
+                    <li><a href="#categorias">Categorias</a></li>
+                    <li><a href="#gerenciar">Gerenciar preferências</a></li>
+                    <li><a href="#navegador">Bloquear no navegador</a></li>
+                    <li><a href="#duvidas">Dúvidas</a></li>
+                </ol>
+            </aside>
+
+            <article class="legal-content">
+
+                <section id="oque-sao" class="cookie-intro">
+                    <h2>1. O que são cookies e tecnologias semelhantes</h2>
+                    <p>
+                        <strong>Cookies</strong> são pequenos arquivos gravados pelo navegador que ajudam o site
+                        a lembrar de você entre visitas. Também usamos <strong>armazenamento local</strong>
+                        (<em>localStorage</em> e <em>sessionStorage</em>) — tecnologias equivalentes que mantêm
+                        informações apenas no seu dispositivo.
+                    </p>
+                    <p>
+                        Usamos o mínimo necessário para a loja funcionar e, quando você autoriza, algumas
+                        categorias extras para melhorar sua experiência e medir resultados. Nenhuma delas
+                        é ativada por padrão.
+                    </p>
+                </section>
+
+                <section id="categorias">
+                    <h2>2. Categorias de cookies utilizadas</h2>
+                    <p class="cookie-cat-intro">
+                        Organizamos tudo em quatro categorias, no mesmo padrão usado pelos principais
+                        navegadores. Ative apenas o que fizer sentido para você.
+                    </p>
+
+                    <div class="cookie-summary" id="cookieSummary">
+                        <span class="cookie-summary-pill" aria-hidden="true"></span>
+                        <span class="cookie-summary-count" id="cookieSummaryCount">— categorias ativas</span>
+                        <span class="cookie-summary-date" id="cookieSummaryDate">Nenhuma escolha registrada ainda</span>
+                    </div>
+
+                    <!-- ESSENCIAIS -->
+                    <div class="cookie-category is-locked">
+                        <div>
+                            <div class="cookie-cat-head">
+                                <span class="cookie-cat-title">Essenciais</span>
+                                <span class="cookie-cat-badge locked">Sempre ativos</span>
+                            </div>
+                            <p class="cookie-cat-desc">
+                                Sem eles a loja simplesmente não funciona. Guardam o que você colocou no
+                                carrinho, mantêm sua sessão segura e permitem o envio de avaliações.
+                                Não rastreiam você em outros sites.
+                            </p>
+                            <ul class="cookie-purpose-list">
+                                <li>Itens adicionados ao carrinho e à lista de comparação</li>
+                                <li>Sessão de navegação e proteção contra uso indevido</li>
+                                <li>Preferências básicas de exibição da loja</li>
+                            </ul>
+                        </div>
+                        <label class="cookie-toggle" title="Sempre ativo">
+                            <input type="checkbox" checked disabled data-cat="essential" aria-label="Essenciais — sempre ativos">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- PREFERÊNCIAS -->
+                    <div class="cookie-category">
+                        <div>
+                            <div class="cookie-cat-head">
+                                <span class="cookie-cat-title">Preferências e funcionalidades</span>
+                                <span class="cookie-cat-badge">Opcional</span>
+                            </div>
+                            <p class="cookie-cat-desc">
+                                Guardam escolhas que você já fez, para que não precise repetir tudo na
+                                próxima visita. São dados simples, mantidos só no seu navegador.
+                            </p>
+                            <ul class="cookie-purpose-list">
+                                <li>Nome já informado ao enviar uma avaliação</li>
+                                <li>Última página e filtros de produtos utilizados</li>
+                                <li>Preferências de idioma e de exibição</li>
+                            </ul>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" data-cat="preferences" aria-label="Alternar cookies de preferências">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- ANALYTICS -->
+                    <div class="cookie-category">
+                        <div>
+                            <div class="cookie-cat-head">
+                                <span class="cookie-cat-title">Analytics e desempenho</span>
+                                <span class="cookie-cat-badge">Opcional</span>
+                            </div>
+                            <p class="cookie-cat-desc">
+                                Ajudam a entender quais páginas e produtos despertam mais interesse, para
+                                melhorarmos o site. As informações são agrupadas por sessão anônima e não
+                                identificam você pessoalmente.
+                            </p>
+                            <ul class="cookie-purpose-list">
+                                <li>Páginas e produtos mais acessados</li>
+                                <li>Origem do acesso e tempo de permanência</li>
+                                <li>Tipo de dispositivo (celular ou computador)</li>
+                            </ul>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" data-cat="analytics" aria-label="Alternar cookies de analytics">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- MARKETING -->
+                    <div class="cookie-category">
+                        <div>
+                            <div class="cookie-cat-head">
+                                <span class="cookie-cat-title">Marketing e publicidade</span>
+                                <span class="cookie-cat-badge">Opcional</span>
+                            </div>
+                            <p class="cookie-cat-desc">
+                                Permitem medir a eficácia das nossas campanhas no Google Ads e mostrar
+                                anúncios mais relevantes em outras plataformas. Se você desativar, continuará
+                                vendo anúncios — apenas menos personalizados.
+                            </p>
+                            <ul class="cookie-purpose-list">
+                                <li>Medição de conversões de campanhas publicitárias</li>
+                                <li>Remarketing em plataformas parceiras</li>
+                                <li>Limitação da frequência de exibição de anúncios</li>
+                            </ul>
+                        </div>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" data-cat="marketing" aria-label="Alternar cookies de marketing">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section id="gerenciar">
+                    <h2>3. Gerenciar suas preferências</h2>
+                    <p>
+                        Ajuste as opções acima e clique em <strong>Salvar preferências</strong>. A escolha vale
+                        para este navegador e pode ser alterada quando quiser, voltando a esta página.
+                    </p>
+
+                    <div class="legal-actions">
+                        <button type="button" class="btn" id="savePreferences">Salvar preferências</button>
+                        <button type="button" class="btn ghost" id="acceptAll">Aceitar todos</button>
+                        <button type="button" class="btn ghost" id="rejectAll">Recusar opcionais</button>
+                        <span class="status" id="cookieStatus" role="status" aria-live="polite"></span>
+                    </div>
+
+                    <div class="legal-note">
+                        <strong>Privacidade por padrão:</strong> na sua primeira visita, todas as categorias
+                        opcionais permanecem desligadas até que você escolha o contrário.
+                    </div>
+                </section>
+
+                <section id="navegador">
+                    <h2>4. Bloquear cookies direto no navegador</h2>
+                    <p>
+                        Além desta página, você pode gerenciar ou apagar cookies pelas configurações
+                        do próprio navegador:
+                    </p>
+                    <ul>
+                        <li><strong>Chrome:</strong> Configurações → Privacidade e segurança → Cookies e outros dados do site.</li>
+                        <li><strong>Firefox:</strong> Preferências → Privacidade &amp; Segurança → Cookies e dados do site.</li>
+                        <li><strong>Safari:</strong> Ajustes → Safari → Avançado → Dados de sites.</li>
+                        <li><strong>Edge:</strong> Configurações → Cookies e permissões do site.</li>
+                    </ul>
+                    <div class="legal-note">
+                        Bloquear cookies essenciais pode impedir o funcionamento correto do carrinho de
+                        compras e do sistema de avaliações.
+                    </div>
+                </section>
+
+                <section id="duvidas">
+                    <h2>5. Dúvidas</h2>
+                    <p>
+                        Para saber mais sobre como tratamos seus dados, consulte nossa
+                        <a href="/politica-de-privacidade/">Política de Privacidade</a> ou
+                        fale conosco pelo WhatsApp
+                        <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a>.
+                    </p>
+                </section>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="alfa-footer-trust">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Alfa Segurança &amp; Tecnologia</h3>
+                <p><strong>CNPJ:</strong> 20.744.572/0001-92</p>
+                <p>Contagem - MG</p>
+                <p class="trust-badge">Compra 100% Segura &amp; Protegida</p>
+            </div>
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p>Segunda a Sexta: 09:00 às 18:00</p>
+                <p>Atendimento Online e Loja Física</p>
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></p>
+            </div>
+            <div class="footer-col">
+                <h4>Transparência</h4>
+                <ul class="footer-links">
+                    <li><a href="/politica-de-privacidade/">Política de Privacidade</a></li>
+                    <li><a href="/termos-de-servico/">Termos de Serviço</a></li>
+                    <li><a href="/preferencias-de-cookies/">Preferências de Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
+        </div>
+    </footer>
+
+    <!-- =====================================================
+         JS — GERENCIADOR DE PREFERÊNCIAS DE COOKIES
+         ===================================================== -->
+    <script>
+        (function () {
+            const CONSENT_KEY = 'alfa_cookie_consent_v1';
+
+            const DEFAULT_STATE = {
+                essential: true,
+                preferences: false,
+                analytics: false,
+                marketing: false,
+                updatedAt: null
+            };
+
+            const toggles = document.querySelectorAll('.cookie-toggle input[data-cat]');
+            const statusEl = document.getElementById('cookieStatus');
+            const countEl = document.getElementById('cookieSummaryCount');
+            const dateEl = document.getElementById('cookieSummaryDate');
+
+            function lerConsentimento() {
+                try {
+                    const raw = localStorage.getItem(CONSENT_KEY);
+                    if (!raw) return { ...DEFAULT_STATE };
+                    const parsed = JSON.parse(raw);
+                    return { ...DEFAULT_STATE, ...parsed, essential: true };
+                } catch {
+                    return { ...DEFAULT_STATE };
+                }
+            }
+
+            function salvarConsentimento(state) {
+                const payload = { ...state, essential: true, updatedAt: new Date().toISOString() };
+                try { localStorage.setItem(CONSENT_KEY, JSON.stringify(payload)); } catch (_) { }
+                return payload;
+            }
+
+            function aplicarEstadoNoUI(state) {
+                toggles.forEach(input => {
+                    const cat = input.dataset.cat;
+                    input.checked = cat === 'essential' ? true : Boolean(state[cat]);
+                });
+            }
+
+            function lerEstadoDaUI() {
+                const state = { essential: true };
+                toggles.forEach(input => {
+                    if (input.dataset.cat === 'essential') return;
+                    state[input.dataset.cat] = input.checked;
+                });
+                return state;
+            }
+
+            function atualizarResumo(state) {
+                const total = 4;
+                const ativos = ['essential', 'preferences', 'analytics', 'marketing']
+                    .filter(k => state[k]).length;
+
+                if (countEl) countEl.textContent = ativos + ' de ' + total + ' categorias ativas';
+
+                if (dateEl) {
+                    if (state.updatedAt) {
+                        const d = new Date(state.updatedAt);
+                        const data = d.toLocaleDateString('pt-BR');
+                        const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                        dateEl.textContent = 'Salvo em ' + data + ' às ' + hora;
+                    } else {
+                        dateEl.textContent = 'Nenhuma escolha registrada ainda';
+                    }
+                }
+            }
+
+            function aplicarEfeitoColateral(state) {
+                if (!state.preferences) {
+                    try {
+                        localStorage.removeItem('alfa_user_name_v1');
+                        localStorage.removeItem('loja.currentPage');
+                    } catch (_) { }
+                }
+
+                if (typeof window.gtag === 'function') {
+                    try {
+                        window.gtag('consent', 'update', {
+                            ad_storage: state.marketing ? 'granted' : 'denied',
+                            ad_user_data: state.marketing ? 'granted' : 'denied',
+                            ad_personalization: state.marketing ? 'granted' : 'denied',
+                            analytics_storage: state.analytics ? 'granted' : 'denied'
+                        });
+                    } catch (_) { }
+                }
+            }
+
+            function mostrarStatus(msg, saved = false) {
+                if (!statusEl) return;
+                statusEl.textContent = msg;
+                statusEl.classList.toggle('saved', saved);
+                if (saved) {
+                    setTimeout(() => {
+                        statusEl.textContent = '';
+                        statusEl.classList.remove('saved');
+                    }, 3200);
+                }
+            }
+
+            function salvarComFeedback(state) {
+                const salvo = salvarConsentimento(state);
+                aplicarEstadoNoUI(salvo);
+                aplicarEfeitoColateral(salvo);
+                atualizarResumo(salvo);
+                mostrarStatus('✅ Preferências salvas com sucesso.', true);
+            }
+
+            const atual = lerConsentimento();
+            aplicarEstadoNoUI(atual);
+            aplicarEfeitoColateral(atual);
+            atualizarResumo(atual);
+
+            document.getElementById('savePreferences')?.addEventListener('click', () => {
+                salvarComFeedback(lerEstadoDaUI());
+            });
+
+            document.getElementById('acceptAll')?.addEventListener('click', () => {
+                salvarComFeedback({ essential: true, preferences: true, analytics: true, marketing: true });
+            });
+
+            document.getElementById('rejectAll')?.addEventListener('click', () => {
+                salvarComFeedback({ essential: true, preferences: false, analytics: false, marketing: false });
+            });
+
+            toggles.forEach(input => {
+                if (input.dataset.cat === 'essential') return;
+                input.addEventListener('change', () => {
+                    salvarComFeedback(lerEstadoDaUI());
+                });
+            });
+
+            window.alfaCookieConsent = {
+                get: lerConsentimento,
+                set: salvarConsentimento
+            };
+        })();
+    </script>
+</body>
+
+</html>

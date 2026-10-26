@@ -49,7 +49,7 @@ async function carregarDashboard(periodo = '7dias') {
     // B. BUSCA EVENTOS NO ANALYTICS NO PERÍODO
     const { data: analyticsData, error: errAnalytics } = await supabase
         .from('analytics')
-        .select('id, event_type, page_path, produto_id, session_id, created_at, produtos(id, title, images, price)')
+        .select('id, event_type, page_path, produto_id, session_id, device, created_at, produtos(id, title, images, price)')
         .gte('created_at', dataInicio);
 
     if (errAnalytics) {
@@ -168,7 +168,6 @@ function renderizarGraficoTrafego(eventos) {
     });
 }
 
-// GRÁFICO 2: DISPOSITIVOS
 function renderizarGraficoDispositivos(eventos) {
     const canvas = document.getElementById('deviceChart');
     if (!canvas || typeof Chart === 'undefined') return;
@@ -178,11 +177,11 @@ function renderizarGraficoDispositivos(eventos) {
     let desktop = 0;
 
     eventos.forEach(e => {
-        if (e.page_path && e.page_path.includes('mobile')) {
-            mobile++;
-        } else {
-            desktop++;
-        }
+        // Usa a coluna `device`; se estiver nula (dados antigos), tenta heurística
+        const device = e.device
+            || ((e.page_path && e.page_path.includes('mobile')) ? 'mobile' : 'desktop');
+        if (device === 'mobile') mobile++;
+        else desktop++;
     });
 
     if (deviceChartInstance) deviceChartInstance.destroy();
@@ -199,7 +198,6 @@ function renderizarGraficoDispositivos(eventos) {
         options: { responsive: true, maintainAspectRatio: false }
     });
 }
-
 // GRÁFICO 3: COTAÇÕES AO LONGO DO TEMPO
 function renderizarGraficoCotacoes(cotacoesEventos) {
     const canvas = document.getElementById('quotesChart');

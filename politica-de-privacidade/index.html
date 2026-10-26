@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-372853735"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-372853735');
+    </script>
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Política de Privacidade da Equipe Alfa — saiba como coletamos, usamos e protegemos seus dados pessoais (LGPD).">
+    <title>Política de Privacidade — Equipe Alfa</title>
+    <link rel="stylesheet" href="/css/global.css?v=20261002-6" />
+    <link rel="stylesheet" href="/css/home.css?v=20261005-1" />
+    <link rel="stylesheet" href="/css/background.css" />
+    <link rel="stylesheet" href="/css/legal.css?v=20261008-1" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/global.js?v=20261002-1" defer></script>
+    <script src="/js/background.js?v=20260907" defer></script>
+</head>
+
+<body>
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="draggable-cart-widget" id="draggableCartWidget">
+        <div class="draggable-cart-header">
+            <span class="draggable-cart-badge" id="draggableCartBadge">0</span>
+            <img src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+        </div>
+        <div class="draggable-cart-tooltip">Pressione para mover</div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <a href="/"> <img src="/images/logo.png" alt="Logo Equipe Alfa" class="logo"> </a>
+            <button class="cart-btn2" id="openCartHeader" title="Abrir carrinho">
+                <img class="cart-icon" src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+                <span class="cart-count" id="cartCountHeader">0</span>
+            </button>
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <nav class="navbar" id="navMenu">
+                <a href="#">Monte seu PC</a>
+                <a href="#">Cursos</a>
+                <a href="#">Sobre Nós</a>
+                <button class="cart-btn1" id="openCartNav" title="Abrir carrinho">
+                    <img class="cart-icon" src="/images/usefull-icons/cart.png" alt="Carrinho" height="35px">
+                    <span class="cart-count" id="cartCountNav">0</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <h3>Carrinho</h3>
+        <div class="cart-box"><div id="cartItemsDesktop"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalDesktop">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkout" onclick="window.location.href='/cart/'">Finalizar</button>
+            <button class="btn ghost" id="closeCart">Fechar</button>
+        </div>
+    </div>
+    <div class="cart-bottom-sheet" id="cartBottomSheet" aria-hidden="true">
+        <div class="cart-bottom-header">
+            <h3>Carrinho</h3>
+            <button id="closeCartBottom" class="btn ghost">Fechar</button>
+        </div>
+        <div class="cart-box" id="cartItemsMobile"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <strong>Total:</strong><strong id="cartTotalMobile">R$ 0,00</strong>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn" id="checkoutMobile" onclick="window.location.href='/cart/'">Finalizar</button>
+        </div>
+    </div>
+
+    <main class="legal-main">
+        <div class="legal-hero">
+            <nav class="legal-breadcrumb" aria-label="Trilha de navegação">
+                <a href="/">Início</a>
+                <span aria-hidden="true">&gt;</span>
+                <span>Política de Privacidade</span>
+            </nav>
+            <h1>Política de Privacidade</h1>
+            <p class="legal-subtitle">
+                Esta política descreve como a <strong>Alfa Segurança &amp; Tecnologia</strong> coleta, usa, armazena
+                e protege seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados
+                (LGPD — Lei nº 13.709/2018).
+            </p>
+            <span class="legal-updated">Última atualização: Outubro de 2026</span>
+        </div>
+
+        <div class="legal-layout">
+            <!-- ÍNDICE -->
+            <aside class="legal-toc" aria-label="Índice da política">
+                <h3>Nesta página</h3>
+                <ol>
+                    <li><a href="#controlador">Quem é o controlador</a></li>
+                    <li><a href="#dados">Dados que coletamos</a></li>
+                    <li><a href="#finalidade">Para que usamos</a></li>
+                    <li><a href="#base-legal">Base legal (LGPD)</a></li>
+                    <li><a href="#compartilhamento">Compartilhamento</a></li>
+                    <li><a href="#cookies">Cookies e armazenamento</a></li>
+                    <li><a href="#retencao">Retenção dos dados</a></li>
+                    <li><a href="#direitos">Seus direitos</a></li>
+                    <li><a href="#seguranca">Segurança</a></li>
+                    <li><a href="#contato">Contato do encarregado</a></li>
+                </ol>
+            </aside>
+
+            <!-- CONTEÚDO -->
+            <article class="legal-content">
+
+                <section id="controlador">
+                    <h2>1. Quem é o controlador dos dados</h2>
+                    <p>
+                        O controlador responsável pelo tratamento dos seus dados pessoais é a
+                        <strong>Alfa Segurança &amp; Tecnologia (Equipe Alfa Informática)</strong>,
+                        inscrita no CNPJ <strong>20.744.572/0001-92</strong>, com sede em
+                        <strong>Contagem — MG</strong>.
+                    </p>
+                    <p>
+                        Todas as solicitações relacionadas a dados pessoais podem ser feitas pelo nosso
+                        WhatsApp oficial: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a>.
+                    </p>
+                </section>
+
+                <section id="dados">
+                    <h2>2. Dados que coletamos</h2>
+                    <p>Coletamos apenas as informações necessárias para operar a loja e melhorar sua experiência:</p>
+
+                    <h3>2.1. Dados fornecidos por você</h3>
+                    <ul>
+                        <li><strong>Identificação em avaliações:</strong> nome de exibição informado ao escrever uma avaliação de produto.</li>
+                        <li><strong>Comentários e imagens:</strong> texto da avaliação e eventuais fotos anexadas (armazenadas no bucket privado do Supabase).</li>
+                        <li><strong>Contato via WhatsApp:</strong> dados que você voluntariamente envia ao clicar em "Consultar pelo WhatsApp" (nome, itens do interesse, quantidade, etc.).</li>
+                    </ul>
+
+                    <h3>2.2. Dados coletados automaticamente</h3>
+                    <ul>
+                        <li><strong>Dados de navegação anônimos:</strong> tipo de evento (visualização de página, visualização de produto, cotação), caminho acessado, tipo de dispositivo (mobile/desktop) e um identificador de sessão aleatório (<code>alfa_session_id</code>).</li>
+                        <li><strong>Dados de carrinho:</strong> itens e quantidades que você adiciona, armazenados localmente no seu navegador.</li>
+                        <li><strong>Endereço IP e user-agent:</strong> coletados indiretamente pelo Supabase (como provedor de banco de dados) e pelo Google Ads (quando aplicável).</li>
+                    </ul>
+
+                    <h3>2.3. O que NÃO coletamos</h3>
+                    <ul>
+                        <li>Não solicitamos CPF, RG ou documentos em nenhuma etapa do site.</li>
+                        <li>Não armazenamos dados de cartão de crédito — todo o pagamento é tratado via WhatsApp/Pix diretamente com nossa equipe.</li>
+                    </ul>
+                </section>
+
+                <section id="finalidade">
+                    <h2>3. Para que usamos seus dados</h2>
+                    <ul>
+                        <li><strong>Operar a loja:</strong> exibir produtos, carrinho de compras, controle de estoque e preços.</li>
+                        <li><strong>Publicar avaliações:</strong> após moderação, exibir sua avaliação e nota na página do produto.</li>
+                        <li><strong>Atendimento:</strong> responder sua solicitação enviada por WhatsApp.</li>
+                        <li><strong>Métricas internas:</strong> entender quais produtos são mais vistos e cotados, para melhorar o catálogo.</li>
+                        <li><strong>Publicidade:</strong> medir a eficiência de campanhas do Google Ads (tag AW-372853735).</li>
+                        <li><strong>Segurança:</strong> prevenir abuso, spam e conteúdo inadequado nas avaliações.</li>
+                    </ul>
+                </section>
+
+                <section id="base-legal">
+                    <h2>4. Base legal para o tratamento</h2>
+                    <p>Tratamos dados pessoais com base nas seguintes hipóteses legais da LGPD (art. 7º):</p>
+                    <table class="legal-table">
+                        <thead>
+                            <tr>
+                                <th>Finalidade</th>
+                                <th>Base legal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Execução do contrato de compra e venda</td>
+                                <td>Execução de contrato (art. 7º, V)</td>
+                            </tr>
+                            <tr>
+                                <td>Publicação de avaliações</td>
+                                <td>Consentimento (art. 7º, I)</td>
+                            </tr>
+                            <tr>
+                                <td>Analytics anônimo e melhoria do serviço</td>
+                                <td>Legítimo interesse (art. 7º, IX)</td>
+                            </tr>
+                            <tr>
+                                <td>Cumprimento de obrigações fiscais e legais</td>
+                                <td>Obrigação legal (art. 7º, II)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="compartilhamento">
+                    <h2>5. Com quem compartilhamos</h2>
+                    <p>Não vendemos seus dados. Compartilhamos apenas com operadores essenciais:</p>
+                    <ul>
+                        <li><strong>Supabase</strong> — banco de dados, autenticação e armazenamento de imagens.</li>
+                        <li><strong>Google LLC</strong> — Google Ads (tag AW-372853735) e Google Fonts.</li>
+                        <li><strong>jsDelivr</strong> — CDN que entrega a biblioteca do Supabase.</li>
+                        <li><strong>WhatsApp (Meta)</strong> — quando você escolhe iniciar uma conversa conosco.</li>
+                        <li><strong>Autoridades públicas</strong> — quando exigido por lei ou ordem judicial.</li>
+                    </ul>
+                </section>
+
+                <section id="cookies">
+                    <h2>6. Cookies e armazenamento local</h2>
+                    <p>
+                        Utilizamos <strong>cookies</strong> e o <strong>armazenamento local (localStorage/sessionStorage)</strong>
+                        do seu navegador para funções essenciais, preferências e métricas. Detalhamos cada um deles em
+                        nossa <a href="/preferencias-de-cookies/">página de Preferências de Cookies</a>, onde você pode
+                        gerenciar suas escolhas a qualquer momento.
+                    </p>
+                    <div class="legal-note">
+                        <strong>Importante:</strong> cookies essenciais (carrinho, sessão e segurança) não podem ser
+                        desativados, pois sem eles a loja não funciona corretamente.
+                    </div>
+                </section>
+
+                <section id="retencao">
+                    <h2>7. Por quanto tempo guardamos</h2>
+                    <ul>
+                        <li><strong>Carrinho:</strong> permanece no seu navegador até você limpar os dados ou finalizar a compra.</li>
+                        <li><strong>Avaliações publicadas:</strong> mantidas enquanto o produto estiver ativo na loja.</li>
+                        <li><strong>Eventos de analytics:</strong> mantidos por até 12 meses para fins de relatório interno.</li>
+                        <li><strong>Registros fiscais:</strong> 5 anos, conforme legislação brasileira.</li>
+                    </ul>
+                </section>
+
+                <section id="direitos">
+                    <h2>8. Seus direitos como titular</h2>
+                    <p>Você pode, a qualquer momento, solicitar:</p>
+                    <ul>
+                        <li>Confirmação da existência de tratamento;</li>
+                        <li>Acesso aos dados que mantemos sobre você;</li>
+                        <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
+                        <li>Anonimização, bloqueio ou eliminação de dados desnecessários;</li>
+                        <li>Portabilidade dos dados a outro fornecedor;</li>
+                        <li>Eliminação dos dados tratados com base no consentimento;</li>
+                        <li>Informação sobre compartilhamentos realizados;</li>
+                        <li>Revogação do consentimento.</li>
+                    </ul>
+                    <p>
+                        Para exercer qualquer um desses direitos, envie uma mensagem para o nosso WhatsApp
+                        <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a>.
+                        Responderemos em até 15 dias corridos.
+                    </p>
+                </section>
+
+                <section id="seguranca">
+                    <h2>9. Como protegemos seus dados</h2>
+                    <ul>
+                        <li>Conexão criptografada via HTTPS em todas as páginas.</li>
+                        <li>Supabase com políticas de <em>Row Level Security</em> (RLS), evitando acessos indevidos.</li>
+                        <li>Moderação humana de avaliações antes da publicação.</li>
+                        <li>Boas práticas de minimização de dados — não coletamos o que não é necessário.</li>
+                    </ul>
+                    <div class="legal-note">
+                        Apesar de todos os esforços técnicos, nenhum sistema é 100% imune a incidentes.
+                        Em caso de vazamento relevante, comunicaremos os titulares afetados e a ANPD,
+                        conforme exige a LGPD.
+                    </div>
+                </section>
+
+                <section id="contato">
+                    <h2>10. Contato do encarregado (DPO)</h2>
+                    <p>
+                        Para dúvidas, sugestões ou solicitações relacionadas à proteção de dados, fale
+                        conosco por:
+                    </p>
+                    <ul>
+                        <li><strong>WhatsApp:</strong> <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></li>
+                        <li><strong>Atendimento:</strong> Segunda a sexta, das 09:00 às 18:00</li>
+                        <li><strong>Endereço:</strong> Contagem — MG, Brasil</li>
+                    </ul>
+                </section>
+
+            </article>
+        </div>
+    </main>
+
+    <footer class="alfa-footer-trust">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Alfa Segurança &amp; Tecnologia</h3>
+                <p><strong>CNPJ:</strong> 20.744.572/0001-92</p>
+                <p>Contagem - MG</p>
+                <p class="trust-badge">Compra 100% Segura &amp; Protegida</p>
+            </div>
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <p>Segunda a Sexta: 09:00 às 18:00</p>
+                <p>Atendimento Online e Loja Física</p>
+                <p>WhatsApp: <a href="https://wa.me/5531983753432" target="_blank" rel="noopener noreferrer">+55 (31) 98375-3432</a></p>
+            </div>
+            <div class="footer-col">
+                <h4>Transparência</h4>
+                <ul class="footer-links">
+                    <li><a href="/politica-de-privacidade/">Política de Privacidade</a></li>
+                    <li><a href="/termos-de-servico/">Termos de Serviço</a></li>
+                    <li><a href="/preferencias-de-cookies/">Preferências de Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© Equipe Alfa Informática — Todos os direitos reservados. Powered by <strong>Alfa Team</strong></p>
+        </div>
+    </footer>
+</body>
+
+</html>

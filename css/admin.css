@@ -38,6 +38,10 @@ body {
     transform: translateY(-2px);
 }
 
+/* ---------------------------------------------------------
+   BOTÕES DE USUÁRIO / LOGOUT NO HEADER
+   --------------------------------------------------------- */
+
 .user-drawer_button {
     display: flex;
     align-items: center;
@@ -56,35 +60,56 @@ body {
     cursor: pointer;
 }
 
+/* Por padrão (desktop): mostra só o botão que abre o drawer */
+.nav-logout-btn {
+    display: none;
+}
+
+/* ---------------------------------------------------------
+   DRAWER DE ADMINISTRAÇÃO (DESKTOP)
+   --------------------------------------------------------- */
+
 .user-drawer {
     position: fixed;
-    top: 100px;
-    right: max(16px, calc((100vw - 1100px) / 2));
-    width: min(320px, calc(100vw - 32px));
+    top: 102px;
+    right: max(20px, calc((100% - 1100px) / 2));
+    width: 320px;
+    max-width: calc(100vw - 32px);
     background: var(--card);
-    border-radius: 8px;
-    padding: 8px;
+    border-radius: 10px;
+    padding: 12px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     color: #f1f1f1;
     opacity: 0;
-    transform: translateY(-8px);
-    transition: opacity 180ms ease, transform 180ms ease;
+    transform: translateY(calc(-100% - 20px));
+    visibility: hidden;
+    transition:
+        opacity 400ms cubic-bezier(.2, .9, .3, 1),
+        transform 400ms cubic-bezier(.2, .9, .3, 1),
+        visibility 0s linear 400ms;
     pointer-events: none;
-    z-index: 1200;
+    z-index: 999;
 }
 
 .user-drawer.is-open {
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
+    transition:
+        opacity 400ms cubic-bezier(.2, .9, .3, 1),
+        transform 400ms cubic-bezier(.2, .9, .3, 1),
+        visibility 0s;
     pointer-events: auto;
 }
 
 .user-drawer-title {
-    margin: 4px 10px 8px;
-    color: #aeb8bf;
-    font-size: 12px;
+    margin: 15px 0 12px;
+    padding: 0;
+    color: #f1f1f1;
+    font-size: 18px;
     font-weight: 700;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 .user-drawer-links {
@@ -98,22 +123,24 @@ body {
     align-items: center;
     gap: 12px;
     width: 100%;
-    padding: 10px 12px;
+    padding: 11px 14px;
     border: 0;
-    border-radius: 6px;
+    border-radius: 8px;
     color: #f1f1f1;
     background: transparent;
     font: inherit;
     font-size: 14px;
+    font-weight: 500;
     text-align: left;
     text-decoration: none;
     cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
 }
 
 .user-drawer-links a:hover,
 .user-drawer-logout:hover {
     color: #ffffff;
-    background: #333333;
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .user-drawer-links .material-icons,
@@ -125,14 +152,16 @@ body {
 
 .user-drawer-logout {
     margin-top: 8px;
+    padding-top: 12px;
     border-top: 1px solid #424242;
-    border-radius: 0 0 6px 6px;
+    border-radius: 0 0 8px 8px;
     color: #ffaaaa;
 }
 
 /* ---------------------------------------------------------
    CONTAINER PRINCIPAL E CARDS (DESKTOP)
    --------------------------------------------------------- */
+
 main.admin-container {
     width: calc(100% - 48px) !important;
     max-width: 1400px !important;
@@ -190,13 +219,13 @@ main.admin-container {
     gap: 24px;
 }
 
-.right-column-group > .admin-card:last-child {
+.right-column-group>.admin-card:last-child {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.right-column-group > .admin-card:last-child > .form-group {
+.right-column-group>.admin-card:last-child>.form-group {
     flex: 1;
 }
 
@@ -303,14 +332,14 @@ main.admin-container {
     background: #fafafa;
 }
 
-.category-grid > .category-container:last-child {
+.category-grid>.category-container:last-child {
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 24px;
 }
 
-.category-grid > .category-container:last-child legend {
+.category-grid>.category-container:last-child legend {
     grid-column: 1 / -1;
 }
 
@@ -496,6 +525,9 @@ main.admin-container {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
 }
 
 .preview-card .badge-capa {
@@ -702,7 +734,7 @@ main.admin-container {
     gap: 16px;
 }
 
-.manage-heading > div {
+.manage-heading>div {
     min-width: 0;
 }
 
@@ -997,6 +1029,12 @@ main.admin-container {
 
     .hamburger {
         display: flex;
+        align-self: center;
+        flex: 0 0 auto;
+        width: 25px;
+        height: 20px;
+        margin: 0;
+        padding: 0;
     }
 
     .navbar {
@@ -1028,14 +1066,45 @@ main.admin-container {
         width: 100%;
     }
 
+    /* Drawer em modo mobile */
     .user-drawer {
         top: 84px;
         right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: none;
     }
 
     .user-drawer_button {
         align-self: flex-end;
         margin: 8px 12px 0;
+    }
+
+    /* Esconde o botão de abrir drawer no mobile */
+    .open-drawer-btn {
+        display: none;
+    }
+
+    /* Mostra o botão de logout direto no mobile */
+    .nav-logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        width: 40px;
+        height: 40px;
+        color: #f1f1f1;
+        border: none;
+        transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+    }
+
+    .nav-logout-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.45);
+        color: #fff;
+    }
+
+    .nav-logout-btn .material-icons {
+        font-size: 22px;
     }
 
     .admin-container {
@@ -1128,6 +1197,7 @@ main.admin-container {
         width: 100%;
     }
 }
+
 /* =========================================================
    DASHBOARD — LAYOUT PRINCIPAL
    ========================================================= */
@@ -1144,15 +1214,11 @@ main.admin-container {
 
 .dashboard-header {
     width: 100%;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 24px;
-
     padding: 22px 24px;
-
     margin-bottom: 24px;
     border-bottom: 2px solid #e0e6ed;
     padding-bottom: 12px;
@@ -1160,12 +1226,10 @@ main.admin-container {
 
 .dashboard-header-info {
     min-width: 0;
-    
 }
 
 .dashboard-header-info h1 {
     margin: 0;
-
     color: var(--primary, #00926b);
     font-size: 24px;
     font-weight: 700;
@@ -1173,7 +1237,6 @@ main.admin-container {
 
 .dashboard-header-info p {
     margin: 5px 0 0;
-
     color: #666;
     font-size: 13px;
 }
@@ -1182,7 +1245,6 @@ main.admin-container {
     display: flex;
     align-items: center;
     gap: 10px;
-
     flex-shrink: 0;
 }
 
@@ -1198,10 +1260,8 @@ main.admin-container {
 
 .dashboard-section {
     width: 100%;
-
     display: flex;
     flex-direction: column;
-
     gap: 14px;
 }
 
@@ -1218,33 +1278,24 @@ main.admin-container {
 
 .shortcuts-grid {
     width: 100%;
-
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 16px;
 }
 
 .shortcut-card {
     min-width: 0;
     min-height: 82px;
-
     display: flex;
     align-items: center;
-
     gap: 16px;
-
     padding: 16px 18px;
-
     background: #fff;
     border: 1px solid #e1e8ed;
     border-radius: 10px;
-
     color: inherit;
     text-decoration: none;
-
     box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
-
     transition:
         transform .2s ease,
         box-shadow .2s ease,
@@ -1253,9 +1304,7 @@ main.admin-container {
 
 .shortcut-card:hover {
     transform: translateY(-2px);
-
     border-color: #00926b;
-
     box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
 }
 
@@ -1263,7 +1312,7 @@ main.admin-container {
     margin: 0;
     font-size: 18px;
     font-weight: 700;
-    color:var(--primary);
+    color: var(--primary);
 }
 
 .shortcut-card p {
@@ -1275,15 +1324,11 @@ main.admin-container {
 .shortcut-icon {
     width: 48px;
     height: 48px;
-
     flex: 0 0 48px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 10px;
-
     font-size: 22px;
 }
 
@@ -1296,7 +1341,6 @@ main.admin-container {
     background: #e6f4f0;
 }
 
-
 .shortcut-icon.edit {
     background: #eef2f7;
     color: #2c3e50;
@@ -1306,57 +1350,41 @@ main.admin-container {
     background: #e6f4f0;
 }
 
-
 /* =========================================================
    KPIs
    ========================================================= */
 
 .kpi-grid {
     width: 100%;
-
     display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
 }
 
 .kpi-card {
     min-width: 0;
     min-height: 125px;
-
     padding: 18px 20px;
-
     background: #fff;
-
     border: 1px solid #e1e8ed;
     border-left: 4px solid var(--kpi-color, #00926b);
-
     border-radius: 10px;
-
     box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
 }
 
 .kpi-label {
     display: block;
-
     color: #666;
-
     font-size: 11px;
     font-weight: 700;
-
     text-transform: uppercase;
 }
 
 .kpi-value {
     margin: 10px 0 4px;
-
     color: #2c3e50;
-
     font-size: 30px;
     line-height: 1;
-
     font-weight: 700;
 }
 
@@ -1371,42 +1399,31 @@ main.admin-container {
 
 .highlights-grid {
     width: 100%;
-
     display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
 .highlight-card {
     min-width: 0;
     min-height: 150px;
-
     padding: 18px;
-
     background: #fff;
-
     border: 1px solid #e1e8ed;
     border-radius: 10px;
-
     box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
 }
 
 .highlight-card-header {
     display: flex;
     align-items: center;
-
     padding-bottom: 11px;
     margin-bottom: 12px;
-
     border-bottom: 1px solid #f0f0f0;
 }
 
 .highlight-card-header h3 {
     margin: 0;
-
     color: #2c3e50;
     font-size: 15px;
     font-weight: 700;
@@ -1414,23 +1431,17 @@ main.admin-container {
 
 .highlight-content {
     min-width: 0;
-
     display: flex;
     align-items: center;
-
     gap: 16px;
 }
 
 .highlight-thumb {
     width: 70px;
     height: 70px;
-
     flex: 0 0 70px;
-
     object-fit: contain;
-
     background: #f8f9fa;
-
     border: 1px solid #eee;
     border-radius: 8px;
 }
@@ -1441,23 +1452,17 @@ main.admin-container {
 
 .highlight-details h4 {
     margin: 0;
-
     overflow: hidden;
-
     color: #2c3e50;
-
     font-size: 14px;
     font-weight: 700;
-
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .highlight-details p {
     margin: 6px 0 0;
-
     color: #00926b;
-
     font-size: 12px;
     font-weight: 700;
 }
@@ -1468,25 +1473,17 @@ main.admin-container {
 
 .charts-grid {
     width: 100%;
-
     display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
 .chart-card {
     min-width: 0;
-
     padding: 18px;
-
     background: #fff;
-
     border: 1px solid #e1e8ed;
     border-radius: 10px;
-
     box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
 }
 
@@ -1498,25 +1495,20 @@ main.admin-container {
 .chart-card-header {
     display: flex;
     align-items: center;
-
     padding-bottom: 11px;
     margin-bottom: 12px;
-
     border-bottom: 1px solid #f0f0f0;
 }
 
 .chart-card-header h3 {
     margin: 0;
-
     color: #2c3e50;
-
     font-size: 15px;
     font-weight: 700;
 }
 
 .chart-container {
     position: relative;
-
     width: 100%;
     height: 260px;
 }
@@ -1581,5 +1573,275 @@ main.admin-container {
 
     .kpi-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================
+   MODERAÇÃO DE AVALIAÇÕES
+   ========================================== */
+
+.reviews-admin-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.review-filter-tabs {
+    display: inline-flex;
+    background: #f1f3f7;
+    border-radius: 10px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.review-filter-tabs .tab {
+    background: transparent;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #5b6470;
+    transition: background .15s ease, color .15s ease;
+    white-space: nowrap;
+}
+
+.review-filter-tabs .tab:hover {
+    background: rgba(0, 0, 0, .04);
+}
+
+.review-filter-tabs .tab.is-active {
+    background: #fff;
+    color: #111;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}
+
+.review-filter-tabs .tab .count {
+    display: inline-block;
+    margin-left: 6px;
+    background: #e5e9f0;
+    color: #394150;
+    border-radius: 10px;
+    font-size: 11px;
+    padding: 1px 8px;
+}
+
+.review-filter-tabs .tab.is-active .count {
+    background: #00926b;
+    color: #fff;
+}
+
+.reviews-admin-list {
+    display: grid;
+    gap: 14px;
+}
+
+.review-card {
+    background: #fff;
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+@media (max-width: 780px) {
+    .review-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+.review-product {
+    text-align: center;
+}
+
+.review-product img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    background: #f7f8fa;
+    border: 1px solid #eef0f4;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto 8px;
+}
+
+.review-product a {
+    font-size: 12px;
+    color: #2563eb;
+    text-decoration: none;
+    display: block;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.review-product a:hover {
+    text-decoration: underline;
+}
+
+.review-body {
+    min-width: 0;
+}
+
+.review-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.review-head strong {
+    font-size: 15px;
+    color: #111;
+}
+
+.review-head .stars {
+    color: #f1c40f;
+    letter-spacing: 2px;
+}
+
+.review-head time {
+    font-size: 12px;
+    color: #7a8393;
+    margin-left: auto;
+}
+
+.review-comment {
+    margin: 0 0 10px;
+    line-height: 1.55;
+    color: #313a49;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.review-images {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.review-images img {
+    width: 68px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #eef0f4;
+    cursor: zoom-in;
+}
+
+.review-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+
+.review-status-badge.em_analise {
+    background: #fff4d6;
+    color: #b37400;
+}
+
+.review-status-badge.postada {
+    background: #e3f6ee;
+    color: #008a63;
+}
+
+.review-status-badge.rejeitada {
+    background: #fde4e3;
+    color: #c0392b;
+}
+
+.review-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.review-actions button {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: filter .15s ease, opacity .15s ease;
+}
+
+.review-actions .btn-approve {
+    background: #00926b;
+    color: #fff;
+}
+
+.review-actions .btn-reject {
+    background: #fde4e3;
+    color: #c0392b;
+}
+
+.review-actions .btn-delete {
+    background: transparent;
+    color: #7a8393;
+    border: 1px solid #e6e9ef;
+}
+
+.review-actions button:hover:not(:disabled) {
+    filter: brightness(.94);
+}
+
+.review-actions button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.reviews-admin-empty,
+.reviews-admin-loading {
+    padding: 40px 20px;
+    text-align: center;
+    color: #7a8393;
+    font-style: italic;
+    background: #fff;
+    border: 1px dashed #e6e9ef;
+    border-radius: 12px;
+}
+
+.review-moderated-info {
+    font-size: 11px;
+    color: #7a8393;
+    margin-top: 6px;
+}
+
+/* Toolbar responsiva — tabs viram scroll horizontal no mobile */
+@media (max-width: 640px) {
+    .reviews-admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .review-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .review-filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .review-filter-tabs .tab {
+        flex: 0 0 auto;
     }
 }

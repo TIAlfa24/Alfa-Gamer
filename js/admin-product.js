@@ -177,51 +177,59 @@ function adicionarEspecificacao() {
 function renderizarPreviews() {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('prod-images-file');
-    dropZone.replaceChildren();
+
+    dropZone.querySelectorAll('.preview-card, .drop-zone-prompt').forEach(el => el.remove());
+
     if (!imagensProduto.length) {
         const prompt = document.createElement('span');
         prompt.className = 'drop-zone-prompt';
         prompt.innerHTML = '<i class="material-icons" aria-hidden="true">library_add</i><span>Clique aqui ou arraste as imagens para anexar</span>';
         dropZone.appendChild(prompt);
+        return;
     }
-    imagensProduto.forEach(item => {
+
+    imagensProduto.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'preview-card';
         card.dataset.id = item.id;
+
         const badge = document.createElement('div');
         badge.className = 'badge-capa';
-        badge.textContent = 'CAPA';
+        badge.textContent = index === 0 ? 'CAPA' : '';
+
         const image = document.createElement('img');
         image.src = item.previewUrl;
         image.alt = 'Imagem do produto';
+
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'btn-remover-img';
         remove.title = 'Remover imagem';
         remove.textContent = '×';
         remove.addEventListener('click', () => {
-            const index = imagensProduto.findIndex(imageItem => imageItem.id === item.id);
-            if (index >= 0) {
-                const [removed] = imagensProduto.splice(index, 1);
+            const imgIndex = imagensProduto.findIndex(i => i.id === item.id);
+            if (imgIndex >= 0) {
+                const [removed] = imagensProduto.splice(imgIndex, 1);
                 if (removed.file) URL.revokeObjectURL(removed.previewUrl);
             }
             renderizarPreviews();
         });
+
         card.append(badge, image, remove);
-        dropZone.appendChild(card);
+        dropZone.appendChild(card);  // <-- appendChild, não insertBefore
     });
-    if (imagensProduto.length) {
-        const addMore = document.createElement('button');
+
+    let addMore = dropZone.querySelector('.add-more-card');
+    if (!addMore) {
+        addMore = document.createElement('button');
         addMore.type = 'button';
         addMore.className = 'preview-card add-more-card';
         addMore.title = 'Adicionar mais imagens';
         addMore.textContent = '+';
         addMore.addEventListener('click', () => fileInput.click());
-        dropZone.appendChild(addMore);
     }
-    dropZone.appendChild(fileInput);
+    dropZone.appendChild(addMore);  // <-- appendChild, não insertBefore
 }
-
 async function adicionarImagens(files) {
     for (const file of files) {
         if (!file.type.startsWith('image/')) continue;
@@ -364,16 +372,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             fileInput.value = '';
         }
     });
-    if (typeof window.Sortable === 'function') {
-        new window.Sortable(dropZone, {
-            animation: 150,
-            draggable: '.preview-card:not(.add-more-card)',
-            filter: '.add-more-card, button',
-            onEnd: () => {
-                const ids = [...dropZone.querySelectorAll('.preview-card:not(.add-more-card)')]
-                    .map(card => card.dataset.id);
-                imagensProduto.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
-                renderizarPreviews();
+
+    function atualizarBadgesCapa() {
+        const cards = dropZone.querySelectorAll('.preview-card:not(.add-more-card)');
+        cards.forEach((card, index) => {
+            const badge = card.querySelector('.badge-capa');
+            if (badge) {
+                badge.textContent = index === 0 ? 'CAPA' : '';
             }
         });
     }
@@ -410,7 +415,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderizarEspecificacoes();
     renderizarTagsManuais();
     atualizarPreviewTagsAutomaticas();
-
+    
+    if (dropZone && typeof window.Sortable === 'function') {
+        new window.Sortable(dropZone, {
+            animation: 150,
+            forceFallback: true,
+            fallbackOnBody: true,
+            fallbackTolerance: 4,
+            ghostClass: 'sortable-ghost',
+            fallbackClass: 'sortable-fallback',
+            draggable: '.preview-card:not(.add-more-card)',
+            filter: '.add-more-card, button, input',
+            preventOnFilter: false,
+            onEnd: (evt) => {
+                const itemMovido = imagensProduto.splice(evt.oldIndex, 1)[0];
+                imagensProduto.splice(evt.newIndex, 0, itemMovido);
+                renderizarPreviews();
+            }
+        });
+    }
     document.getElementById('form-cadastro-produto').addEventListener('submit', async event => {
         event.preventDefault();
         const button = document.getElementById('btn-salvar');

@@ -65,6 +65,8 @@ main {
 }
 
 .comments-area {
+    height: 100%;
+    max-height: 580px;
     color: var(--primary);
     font-family: 'Poppins', sans-serif;
     font-size: 50px;
@@ -150,13 +152,15 @@ main {
     display: grid;
     gap: 12px;
 
-    /* ESTADO PADRÃO (No topo): Fade apenas embaixo */
+    /* ADICIONE ESTAS DUAS LINHAS */
+    align-content: start;
+    /* Impede as linhas de esticarem */
+    align-items: start;
+    /* Impede os itens de esticarem */
+
     -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
-
-    /* Transição suave do efeito (funciona na maioria dos navegadores modernos) */
     transition: -webkit-mask-image 0.3s, mask-image 0.3s;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
@@ -250,6 +254,7 @@ main {
 .commentBtn:hover {
     transform: scale(1.05);
 }
+
 .product-imagens {
     display: flex;
     flex-direction: row-reverse;
@@ -528,6 +533,7 @@ main {
     width: 200px;
     color: #555;
 }
+
 /* =========================================================
    ESTILIZAÇÃO DA DESCRIÇÃO FORMATADA DO PRODUTO (DESKTOP E MOBILE)
    ========================================================= */
@@ -541,7 +547,6 @@ main {
     overflow-wrap: break-word;
 }
 
-/* Parágrafos com espaçamento equilibrado */
 .product-description-content p {
     margin: 0 0 14px 0 !important;
     padding: 0;
@@ -553,7 +558,6 @@ main {
     margin-bottom: 0 !important;
 }
 
-/* Títulos com hierarquia visual clara */
 .product-description-content h1,
 .product-description-content h2,
 .product-description-content h3,
@@ -590,7 +594,6 @@ main {
     font-weight: 600;
 }
 
-/* Listas estilizadas (Marcadores com a cor da marca) */
 .product-description-content ul,
 .product-description-content ol {
     margin: 10px 0 16px 0;
@@ -624,7 +627,6 @@ main {
     color: #333333;
 }
 
-/* Negritos, Links e Elementos Especiais */
 .product-description-content strong,
 .product-description-content b {
     color: #111111;
@@ -756,11 +758,9 @@ main {
     max-height: 260px;
     overflow: hidden;
     position: relative;
-    /* Animação mais longa e fluida ao abrir/fechar */
     transition: max-height 0.75s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Gradiente de esmaecimento inferior */
 .product-description-content.expandable::after {
     content: '';
     position: absolute;
@@ -774,14 +774,13 @@ main {
 }
 
 .product-description-content.expanded {
-    max-height: 3000px; /* Permite expansão total do conteúdo */
+    max-height: 3000px;
 }
 
 .product-description-content.expanded::after {
     opacity: 0;
 }
 
-/* Botão "Ver mais" / "Ver menos" limpo */
 .btn-ver-mais-container {
     display: flex;
     justify-content: center;
@@ -804,12 +803,12 @@ main {
     color: var(--primary-light, #00b37d);
     text-decoration: underline;
 }
-/* Ajuste Fino Responsivo para Mobile */
+
 @media (max-width: 700px) {
     .product-description-content.expandable {
         max-height: 220px;
     }
-    
+
     .btn-ver-mais {
         font-size: 14px;
     }
@@ -1176,7 +1175,7 @@ main {
     grid-template-columns: minmax(0, 1fr);
 }
 
-.purchase-row.is-out-of-stock > .btn-comprar {
+.purchase-row.is-out-of-stock>.btn-comprar {
     grid-column: 1 / -1;
     width: 100%;
 }
@@ -1304,13 +1303,14 @@ main {
     background: #fff;
 }
 
-.reviews-container{
+.reviews-container {
     width: 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     padding: 10px;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
+    /* Mudança aqui: estica os itens para ocupar a altura */
 }
 
 .stars-area {
@@ -1326,6 +1326,18 @@ main {
     width: 100%;
     max-width: 420px;
     overflow: visible;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Impede seleção do texto dentro do SVG (o "5,0" e "1 avaliação") */
+.rating-distribution-chart text,
+.rating-distribution-chart tspan {
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
 }
 
 .rating-distribution-chart .slice {
@@ -1333,16 +1345,40 @@ main {
     stroke: #fff;
     stroke-width: 3;
     transform-origin: 200px 200px;
-    transition: transform 0.25s ease, filter 0.25s ease;
+    transition: fill 0.2s ease, opacity 0.2s ease, stroke 0.2s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .rating-distribution-chart .slice.has-reviews {
     fill: var(--slice-color);
 }
 
-.rating-distribution-chart .slice:hover {
-    filter: brightness(1.05);
-    transform: scale(1.035);
+/* Hover: leve escurecida, sem escala nem brilho */
+.rating-distribution-chart .slice.has-reviews:hover {
+    filter: brightness(0.94);
+}
+
+/* Quando há um filtro ativo, as fatias não-ativas ficam mais apagadas */
+.rating-distribution-chart.has-active-filter .slice:not(.is-active) {
+    opacity: 0.35;
+}
+
+/* Fatia ativa: sem glow, sem borda. Apenas fica 100% visível. */
+.rating-distribution-chart .slice.is-active {
+    filter: none;
+    opacity: 1;
+}
+
+/* Foco via teclado: stroke verde discreto, sem brilho */
+.rating-distribution-chart .slice:focus {
+    outline: none;
+}
+
+.rating-distribution-chart .slice:focus-visible {
+    outline: none;
+    stroke: var(--primary);
+    stroke-width: 2.5;
 }
 
 .rating-distribution-chart .star-outline {
@@ -1420,10 +1456,17 @@ main {
     font-size: 14px;
     padding: 20px;
     text-align: center;
+    /* Mudança aqui: alinha o texto à esquerda por padrão */
+    align-items: center;
+    /* Adições para forçar o conteúdo para o topo */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    /* Garante que a caixa preencha a coluna */
 }
 
-.stars-area {
-}
+.stars-area {}
 
 .reviews .btn.ghost {
     margin: 20px;
@@ -1685,10 +1728,521 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .product-grid,
     .miniaturas button,
     .btn-comprar,
     .imagem-principal img {
+        transition: none;
+    }
+}
+
+/* ==========================================
+   AVALIAÇÕES — LISTA + FILTRO + MODAL
+   (identidade visual clara, integrada ao site)
+   ========================================== */
+
+/* ---------- Cabeçalho da lista ---------- */
+.reviews-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 16px;
+    flex-wrap: wrap;
+}
+
+.reviews-list-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #252e29;
+}
+
+/* ---------- Botão Escrever avaliação ---------- */
+#writeReviewBtn {
+    margin: 4px 0 18px;
+}
+
+#writeReviewBtn.is-reviewed,
+#writeReviewBtn:disabled {
+    background: #f2faf6;
+    border-color: #bdd8ca;
+    color: #176247;
+    cursor: default;
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+}
+
+#writeReviewBtn.is-reviewed:hover,
+#writeReviewBtn:disabled:hover {
+    background: #f2faf6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---------- Lista de avaliações ---------- */
+.reviews-list {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    /* sobrescreve o text-align:center do .comments-area */
+}
+
+.review-item {
+    background: #fff;
+    border: 1px solid #e0e7e2;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(24, 48, 36, 0.05);
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+
+    /* MUDANÇAS PARA NÃO ESTICAR */
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    /* O segredo: altura baseada apenas no conteúdo */
+    align-self: start;
+    /* Garante que não estique na grid */
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.review-item:hover {
+    border-color: #a9cdbd;
+    box-shadow: 0 4px 12px rgba(24, 48, 36, 0.09);
+}
+
+.review-item-header {
+    display: flex;
+    flex-wrap: wrap;
+    /* Permite que o nome, estrelas e data quebrem linha */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    min-width: 0;
+    /* Importante para permitir o encolhimento dos filhos */
+}
+
+.review-item-name {
+    font-weight: 700;
+    color: #252e29;
+    font-size: 14px;
+}
+
+.review-item-stars {
+    color: #f1c40f;
+    letter-spacing: 2px;
+    font-size: 1rem;
+}
+
+.review-item-date {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.review-item-comment {
+    margin: 0;
+    line-height: 1.55;
+    color: #3b4741;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    /* Garante que o texto do comentário se ajuste */
+}
+
+.review-item-gallery {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+/* Imagens flexíveis */
+.review-item-gallery img {
+    width: 100%;
+    /* Ocupa o espaço disponível... */
+    max-width: 90px;
+    /* ...até o limite de 90px */
+    aspect-ratio: 1;
+    /* Mantém o formato quadrado */
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e0e7e2;
+    cursor: zoom-in;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.review-item-gallery img:hover {
+    transform: scale(1.04);
+    border-color: var(--primary);
+}
+
+/* Quando a lista contiver a mensagem de vazio, centraliza o conteúdo verticalmente */
+#reviewsList:has(.reviews-empty) {
+    align-content: center;
+}
+
+/* Estilo da mensagem de vazio */
+.reviews-empty {
+    grid-column: 1 / -1; /* Ocupa toda a largura do grid */
+    margin: 0;           /* Remove margens padrão */
+    padding: 0 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* Estilo do botão quando está dentro da lista vazia */
+#reviewsList #writeReviewBtn {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: 0 0 15px 0; /* Espaço entre o botão e a mensagem */
+}
+
+/* Mensagem do rodapé — fica no fundo da caixa */
+.reviews-footer-note {
+    margin-top: 20px;
+    /* Remove o 'auto' anterior */
+    padding-top: 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    width: 100%;
+}
+
+#writeReviewBtn[hidden] {
+    display: none !important;
+}
+
+/* ---------- Legendas do gráfico (claras) ---------- */
+.rating-distribution-legend-item {
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #e0e7e2;
+    border-radius: 8px;
+    padding: 8px 10px;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    text-align: left;
+    width: 100%;
+    color: #3b4741;
+    font-family: inherit;
+}
+
+.rating-distribution-legend-item:hover {
+    background: #f2faf6;
+    border-color: #bdd8ca;
+}
+
+.rating-distribution-legend-item.is-active {
+    border-color: var(--primary);
+    background: #e6fff6;
+    color: #176247;
+}
+
+/* ==========================================
+   MODAL DE AVALIAÇÃO — tema claro
+   ========================================== */
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 17, 17, 0.55);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    animation: fadeIn 0.18s ease;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-content {
+    background: #fff;
+    border: 1px solid #e0e7e2;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px;
+    box-shadow: 0 24px 60px rgba(24, 48, 36, 0.25);
+    animation: slideUp 0.22s ease;
+    color: #252e29;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eef2f0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #176247;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: #757575;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close:hover {
+    background: #f2f2f2;
+    color: #252e29;
+}
+
+.modal-close:focus-visible {
+    outline: 3px solid rgba(0, 146, 107, 0.3);
+    outline-offset: 2px;
+}
+
+/* ---------- Formulário ---------- */
+.review-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.review-form label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3b4741;
+}
+
+.review-form input[type="text"],
+.review-form input[type="file"],
+.review-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #afafaf;
+    color: #252e29;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.review-form input[type="text"]:focus,
+.review-form input[type="file"]:focus,
+.review-form textarea:focus {
+    border-color: #00b686;
+    box-shadow: 0 0 5px #ebebeb;
+    outline: none;
+}
+
+.review-form small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.char-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: right;
+}
+
+/* ---------- Estrelas ---------- */
+.rating-input {
+    display: flex;
+    gap: 4px;
+    font-size: 2rem;
+}
+
+.rating-input .star {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #c7c7c7;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.12s ease, transform 0.12s ease;
+}
+
+.rating-input .star:hover,
+.rating-input .star.hover,
+.rating-input .star.active {
+    color: #f1c40f;
+    transform: scale(1.05);
+}
+
+.rating-input .star:focus-visible {
+    outline: 3px solid rgba(0, 146, 107, 0.3);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---------- Preview de imagens ---------- */
+.review-image-previews {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.review-image-previews img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e0e7e2;
+}
+
+/* ---------- Status (sucesso/erro/carregando) ---------- */
+.review-form-status {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    background: #f2faf6;
+    border: 1px solid #bdd8ca;
+    color: #176247;
+}
+
+.review-form-status.success {
+    background: #e6fff6;
+    color: #176247;
+    border: 1px solid #bdd8ca;
+}
+
+.review-form-status.error {
+    background: #ffe6e6;
+    color: #b00020;
+    border: 1px solid #f3c4c4;
+}
+
+/* ---------- Ações ---------- */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #eef2f0;
+}
+
+/* ==========================================
+   RESPONSIVIDADE DO MODAL
+   ========================================== */
+@media (max-width: 700px) {
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        max-height: 92vh;
+        padding: 18px;
+        border-radius: 14px 14px 0 0;
+        border-bottom: none;
+        box-shadow: 0 -12px 40px rgba(24, 48, 36, 0.22);
+    }
+
+    .modal-header {
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.05rem;
+    }
+
+    .rating-input {
+        font-size: 1.9rem;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+
+    .modal-actions .btn,
+    .modal-actions .btn.ghost {
+        width: 100%;
+    }
+
+    .review-item-gallery img {
+        width: 72px;
+        height: 72px;
+    }
+
+    .review-item-date {
+        margin-left: 0;
+    }
+}
+
+/* ---------- Animações ---------- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(14px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .modal-overlay,
+    .modal-content,
+    .review-item,
+    .rating-input .star {
+        animation: none;
         transition: none;
     }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,15 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link
-        href="https://fonts.googleapis.com/icon?family=Material+Icons"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Estilos -->
     <link rel="stylesheet" href="/css/global.css">
@@ -27,20 +22,15 @@
     <link rel="stylesheet" href="/css/background.css">
 
     <!-- Bibliotecas externas -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-        defer
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
-        defer
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
 
     <!-- Scripts da aplicação -->
     <script src="/js/global.js?v=20261002" defer></script>
     <script src="/js/admin.js?v=20261002" defer></script>
     <script src="/js/background.js?v=20260907" defer></script>
+
 <body>
     <canvas id="bgCanvas"></canvas>
     <header>
@@ -57,8 +47,17 @@
                 <a href="/admin/" aria-current="page">Painel</a>
                 <a href="/admin/editar/">Gerenciar produtos</a>
                 <a href="/admin/novo/">Novo produto</a>
-                <button class="user-drawer_button" id="openUDrawer" type="button" title="Opções de usuário" aria-label="Opções de usuário" aria-controls="userDrawer" aria-expanded="false">
+                <!-- Desktop: abre o drawer -->
+                <button class="user-drawer_button open-drawer-btn" id="openUDrawer" type="button"
+                    title="Opções de usuário" aria-label="Opções de usuário" aria-controls="userDrawer"
+                    aria-expanded="false">
                     <img src="/images/usefull-icons/person.png" alt="Usuário" height="35px">
+                </button>
+
+                <!-- Mobile: logout direto -->
+                <button class="user-drawer_button nav-logout-btn" id="navLogout" type="button" title="Sair"
+                    aria-label="Sair">
+                    <span class="material-icons" aria-hidden="true">logout</span>
                 </button>
             </nav>
         </div>
@@ -68,7 +67,8 @@
         <p class="user-drawer-title">Administração</p>
         <nav class="user-drawer-links" aria-label="Atalhos administrativos">
             <a href="/admin/"><span class="material-icons" aria-hidden="true">dashboard</span>Painel</a>
-            <a href="/admin/editar/"><span class="material-icons" aria-hidden="true">inventory_2</span>Gerenciar produtos</a>
+            <a href="/admin/editar/"><span class="material-icons" aria-hidden="true">inventory_2</span>Gerenciar
+                produtos</a>
             <a href="/admin/novo/"><span class="material-icons" aria-hidden="true">add_box</span>Novo produto</a>
             <a href="/"><span class="material-icons" aria-hidden="true">storefront</span>Ver loja</a>
         </nav>
@@ -99,14 +99,16 @@
                 <h2 class="dashboard-section-title">Acesso Rápido</h2>
                 <div class="shortcuts-grid">
                     <a href="/admin/novo" class="shortcut-card">
-                        <div class="shortcut-icon add"><i class="material-icons" style="font-size:32px; transform: rotate(-45deg);">link</i></div>
-                        <div class="shortcut-info">     
+                        <div class="shortcut-icon add"><i class="material-icons"
+                                style="font-size:32px; transform: rotate(-45deg);">link</i></div>
+                        <div class="shortcut-info">
                             <h3>Adicionar Produto</h3>
                             <p>Cadastrar novos itens</p>
                         </div>
                     </a>
                     <a href="/admin/editar/" class="shortcut-card">
-                        <div class="shortcut-icon edit"><i class="material-icons", style="font-size:32px;">edit</i></div>
+                        <div class="shortcut-icon edit"><i class="material-icons" , style="font-size:32px;">edit</i>
+                        </div>
                         <div class="shortcut-info">
                             <h3>Editar / Remover</h3>
                             <p>Gerenciar catálogo existente</p>
@@ -114,7 +116,16 @@
                     </a>
                 </div>
             </section>
-
+            <section class="dashboard-section">
+                <h2 class="dashboard-section-title">Comentários</h2>
+                <a href="/admin/reviews" class="shortcut-card">
+                    <div class="shortcut-icon add"><i class="material-icons" style="font-size:32px;">reviews</i></div>
+                    <div class="shortcut-info">
+                        <h3>Gerenciar Comentarios</h3>
+                        <p>Remover/Aprovar comentarios</p>
+                    </div>
+                </a>
+            </section>
             <!-- Indicadores -->
             <section class="dashboard-section">
                 <h2 class="dashboard-section-title">Indicadores do Sistema</h2>
@@ -190,8 +201,10 @@
                     </div>
                 </div>
             </section>
+
         </div>
     </main>
 </body>
 <script src="/js/background.js?v=20260907"></script>
+
 </html>

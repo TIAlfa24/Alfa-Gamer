@@ -15,8 +15,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Produto - Loja</title>
     <link rel="stylesheet" href="/css/global.css?v=20261002-6">
-    <link rel="stylesheet" href="/css/home.css?v=20261002-7">
-    <link rel="stylesheet" href="/css/product.css?v=20261002-7">
+    <link rel="stylesheet" href="/css/home.css?v=20261005-1">
+    <link rel="stylesheet" href="/css/product.css?v=20261002-11">
     <link rel="stylesheet" href="/css/background.css?v=20261002">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/global.js?v=20261002-2"></script>
@@ -180,18 +180,34 @@
         <div class="divider"></div>
         <section class="reviews">
             <h3>Avaliações</h3>
+
             <div class="reviews-container">
                 <div class="stars-area">
-                    <svg id="ratingDistributionChart" class="rating-distribution-chart"
-                        viewBox="0 0 400 400" role="img" aria-labelledby="ratingChartTitle ratingChartDescription">
+                    <svg id="ratingDistributionChart" class="rating-distribution-chart" viewBox="0 0 400 400" role="img"
+                        aria-labelledby="ratingChartTitle ratingChartDescription">
                         <title id="ratingChartTitle">Distribuição das avaliações</title>
                         <desc id="ratingChartDescription"></desc>
                     </svg>
                     <div id="ratingDistributionLegend" class="rating-distribution-legend"></div>
                 </div>
+
                 <div class="comments-area">
-                    <button class="btn ghost" id="writeReviewBtn">Escrever uma avaliação</button>
-                    <p>Confira a distribuição das avaliações deste produto.</p>
+                    <div class="reviews-list-header">
+                        <h4 id="reviewsListTitle">Todas as avaliações (0)</h4>
+                        <button type="button" class="btn ghost" id="clearReviewFilter" hidden>
+                            Limpar filtro
+                        </button>
+                    </div>
+                     <div class="reviews-list" id="reviewsList">
+                    </div>
+                    
+                    <button class="btn ghost" id="writeReviewBtn" type="button">
+                        Escrever uma avaliação
+                    </button>
+
+
+
+                    <p class="reviews-footer-note">Confira as avaliações deste produto.</p>
                 </div>
             </div>
         </section>
@@ -226,7 +242,59 @@
         </div>
     </footer>
 
-    <script src="/js/product.js?v=20261002-3"></script>
+    <!-- Modal de avaliação -->
+    <div class="modal-overlay" id="reviewModal" hidden aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="reviewModalTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="reviewModalTitle">Escrever uma avaliação</h3>
+                <button type="button" class="modal-close" id="closeReviewModal" aria-label="Fechar">×</button>
+            </div>
+
+            <form id="reviewForm" class="review-form" novalidate>
+                <div class="form-group">
+                    <label for="reviewName">Seu nome *</label>
+                    <input type="text" id="reviewName" name="user_name" maxlength="80" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label id="ratingLabel">Sua nota *</label>
+                    <div class="rating-input" id="ratingInput" role="radiogroup" aria-labelledby="ratingLabel">
+                        <button type="button" class="star" data-value="1" aria-label="1 estrela">★</button>
+                        <button type="button" class="star" data-value="2" aria-label="2 estrelas">★</button>
+                        <button type="button" class="star" data-value="3" aria-label="3 estrelas">★</button>
+                        <button type="button" class="star" data-value="4" aria-label="4 estrelas">★</button>
+                        <button type="button" class="star" data-value="5" aria-label="5 estrelas">★</button>
+                    </div>
+                    <input type="hidden" id="reviewRating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewComment">Comentário *</label>
+                    <textarea id="reviewComment" name="comment" rows="5" maxlength="2000" required></textarea>
+                    <small class="char-count"><span id="commentCount">0</span>/2000</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewImages">Imagens (opcional)</label>
+                    <input type="file" id="reviewImages" name="images"
+                        accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                    <small>Máximo 3 imagens, até 5MB cada. Serão comprimidas automaticamente.</small>
+                    <div class="review-image-previews" id="reviewImagePreviews"></div>
+                </div>
+
+                <div class="review-form-status" id="reviewFormStatus" hidden></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" id="cancelReview">Cancelar</button>
+                    <button type="submit" class="btn" id="submitReview">Enviar avaliação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/product.js?v=20261002-4"></script>
+    <script src="/js/reviews.js?v=20261005-3"></script>
 </body>
 
 </html>

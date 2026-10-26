@@ -316,47 +316,62 @@ function setupHamburgerMenu() {
     const hamburger = el('hamburger');
     const navMenu = el('navMenu');
 
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            const isNowActive = !hamburger.classList.contains('active');
-            hamburger.classList.toggle('active', isNowActive);
-            navMenu.classList.toggle('active', isNowActive);
+    if (!hamburger || !navMenu) return;
 
-            if (isNowActive && globalState.isCartOpen) {
-                setCartOpen(false);
-            }
-        });
-    }
+    hamburger.addEventListener('click', () => {
+        const isNowActive = !hamburger.classList.contains('active');
+        hamburger.classList.toggle('active', isNowActive);
+        navMenu.classList.toggle('active', isNowActive);
+
+        if (isNowActive && globalState.isCartOpen) {
+            setCartOpen(false);
+        }
+    });
+
+    // Fecha o menu ao clicar fora do header (somente em mobile)
+    document.addEventListener('click', event => {
+        if (window.innerWidth > 768) return;
+        if (!navMenu.classList.contains('active')) return;
+
+        const header = hamburger.closest('header') || document.querySelector('header');
+        if (header && header.contains(event.target)) return;
+
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+    });
 }
-
 function setupAdminNavigation() {
     const drawer = el('userDrawer');
     const trigger = el('openUDrawer');
-    if (!drawer || !trigger) return;
 
-    const setDrawerOpen = isOpen => {
-        drawer.classList.toggle('is-open', isOpen);
-        drawer.setAttribute('aria-hidden', String(!isOpen));
-        trigger.setAttribute('aria-expanded', String(isOpen));
-    };
+    if (drawer && trigger) {
+        const setDrawerOpen = isOpen => {
+            drawer.classList.toggle('is-open', isOpen);
+            drawer.setAttribute('aria-hidden', String(!isOpen));
+            trigger.setAttribute('aria-expanded', String(isOpen));
+        };
 
-    trigger.addEventListener('click', () => {
-        setDrawerOpen(!drawer.classList.contains('is-open'));
-    });
-    document.addEventListener('click', event => {
-        if (!drawer.contains(event.target) && !trigger.contains(event.target)) {
-            setDrawerOpen(false);
-        }
-    });
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && drawer.classList.contains('is-open')) {
-            setDrawerOpen(false);
-            trigger.focus();
-        }
-    });
+        trigger.addEventListener('click', () => {
+            setDrawerOpen(!drawer.classList.contains('is-open'));
+        });
+
+        document.addEventListener('click', event => {
+            if (!drawer.contains(event.target) && !trigger.contains(event.target)) {
+                setDrawerOpen(false);
+            }
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && drawer.classList.contains('is-open')) {
+                setDrawerOpen(false);
+                trigger.focus();
+            }
+        });
+    }
+
     el('adminLogout')?.addEventListener('click', fazerLogout);
+    el('navLogout')?.addEventListener('click', fazerLogout);   // <-- novo
 }
-
 async function fazerLogout() {
     const supabase = await inicializarSupabase();
     if (supabase) {
@@ -431,6 +446,13 @@ function setupDraggableCartWidget() {
     widget.addEventListener('touchstart', onStart, { passive: true });
 }
 
+function detectarDispositivo() {
+    const ua = navigator.userAgent || '';
+    const mobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|CriOS|FxiOS/i.test(ua);
+    const mobileWidth = window.matchMedia('(max-width: 768px)').matches;
+    return (mobileUA || mobileWidth) ? 'mobile' : 'desktop';
+}
+
 // ==========================================
 // REGISTRO DE ANALYTICS (PÁGINAS PÚBLICAS)
 // ==========================================
@@ -440,8 +462,8 @@ async function registrarEventoAnalytics() {
 
     // Filtra páginas administrativas e rotas internas
     if (
-        pathname.startsWith('/admin') || 
-        pathname.startsWith('/auth') || 
+        pathname.startsWith('/admin') ||
+        pathname.startsWith('/auth') ||
         pathname.includes('login') ||
         pathname.includes('cadastrar') ||
         pathname.includes('gerenciar')
@@ -476,7 +498,8 @@ async function registrarEventoAnalytics() {
             event_type: eventType,
             page_path: fullPath,
             produto_id: produtoId,
-            session_id: sessionId
+            session_id: sessionId,
+            device: detectarDispositivo()
         }]);
     } catch (err) {
         console.warn('Erro ao registrar analytics:', err);
@@ -615,7 +638,8 @@ async function registrarCotacaoAnalytics(produtoIds) {
             event_type: 'quote',
             page_path: fullPath,
             produto_id: prodId,
-            session_id: sessionId
+            session_id: sessionId,
+            device: detectarDispositivo()
         }));
 
         await client.from('analytics').insert(payload);
@@ -624,3 +648,271 @@ async function registrarCotacaoAnalytics(produtoIds) {
     }
 }
 window.registrarCotacaoAnalytics = registrarCotacaoAnalytics;
+
+// ==========================================
+// SISTEMA DE AVALIAÇÕES — HELPERS
+// ==========================================
+const REVIEW_IMAGES_BUCKET = 'avaliacoes';
+const REVIEW_MAX_IMAGES = 3;
+const REVIEW_MAX_FILE_SIZE = 5 * 1024 * 1024;
+const REVIEW_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+// Lista simples de bloqueio (expanda conforme necessário)
+const REVIEW_BAD_WORDS = [
+    'porra', 'caralho', 'carai', 'merda', 'foder', 'fodase', 'foda se', 'puta', 'putaria', 'puto',
+    'buceta', 'piroca', 'xoxota', 'peito', 'pau', 'cu', 'rola', 'cacete',
+    'viado', 'viadinho', 'bicha', 'boiola', 'traveco', 'sapatao',
+    'retardado', 'imbecil', 'idiota', 'otario', 'burro', 'estupido', 'vaca', 'corno', 'corna',
+    'fdp', 'vsf', 'vtnc', 'krl', 'arrombado', 'escroto', 'desgraca',
+    'nazi', 'nazista', 'hitler', 'racista', 'pedofilo', 'pedofilia',
+    'sexo explicito', 'pornografia', 'porno'
+];
+
+function normalizarTextoFiltro(texto) {
+    return String(texto || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function contemConteudoInadequado(texto) {
+    const t = normalizarTextoFiltro(texto);
+    if (!t) return false;
+
+    return REVIEW_BAD_WORDS.some(w => {
+        const palavra = normalizarTextoFiltro(w);
+        if (!palavra) return false;
+
+        // Constrói a regex com word boundaries (\b) para não pegar substrings.
+        // Suporta palavras compostas (ex: "foda se") trocando espaços por \s+.
+        const pattern = '\\b' + palavra.replace(/\s+/g, '\\s+') + '\\b';
+        const regex = new RegExp(pattern, 'i');
+        return regex.test(t);
+    });
+}
+window.contemConteudoInadequado = contemConteudoInadequado;
+
+// Compressão simples via canvas
+function comprimirImagemAvaliacao(file, maxDim = 1280, quality = 0.82) {
+    return new Promise((resolve) => {
+        if (!file.type.startsWith('image/')) return resolve(file);
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+                const r = Math.min(maxDim / width, maxDim / height);
+                width = Math.round(width * r);
+                height = Math.round(height * r);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            canvas.toBlob(blob => {
+                if (!blob) return resolve(file);
+                const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+                resolve(new File([blob], name, { type: 'image/jpeg' }));
+            }, 'image/jpeg', quality);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+    });
+}
+
+async function uploadImagemAvaliacao(file, productId) {
+    const client = await inicializarSupabase();
+    if (!client) throw new Error('Supabase não inicializado.');
+
+    const processado = await comprimirImagemAvaliacao(file);
+    const ext = (processado.name.match(/\.([a-z0-9]+)$/i) || [, 'jpg'])[1].toLowerCase();
+    const rand = Math.random().toString(36).slice(2, 10);
+    const path = `produto_${productId}/${Date.now()}_${rand}.${ext}`;
+
+    const { error } = await client.storage
+        .from(REVIEW_IMAGES_BUCKET)
+        .upload(path, processado, { upsert: false, contentType: processado.type });
+    if (error) throw error;
+
+    const { data } = client.storage.from(REVIEW_IMAGES_BUCKET).getPublicUrl(path);
+    return data?.publicUrl || path;
+}
+
+async function carregarAvaliacoesProduto(productId) {
+    const client = await inicializarSupabase();
+    if (!client) return [];
+    const { data, error } = await client
+        .from('avaliacoes')
+        .select('id, user_name, comment, image_paths, rating, posted_at, created_at')
+        .eq('product_id', productId)
+        .eq('status', 'postada')
+        .order('posted_at', { ascending: false });
+    if (error) { console.warn('Erro ao carregar avaliações:', error); return []; }
+    return data || [];
+}
+window.carregarAvaliacoesProduto = carregarAvaliacoesProduto;
+
+// ==========================================
+// IDENTIDADE PERSISTENTE (sem login)
+// ==========================================
+const USER_TOKEN_KEY = 'alfa_user_token_v1';
+const USER_NAME_KEY = 'alfa_user_name_v1';
+const USER_TOKEN_TTL_DAYS = 730; // ~2 anos
+
+function gerarTokenAleatorio() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    const rand = () => Math.random().toString(36).slice(2, 10);
+    return `ut_${Date.now().toString(36)}_${rand()}${rand()}`;
+}
+
+function lerCookie(nome) {
+    return document.cookie
+        .split('; ')
+        .find(c => c.startsWith(nome + '='))
+        ?.split('=')[1];
+}
+
+function gravarCookie(nome, valor, dias) {
+    const maxAge = 60 * 60 * 24 * dias;
+    document.cookie = `${nome}=${valor}; max-age=${maxAge}; path=/; SameSite=Lax`;
+}
+
+function obterUserToken() {
+    // 1) tenta localStorage
+    try {
+        const t = localStorage.getItem(USER_TOKEN_KEY);
+        if (t && t.length >= 16) return t;
+    } catch { }
+
+    // 2) tenta cookie (fallback para navegadores com storage bloqueado)
+    const fromCookie = lerCookie(USER_TOKEN_KEY);
+    if (fromCookie && fromCookie.length >= 16) {
+        try { localStorage.setItem(USER_TOKEN_KEY, fromCookie); } catch { }
+        return fromCookie;
+    }
+
+    // 3) gera novo
+    const novo = gerarTokenAleatorio();
+    try { localStorage.setItem(USER_TOKEN_KEY, novo); } catch { }
+    gravarCookie(USER_TOKEN_KEY, novo, USER_TOKEN_TTL_DAYS);
+    return novo;
+}
+
+function obterNomeSalvo() {
+    try { return localStorage.getItem(USER_NAME_KEY) || ''; } catch { return ''; }
+}
+
+function salvarNome(nome) {
+    const v = String(nome || '').trim();
+    if (v.length < 2) return;
+    try { localStorage.setItem(USER_NAME_KEY, v); } catch { }
+}
+
+// Expõe para o reviews.js
+window.obterUserToken = obterUserToken;
+window.obterNomeSalvo = obterNomeSalvo;
+window.salvarNome = salvarNome;
+async function enviarAvaliacao({ userName, rating, comment, files = [], productId }) {
+    const nome = String(userName || '').trim();
+    const texto = String(comment || '').trim();
+    const nota = parseInt(rating, 10);
+
+    if (nome.length < 2 || nome.length > 80) throw new Error('Informe um nome entre 2 e 80 caracteres.');
+    if (!Number.isInteger(nota) || nota < 1 || nota > 5) throw new Error('Selecione uma nota de 1 a 5 estrelas.');
+    if (texto.length < 3) throw new Error('Comentário muito curto (mínimo 3 caracteres).');
+    if (texto.length > 2000) throw new Error('Comentário muito longo (máximo 2000 caracteres).');
+    if (contemConteudoInadequado(nome)) throw new Error('O nome contém conteúdo inadequado.');
+    if (contemConteudoInadequado(texto)) throw new Error('O comentário contém conteúdo inadequado.');
+
+    // ✅ CORREÇÃO: converte para número antes de validar
+    const productIdNum = Number(productId);
+    if (!Number.isFinite(productIdNum) || productIdNum <= 0) throw new Error('Produto inválido.');
+
+    const userToken = obterUserToken();
+
+    const arquivos = Array.from(files || []);
+    if (arquivos.length > REVIEW_MAX_IMAGES)
+        throw new Error(`Máximo de ${REVIEW_MAX_IMAGES} imagens por avaliação.`);
+
+    const imagePaths = [];
+    for (const f of arquivos) {
+        if (!REVIEW_ALLOWED_TYPES.includes(f.type))
+            throw new Error('Formato de imagem não suportado (use JPG, PNG, WEBP ou GIF).');
+        if (f.size > REVIEW_MAX_FILE_SIZE)
+            throw new Error('Cada imagem deve ter no máximo 5MB.');
+        imagePaths.push(await uploadImagemAvaliacao(f, productIdNum));
+    }
+
+    const client = await inicializarSupabase();
+    if (!client) throw new Error('Supabase não inicializado.');
+
+    // Verifica se já existe uma avaliação ATIVA (em análise ou publicada)
+    const { data: ativa, error: errAtiva } = await client
+        .from('avaliacoes')
+        .select('id, status')
+        .eq('user_token', userToken)
+        .eq('product_id', productIdNum)
+        .in('status', ['em_analise', 'postada'])
+        .maybeSingle();
+
+    if (errAtiva) throw errAtiva;
+
+    if (ativa) {
+        throw new Error(ativa.status === 'postada'
+            ? 'Você já avaliou este produto. Obrigado!'
+            : 'Você já enviou uma avaliação para este produto. Aguarde a moderação.');
+    }
+
+    // Verifica se existe uma avaliação REJEITADA (podemos reaproveitar o registro)
+    const { data: rejeitada } = await client
+        .from('avaliacoes')
+        .select('id')
+        .eq('user_token', userToken)
+        .eq('product_id', productIdNum)
+        .eq('status', 'rejeitada')
+        .maybeSingle();
+
+    let data, error;
+
+    if (rejeitada) {
+        // Reaproveita o registro rejeitado, atualizando os dados e voltando para 'em_analise'
+        ({ data, error } = await client
+            .from('avaliacoes')
+            .update({
+                user_name: nome,
+                comment: texto,
+                rating: nota,
+                image_paths: imagePaths,
+                status: 'em_analise',
+                posted_at: null
+            })
+            .eq('id', rejeitada.id)
+            .select()
+            .single());
+    } else {
+        // Insere nova avaliação
+        ({ data, error } = await client.from('avaliacoes').insert([{
+            user_name: nome,
+            comment: texto,
+            rating: nota,
+            product_id: productIdNum,
+            image_paths: imagePaths,
+            user_token: userToken,
+            status: 'em_analise'
+        }]).select().single());
+    }
+
+    if (error) {
+        if (error.code === '23505') {
+            throw new Error('Você já enviou uma avaliação para este produto.');
+        }
+        throw error;
+    }
+
+    // Guarda o nome para pré-preencher no próximo produto
+    salvarNome(nome);
+    return data;
+}
+window.enviarAvaliacao = enviarAvaliacao;

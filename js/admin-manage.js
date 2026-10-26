@@ -107,22 +107,32 @@ function mostrarLista() {
     especificacoesEdicao = [];
     indiceSpecEditada = null;
     document.getElementById('edit-specs-list').replaceChildren();
-    document.getElementById('edit-drop-zone').replaceChildren(document.getElementById('edit-images-file'));
+    const dropZoneLista = document.getElementById('edit-drop-zone');
+    dropZoneLista.querySelectorAll('.preview-card, .manage-image-prompt').forEach(el => el.remove());
+    // NÃO fazer dropZoneLista.appendChild(inputLista) — o input já está fora
     renderizarProdutos();
 }
-
 function renderizarImagensEdicao() {
     const zone = document.getElementById('edit-drop-zone');
     const input = document.getElementById('edit-images-file');
-    zone.replaceChildren();
-    if (!imagensEdicao.length) zone.appendChild(criarElemento('span', 'manage-image-prompt', 'Clique para adicionar imagens'));
+
+    zone.querySelectorAll('.preview-card, .manage-image-prompt').forEach(el => el.remove());
+
+    if (!imagensEdicao.length) {
+        const prompt = criarElemento('span', 'manage-image-prompt', 'Clique para adicionar imagens');
+        zone.appendChild(prompt);
+    }
+
     imagensEdicao.forEach((item, index) => {
         const card = criarElemento('div', 'preview-card');
         card.dataset.id = item.id;
-        const badge = criarElemento('span', 'badge-capa', 'CAPA');
+
+        const badge = criarElemento('span', 'badge-capa', index === 0 ? 'CAPA' : '');
+
         const image = document.createElement('img');
         image.src = item.previewUrl;
         image.alt = `Imagem ${index + 1} do produto`;
+
         const remove = criarElemento('button', 'btn-remover-img', '×');
         remove.type = 'button';
         remove.title = 'Remover imagem';
@@ -133,29 +143,27 @@ function renderizarImagensEdicao() {
             if (removed.file) URL.revokeObjectURL(removed.previewUrl);
             renderizarImagensEdicao();
         });
+
         card.append(badge, image, remove);
-        zone.appendChild(card);
+        zone.appendChild(card);  // <-- appendChild
     });
-    const addMore = criarElemento('button', 'preview-card add-more-card', '+');
-    addMore.type = 'button';
-    addMore.title = 'Adicionar imagens';
-    addMore.addEventListener('click', event => { event.stopPropagation(); input.click(); });
-    zone.append(addMore, input);
-    if (sortableEdicao) sortableEdicao.destroy();
-    if (typeof window.Sortable === 'function') {
-        sortableEdicao = new window.Sortable(zone, {
-            animation: 150,
-            draggable: '.preview-card:not(.add-more-card)',
-            filter: '.add-more-card, button',
-            onEnd: () => {
-                const ids = [...zone.querySelectorAll('.preview-card:not(.add-more-card)')].map(card => card.dataset.id);
-                imagensEdicao.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
-                renderizarImagensEdicao();
-            }
-        });
+
+    let addMore = zone.querySelector('.add-more-card');
+    if (imagensEdicao.length) {
+        if (!addMore) {
+            addMore = criarElemento('button', 'preview-card add-more-card', '+');
+            addMore.type = 'button';
+            addMore.title = 'Adicionar imagens';
+            addMore.addEventListener('click', event => {
+                event.stopPropagation();
+                input.click();
+            });
+        }
+        zone.appendChild(addMore);  // <-- appendChild
+    } else if (addMore) {
+        addMore.remove();
     }
 }
-
 async function prepararImagens(files) {
     for (const file of files) {
         if (!file.type.startsWith('image/')) continue;
@@ -377,6 +385,25 @@ async function inicializarGerenciamento() {
         catch (error) { mostrarFeedback(`Erro ao preparar imagens: ${error.message}`, 'error'); }
         finally { fileInput.value = ''; }
     });
+
+if (dropZone && typeof window.Sortable === 'function') {
+    sortableEdicao = new window.Sortable(dropZone, {
+        animation: 150,
+        forceFallback: true,
+        fallbackOnBody: true,
+        fallbackTolerance: 4,
+        ghostClass: 'sortable-ghost',
+        fallbackClass: 'sortable-fallback',
+        draggable: '.preview-card:not(.add-more-card)',
+        filter: '.add-more-card, button, input',
+        preventOnFilter: false,
+        onEnd: (evt) => {
+            const itemMovido = imagensEdicao.splice(evt.oldIndex, 1)[0];
+            imagensEdicao.splice(evt.newIndex, 0, itemMovido);
+            renderizarImagensEdicao();
+        }
+    });
+}
 
     clienteProdutos = await obterClienteSupabase();
     if (!clienteProdutos) {
